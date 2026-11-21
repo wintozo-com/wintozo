@@ -18,5 +18,5 @@ export const APP_BRAND = isStoreApp
 export const APP_PACKAGE_ID = isStoreApp
   ? "com.winchat.store"
   : isYouOnlyApp
-    ? "org.winchat.you"
+    ? "com.winchat.you"
     : "org.wintozo.messenger";

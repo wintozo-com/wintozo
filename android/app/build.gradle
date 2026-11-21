@@ -1,14 +1,30 @@
 apply plugin: 'com.android.application'
 
+/* Подпись release: переменные окружения (CI) -> локальный keystore.
+   Раньше тут читался RELEASE_STORE_FILE с Windows-путём из gradle.properties,
+   из-за чего Gradle в GitHub Actions падал с URISyntaxException. */
+def keystorePath = System.getenv("KEYSTORE_FILE")
+def releaseStoreFile = null
+if (keystorePath) {
+    releaseStoreFile = new File(keystorePath)
+}
+if (releaseStoreFile == null || !releaseStoreFile.exists()) {
+    def localStore = rootProject.file("keystore.jks")
+    if (!localStore.exists()) localStore = rootProject.file("my-release-key.jks")
+    if (localStore.exists()) releaseStoreFile = localStore
+}
+
 android {
     namespace "org.wintozo.messenger"
     compileSdk rootProject.ext.compileSdkVersion
     signingConfigs {
-        release {
-            storeFile file(System.getenv("KEYSTORE_FILE") ?: RELEASE_STORE_FILE)
-            storePassword System.getenv("KEYSTORE_PASSWORD")
-            keyAlias System.getenv("KEY_ALIAS") ?: RELEASE_KEY_ALIAS
-            keyPassword System.getenv("KEY_PASSWORD")
+        if (releaseStoreFile != null) {
+            release {
+                storeFile releaseStoreFile
+                storePassword System.getenv("KEYSTORE_PASSWORD") ?: ""
+                keyAlias System.getenv("KEY_ALIAS") ?: (project.findProperty("RELEASE_KEY_ALIAS") ?: "my-key-alias")
+                keyPassword System.getenv("KEY_PASSWORD") ?: ""
+            }
         }
     }
     defaultConfig {
@@ -26,7 +42,9 @@ android {
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            if (releaseStoreFile != null) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

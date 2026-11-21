@@ -22,6 +22,15 @@ jobs:
     name: Build APK
     runs-on: ubuntu-latest
 
+    # Единый источник параметров подписи для Gradle.
+    # KEYSTORE_FILE указывает на корень репозитория; жёсткий Windows-путь
+    # из gradle.properties больше не используется.
+    env:
+      KEYSTORE_FILE: ${{ github.workspace }}/keystore.jks
+      KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -88,11 +97,7 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon \
-            -Pandroid.injected.signing.store.file=$GITHUB_WORKSPACE/keystore.jks \
-            -Pandroid.injected.signing.store.password=${{ secrets.ANDROID_KEYSTORE_PASSWORD }} \
-            -Pandroid.injected.signing.key.alias=${{ secrets.ANDROID_KEY_ALIAS }} \
-            -Pandroid.injected.signing.key.password=${{ secrets.ANDROID_KEY_PASSWORD }}
+          ./gradlew assembleRelease --no-daemon
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4

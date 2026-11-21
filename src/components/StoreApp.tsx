@@ -37,7 +37,7 @@ const CATALOG: CatalogApp[] = [
   {
     id: "winchat-you",
     name: "WinChat You",
-    packageId: "org.winchat.you",
+    packageId: "com.winchat.you",
     description: "Отдельное приложение WinChat только в теме Material You.",
     badge: "You",
   },
