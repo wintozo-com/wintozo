@@ -8,7 +8,8 @@ import {
 } from "../../../lib/supabase";
 import { directKey, uuid } from "../../../lib/utils";
 import Sidebar from "./modern/ModernSidebar";
-import ChatView from "./modern/ModernChatView";
+import HappyYearChatView from "../../HappyYearChatView";
+import { HappyYearBackdrop, HappyYearMelody } from "../../HappyYearDecor";
 import SettingsModal from "./modern/ModernSettingsModal";
 import ChatInfoModal from "./modern/ModernChatInfoModal";
 import AndroidSettings from "./modern/ModernAndroidSettings";
@@ -576,15 +577,28 @@ export default function Messenger({
   return (
     <div
       className={cn(
-        "font-app flex h-dvh overflow-hidden",
+        "font-app hy-messenger flex h-dvh overflow-hidden",
         youMode
           ? "you-shell"
           : "messenger-modern bg-gradient-to-br from-[#fbfbfa] via-[#f7f7f4] to-accent-soft/25"
       )}
       style={viewportHeight ? { height: viewportHeight } : undefined}
     >
-      {/* Живой фон Material You */}
-      {youMode && <YouBackdrop />}
+      {/* Живой фон Material You / новогодний фон */}
+      {youMode ? (
+        <YouBackdrop />
+      ) : (
+        <>
+          <HappyYearBackdrop className="hy-shell-backdrop fixed" dense easterEggs />
+          <HappyYearMelody
+            className="hy-shell-melody fixed"
+            track="bg"
+            volume={0.16}
+            storageKey="winchat_bg_new_year_music"
+            label="Фоновая музыка"
+          />
+        </>
+      )}
 
       {/* Проверка версии / баннеры обновления */}
       <CheckVersion />
@@ -624,7 +638,7 @@ export default function Messenger({
         )}
       >
         {active ? (
-          <ChatView
+          <HappyYearChatView
             key={active.id}
             me={me}
             chat={active}

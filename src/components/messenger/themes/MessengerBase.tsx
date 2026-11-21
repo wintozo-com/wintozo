@@ -9,6 +9,7 @@ import {
 import { directKey, uuid } from "../../../lib/utils";
 import Sidebar from "../../Sidebar";
 import ChatView from "../../ChatView";
+import { HappyYearFrame } from "../../HappyYearChatView";
 import SettingsModal from "../../SettingsModal";
 import AndroidSettings from "../../AndroidSettings";
 import { Capacitor } from "@capacitor/core";
@@ -480,7 +481,7 @@ export default function Messenger({
 
   return (
     <div
-      className={cn("font-app flex h-dvh overflow-hidden", youMode ? "you-shell" : "bg-paper")}
+      className={cn("font-app hy-messenger flex h-dvh overflow-hidden", youMode ? "you-shell" : "bg-paper")}
       style={viewportHeight ? { height: viewportHeight } : undefined}
     >
       {/* Живой фон Material You */}
@@ -523,16 +524,18 @@ export default function Messenger({
         )}
       >
         {active ? (
-          <ChatView
-            key={active.id}
-            me={me}
-            chat={active}
-            onlineIds={onlineIds}
-            onBack={closeChat}
-            onActivity={applyIncoming}
-            onOpenInfo={() => setInfoOpen(true)}
-            youMode={youMode}
-          />
+          <HappyYearFrame>
+            <ChatView
+              key={active.id}
+              me={me}
+              chat={active}
+              onlineIds={onlineIds}
+              onBack={closeChat}
+              onActivity={applyIncoming}
+              onOpenInfo={() => setInfoOpen(true)}
+              youMode={youMode}
+            />
+          </HappyYearFrame>
         ) : (
           <Placeholder
             youMode={youMode}

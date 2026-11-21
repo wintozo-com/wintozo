@@ -22,7 +22,12 @@ export const OOBE_INSTALL_KEY = "winchat_oobe_install_done";
 /** Ступени OOBE-обновлений в порядке выхода.
  *  Одна ступень = один показ приветствия. 6.0.0 уже показывали в closed
  *  beta, поэтому релиз 6.0.0 — отдельная ступень (следующий ключ). */
-const OOBE_UPDATE_VERSIONS = ["5.0.0", "6.0.0", "6.0.0-release"];
+const OOBE_UPDATE_VERSIONS = [
+  "5.0.0",
+  "6.0.0",
+  "6.0.0-release",
+  "7.0.0-closed-beta",
+];
 
 /** Ожидаемый ключ для текущей версии приложения. */
 export function getOobeUpdateExpectedKey(): number {

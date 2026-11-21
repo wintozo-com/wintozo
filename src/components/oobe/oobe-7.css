@@ -1,0 +1,752 @@
+/* ============================================================
+   WinChat 7.0 — Новогоднее OOBE (отдельный дизайн, не Material You 6.0).
+   Белая открытка, золото/красный/зелёный, снег, гирлянды, отсчёт.
+   ============================================================ */
+
+.ny7 {
+  --ny-red: #c62828;
+  --ny-red-deep: #8e1b1b;
+  --ny-green: #2e7d32;
+  --ny-green-deep: #1b5e20;
+  --ny-gold: #b8860b;
+  --ny-gold-soft: #f4d87c;
+  --ny-ink: #1d2a24;
+  --ny-muted: #5f6b63;
+  --ny-line: rgba(184, 134, 11, 0.24);
+  --ny-card: rgba(255, 255, 255, 0.92);
+
+  position: relative;
+  min-height: 100dvh;
+  overflow-x: clip;
+  color: var(--ny-ink);
+  background:
+    radial-gradient(900px 520px at 50% -10%, #ffffff 0%, rgba(255,255,255,0) 62%),
+    radial-gradient(circle at 8% 12%, rgba(198, 40, 40, 0.1), transparent 28%),
+    radial-gradient(circle at 92% 10%, rgba(46, 125, 50, 0.12), transparent 30%),
+    radial-gradient(circle at 50% 110%, rgba(217, 154, 23, 0.16), transparent 50%),
+    linear-gradient(180deg, #ffffff 0%, #fffdf8 48%, #fff6e8 100%);
+  font-family: "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  isolation: isolate;
+}
+
+.ny7 *, .ny7 *::before, .ny7 *::after { box-sizing: border-box; }
+
+/* Снежная пыль + виньетка */
+.ny7::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.45;
+  background-image: radial-gradient(rgba(21, 101, 192, 0.14) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(180deg, #000 0%, transparent 38%, transparent 72%, #000 100%);
+}
+.ny7::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 42%, transparent 55%, rgba(120, 80, 10, 0.05) 100%);
+}
+
+.ny7-bg {
+  position: absolute;
+  inset: -10% -20% auto;
+  height: 60vh;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 50% at 22% 30%, rgba(198, 40, 40, 0.12), transparent 70%),
+    radial-gradient(34% 46% at 76% 24%, rgba(46, 125, 50, 0.14), transparent 72%),
+    radial-gradient(30% 40% at 52% 8%, rgba(217, 154, 23, 0.12), transparent 70%);
+  filter: blur(28px);
+}
+
+/* Декор */
+.ny7-garland { top: -4px; z-index: 3; }
+.ny7-hanging { height: 250px; z-index: 2; }
+.ny7-snow { z-index: 2; }
+.ny7-tree {
+  right: max(16px, 3vw);
+  bottom: 24px;
+  width: 140px;
+  height: 182px;
+  opacity: 0.85;
+  z-index: 1;
+}
+.ny7-gifts {
+  left: max(12px, 2.5vw);
+  bottom: 12px;
+  width: 170px;
+  opacity: 0.9;
+  z-index: 1;
+}
+.ny7-melody {
+  position: fixed;
+  top: 84px;
+  right: clamp(14px, 3vw, 28px);
+  z-index: 30;
+}
+
+/* Шапка */
+.ny7-topbar {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px clamp(18px, 5vw, 64px) 0;
+}
+.ny7-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.ny7-logo {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 3px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: conic-gradient(from 20deg, #f4d87c, #c62828, #2e7d32, #f4d87c);
+  box-shadow: 0 12px 28px -14px rgba(198, 40, 40, 0.5), inset 0 0 0 1px rgba(255,255,255,.6);
+  overflow: hidden;
+}
+.ny7-logo img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #fff; }
+.ny7-brand-copy { display: flex; flex-direction: column; line-height: 1.1; }
+.ny7-brand-copy strong { font-size: 19px; font-weight: 800; letter-spacing: -0.025em; color: var(--ny-ink); }
+.ny7-brand-copy small {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ny-green);
+}
+.ny7-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(184, 134, 11, 0.32);
+  background: rgba(255,255,255,.88);
+  color: var(--ny-red);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  box-shadow: 0 10px 24px -16px rgba(80,50,10,.45), inset 0 1px 0 #fff;
+  backdrop-filter: blur(12px);
+}
+.ny7-badge svg { width: 16px; height: 16px; color: #1565c0; }
+
+/* Каркас: поздравление + панель */
+.ny7-shell {
+  position: relative;
+  z-index: 4;
+  width: min(1120px, calc(100% - 32px));
+  margin: clamp(20px, 4vw, 44px) auto 0;
+  padding-bottom: 72px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+  gap: clamp(20px, 4vw, 44px);
+  align-items: stretch;
+}
+
+/* Левая половина */
+.ny7-hero {
+  padding: clamp(16px, 2vw, 28px) 0 clamp(16px, 2vw, 28px) clamp(0px, 2vw, 16px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.ny7-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin: 0 0 16px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(46,125,50,.2);
+  background: rgba(255,255,255,.9);
+  color: var(--ny-green);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+.ny7-eyebrow svg { width: 14px; height: 14px; }
+.ny7-hero-title {
+  margin: 0 0 16px;
+  font-family: "Marck Script", "Segoe Script", cursive;
+  font-size: clamp(48px, 7vw, 88px);
+  line-height: 0.95;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--ny-ink);
+  text-wrap: balance;
+}
+.ny7-hero-title em {
+  display: block;
+  margin-top: 4px;
+  font-style: normal;
+  background: linear-gradient(100deg, #b71c1c 0%, #e53935 36%, #c98a10 72%, #a56d06 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.ny7-hero-text {
+  max-width: 520px;
+  margin: 0 0 28px;
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: var(--ny-muted);
+}
+.ny7-year {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 22px;
+}
+.ny7-year-snow {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: #1565c0;
+  background: rgba(255,255,255,.85);
+  border: 1px solid rgba(21,101,192,.12);
+  box-shadow: 0 8px 20px -14px rgba(21,101,192,.4);
+}
+.ny7-year-snow svg { width: 22px; height: 22px; }
+.ny7-year-digits {
+  font-family: "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(52px, 7vw, 88px);
+  line-height: 0.86;
+  font-weight: 800;
+  letter-spacing: .01em;
+  background: linear-gradient(180deg, #fdf2c0 0%, #ecc65a 28%, #b8860b 55%, #8a6206 72%, #f4d87c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 8px 18px rgba(160,110,10,.25));
+}
+.ny7-countdown {
+  max-width: 460px;
+  margin: 0 0 28px;
+}
+.ny7-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.ny7-features li {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ny-muted);
+}
+.ny7-feature-orb {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #fff;
+  flex: 0 0 auto;
+  box-shadow: inset -3px -4px 8px rgba(0,0,0,.2), 0 6px 14px -8px rgba(0,0,0,.4);
+}
+.ny7-feature-orb svg { width: 16px; height: 16px; }
+.ny7-feature-orb--red { background: radial-gradient(circle at 32% 24%, rgba(255,255,255,.7) 0 10%, transparent 34%), #c62828; }
+.ny7-feature-orb--green { background: radial-gradient(circle at 32% 24%, rgba(255,255,255,.7) 0 10%, transparent 34%), #2e7d32; }
+.ny7-feature-orb--gold { background: radial-gradient(circle at 32% 24%, rgba(255,255,255,.7) 0 10%, transparent 34%), #d99a17; }
+
+/* Правая панель */
+.ny7-panel {
+  position: relative;
+  padding: clamp(24px, 3.5vw, 36px);
+  border-radius: 34px;
+  border: 1px solid var(--ny-line);
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,252,245,.94));
+  box-shadow:
+    0 40px 90px -50px rgba(80,50,10,.45),
+    0 0 0 8px rgba(255,255,255,.45),
+    0 0 0 9px rgba(184,134,11,.1),
+    inset 0 1px 0 #fff;
+  backdrop-filter: blur(18px);
+  align-self: center;
+}
+.ny7-panel::before {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px dashed rgba(184,134,11,.22);
+  border-radius: 24px;
+  pointer-events: none;
+}
+.ny7-panel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+  position: relative;
+}
+.ny7-panel-step {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ny-muted);
+}
+.ny7-progress { display: flex; gap: 6px; }
+.ny7-progress span {
+  width: 34px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(46,125,50,.14);
+  transition: background .25s;
+}
+.ny7-progress span.is-active { background: linear-gradient(90deg, #c62828, #d99a17); }
+.ny7-progress span.is-done { background: #2e7d32; }
+
+.ny7-step {
+  position: relative;
+  animation: ny7-in .45s cubic-bezier(.16,1,.3,1) both;
+}
+.ny7-step--center { text-align: center; display: flex; flex-direction: column; align-items: center; }
+@keyframes ny7-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+.ny7-mark {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  margin: 0 0 20px;
+  padding: 4px;
+  border-radius: 50%;
+  background: conic-gradient(from 20deg, #f4d87c, #c62828, #2e7d32, #f4d87c);
+  box-shadow: 0 18px 36px -18px rgba(80,50,10,.5);
+}
+.ny7-step--center .ny7-mark { margin-left: auto; margin-right: auto; }
+.ny7-mark-ring {
+  position: absolute;
+  inset: 8px;
+  border: 1px dashed rgba(255,255,255,.55);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.ny7-mark img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #fff; }
+.ny7-mark--gift {
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, #c62828, #8e1b1b);
+}
+.ny7-mark--gift svg { width: 38px; height: 38px; }
+
+.ny7-step h2 {
+  margin: 0 0 10px;
+  font-family: "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(28px, 3.4vw, 38px);
+  line-height: 1.08;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ny-ink);
+}
+.ny7-step h2 em {
+  font-style: normal;
+  background: linear-gradient(100deg, #b71c1c, #d99a17);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.ny7-step p {
+  margin: 0 0 22px;
+  max-width: 400px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ny-muted);
+}
+.ny7-step--center p { margin-left: auto; margin-right: auto; }
+
+/* Кнопки */
+.ny7-actions { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.ny7-actions--row { flex-direction: row; align-items: center; }
+.ny7-primary, .ny7-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 14.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .18s, box-shadow .18s, background .18s;
+  border: 1px solid transparent;
+}
+.ny7-primary {
+  width: 100%;
+  color: #fff;
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  box-shadow: 0 18px 36px -20px rgba(46,125,50,.75), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.ny7-primary:hover { transform: translateY(-1px); box-shadow: 0 24px 42px -20px rgba(46,125,50,.8); }
+.ny7-primary:active { transform: translateY(0) scale(.985); }
+.ny7-primary:disabled { opacity: .65; pointer-events: none; }
+.ny7-primary svg { width: 18px; height: 18px; flex: 0 0 auto; }
+.ny7-secondary {
+  width: 100%;
+  color: var(--ny-red);
+  background: rgba(255,255,255,.7);
+  border-color: rgba(184,134,11,.28);
+}
+.ny7-secondary:hover { background: #fff6e6; }
+.ny7-secondary svg { width: 18px; height: 18px; }
+
+.ny7-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  margin: 0 0 14px -10px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ny-muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.ny7-back:hover { color: var(--ny-red); background: rgba(198,40,40,.06); }
+.ny7-back svg { width: 16px; height: 16px; }
+
+.ny7-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.ny7-step--center .ny7-chips { justify-content: center; }
+.ny7-chips span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(184,134,11,.2);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ny-muted);
+}
+.ny7-chips svg { width: 14px; height: 14px; color: var(--ny-red); }
+
+/* Табы */
+.ny7-tabs {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  margin-bottom: 18px;
+  border-radius: 16px;
+  background: rgba(255,246,230,.9);
+  border: 1px solid rgba(184,134,11,.18);
+}
+.ny7-tab-thumb {
+  position: absolute;
+  top: 4px; bottom: 4px; left: 4px;
+  width: calc(50% - 4px);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 18px -14px rgba(80,50,10,.5);
+  transition: transform .25s cubic-bezier(.2,.9,.2,1);
+}
+.ny7-tabs[data-mode="login"] .ny7-tab-thumb { transform: translateX(100%); }
+.ny7-tabs button {
+  position: relative;
+  z-index: 1;
+  min-height: 42px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--ny-muted);
+  cursor: pointer;
+}
+.ny7-tabs button[aria-selected="true"] { color: var(--ny-red); }
+
+/* Форма */
+.ny7-form { display: flex; flex-direction: column; gap: 14px; }
+.ny7-field { display: flex; flex-direction: column; gap: 6px; }
+.ny7-field-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ny-muted);
+  padding-left: 2px;
+}
+.ny7-field-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.94);
+  border: 1px solid rgba(184,134,11,.24);
+  transition: border-color .18s, box-shadow .18s;
+}
+.ny7-field-box:focus-within {
+  border-color: rgba(46,125,50,.55);
+  box-shadow: 0 0 0 4px rgba(46,125,50,.1);
+}
+.ny7-field-box > svg { width: 18px; height: 18px; color: var(--ny-green); flex: 0 0 auto; }
+.ny7-field-box input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  color: var(--ny-ink);
+}
+.ny7-field-box input::placeholder { color: #8a948d; }
+.ny7-field-trail {
+  display: grid;
+  place-items: center;
+  width: 34px; height: 34px;
+  margin-right: -6px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ny-muted);
+  cursor: pointer;
+}
+.ny7-field-trail:hover { background: rgba(46,125,50,.08); color: var(--ny-green); }
+.ny7-field-trail svg { width: 18px; height: 18px; }
+
+.ny7-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(198,40,40,.07);
+  color: #8e1b1b;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.ny7-error svg { width: 18px; height: 18px; flex: 0 0 auto; margin-top: 1px; }
+
+/* WinPass */
+.ny7-winpass { margin-top: 16px; padding-top: 16px; border-top: 1px dashed rgba(184,134,11,.24); }
+.ny7-winpass-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(184,134,11,.28);
+  background: rgba(255,255,255,.7);
+  color: var(--ny-red);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.ny7-winpass-cta:hover { background: #fff6e6; }
+.ny7-winpass-cta svg { width: 17px; height: 17px; }
+.ny7-winpass-card h3 {
+  margin: 0 0 4px;
+  font-family: "Manrope", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ny-ink);
+}
+.ny7-winpass-card p { margin: 0 0 14px; font-size: 13px; color: var(--ny-muted); line-height: 1.5; }
+.ny7-winpass-card form { display: flex; flex-direction: column; gap: 12px; }
+
+.ny7-code {
+  width: 100%;
+  padding: 16px;
+  margin: 4px 0 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #fff7e6, #ffffff);
+  border: 1px dashed rgba(184,134,11,.45);
+  color: #b71c1c;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(16px, 2.4vw, 22px);
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-align: center;
+  word-break: break-all;
+}
+
+/* Проверка */
+.ny7-loader {
+  position: relative;
+  width: 88px; height: 88px;
+  margin: 8px auto 20px;
+  display: grid;
+  place-items: center;
+  color: var(--ny-gold);
+}
+.ny7-loader span {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: #2e7d32;
+  border-right-color: rgba(217,154,23,.5);
+  animation: ny7-spin 1.4s linear infinite;
+}
+.ny7-loader span:nth-child(2) { inset: 10px; border-top-color: #c62828; animation-duration: 1.8s; animation-direction: reverse; }
+.ny7-loader span:nth-child(3) { inset: 20px; border-top-color: #d99a17; animation-duration: 2.2s; }
+.ny7-loader svg { width: 28px; height: 28px; animation: ny7-pulse 2s ease-in-out infinite; }
+@keyframes ny7-spin { to { transform: rotate(360deg); } }
+@keyframes ny7-pulse { 0%,100%{opacity:.5;transform:scale(.92)} 50%{opacity:1;transform:scale(1)} }
+.ny7-spin { animation: ny7-spin .9s linear infinite; }
+
+.ny7-checks { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.ny7-check {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.7);
+  border: 1px solid rgba(184,134,11,.16);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ny-muted);
+  transition: .25s;
+}
+.ny7-check.is-on { color: var(--ny-ink); border-color: rgba(46,125,50,.22); background: #fff; }
+.ny7-check i {
+  display: grid;
+  place-items: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(46,125,50,.1);
+  color: var(--ny-green);
+  flex: 0 0 auto;
+}
+.ny7-check i svg { width: 16px; height: 16px; }
+.ny7-check:not(.is-on) i { background: rgba(95,107,99,.1); color: #8a948d; }
+
+.ny7-success-mark {
+  width: 88px; height: 88px;
+  margin: 8px auto 20px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  box-shadow: 0 20px 40px -20px rgba(46,125,50,.7);
+}
+.ny7-success-mark svg { width: 42px; height: 42px; }
+
+/* Новости обновления */
+.ny7-shell--update { align-items: start; }
+.ny7-panel--wide { max-width: none; }
+.ny7-news {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin: 0 0 18px;
+}
+.ny7-news-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 14px 15px;
+  border-radius: 20px;
+  border: 1px solid rgba(184,134,11,.2);
+  background: linear-gradient(160deg, #fff, #fffaf0);
+  box-shadow: 0 14px 30px -28px rgba(80,50,10,.45), inset 0 1px 0 #fff;
+}
+.ny7-news-orb {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: inset -4px -5px 10px rgba(0,0,0,.2), 0 8px 16px -8px rgba(0,0,0,.35);
+}
+.ny7-news-orb svg { width: 20px; height: 20px; }
+.ny7-news-orb--red { background: radial-gradient(circle at 32% 24%, rgba(255,255,255,.75) 0 10%, transparent 34%), #c62828; }
+.ny7-news-orb--green { background: radial-gradient(circle at 32% 24%, rgba(255,255,255,.75) 0 10%, transparent 34%), #2e7d32; }
+.ny7-news-orb--gold { background: radial-gradient(circle at 32% 24%, rgba(255,255,255,.75) 0 10%, transparent 34%), #d99a17; }
+.ny7-news-orb--blue { background: radial-gradient(circle at 32% 24%, rgba(255,255,255,.75) 0 10%, transparent 34%), #1565c0; }
+.ny7-news-card h3 { margin: 0; font-size: 14px; font-weight: 800; color: var(--ny-ink); }
+.ny7-news-card p { margin: 4px 0 0; font-size: 12.5px; line-height: 1.45; color: var(--ny-muted); }
+.ny7-footnote {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ny-muted);
+}
+.ny7-footnote svg { width: 15px; height: 15px; color: var(--ny-green); flex: 0 0 auto; }
+
+/* Подвал */
+.ny7-footer { display: none; }
+
+/* Адаптив */
+@media (max-width: 980px) {
+  .ny7-shell {
+    grid-template-columns: 1fr;
+    max-width: 640px;
+    gap: 24px;
+  }
+  .ny7-hero { padding: 0; text-align: center; align-items: center; }
+  .ny7-hero-text { margin-left: auto; margin-right: auto; }
+  .ny7-year { justify-content: center; }
+  .ny7-countdown { margin-left: auto; margin-right: auto; }
+  .ny7-features { justify-content: center; }
+  .ny7-tree { width: 100px; height: 130px; opacity: .45; right: -8px; }
+  .ny7-gifts { width: 120px; opacity: .5; left: -10px; }
+}
+@media (max-width: 560px) {
+  .ny7-topbar { padding-top: 16px; }
+  .ny7-logo { width: 46px; height: 46px; }
+  .ny7-brand-copy strong { font-size: 17px; }
+  .ny7-badge { height: 36px; padding: 0 12px; font-size: 12px; }
+  .ny7-shell { width: min(100% - 24px, 640px); margin-top: 16px; padding-bottom: 88px; }
+  .ny7-panel { padding: 22px 18px; border-radius: 28px; }
+  .ny7-panel::before { inset: 10px; border-radius: 20px; }
+  .ny7-hero-title { font-size: 42px; }
+  .ny7-year-digits { font-size: 56px; }
+  .ny7-hanging { height: 180px; }
+  .ny7-tree, .ny7-gifts { display: none; }
+  .ny7-melody { top: auto; bottom: 16px; right: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ny7-step, .ny7-loader span, .ny7-loader svg, .ny7-bg { animation: none !important; }
+}

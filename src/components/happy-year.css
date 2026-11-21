@@ -1,0 +1,1068 @@
+/* ============================================================
+   WinChat 7.0 — общий новогодний декор и стиль мессенджера.
+   Только SVG и CSS, без эмодзи и растровых стикеров.
+   ============================================================ */
+
+:root {
+  --hy-red: #c62828;
+  --hy-red-deep: #8e1b1b;
+  --hy-green: #2e7d32;
+  --hy-green-deep: #1b5e20;
+  --hy-gold: #b8860b;
+  --hy-gold-light: #f4d87c;
+  --hy-blue: #1565c0;
+  --hy-violet: #7b1fa2;
+  --hy-ink: #1d2a24;
+  --hy-muted: #5f6b63;
+  --hy-surface: #fffdf8;
+  --hy-line: rgba(184, 134, 11, 0.22);
+}
+
+/* ---------- Гирлянда ---------- */
+
+.hy-garland {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 104px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hy-garland-wire {
+  fill: none;
+  stroke: #2e7d32;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  opacity: 0.72;
+}
+
+.hy-garland-wire--light {
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 1;
+  opacity: 0.8;
+}
+
+.hy-garland-bulb {
+  animation: hy-twinkle 2.8s ease-in-out infinite;
+}
+
+.hy-garland-bulb line {
+  stroke: #2e7d32;
+  stroke-width: 2;
+}
+
+.hy-garland-halo {
+  fill: currentColor;
+  opacity: 0;
+  filter: blur(5px);
+  animation: hy-halo 2.8s ease-in-out infinite;
+}
+
+.hy-garland-cap {
+  fill: #b8860b;
+}
+
+.hy-garland-shine {
+  fill: rgba(255, 255, 255, 0.82);
+}
+
+@keyframes hy-twinkle {
+  0%,
+  100% {
+    opacity: 0.66;
+    filter: drop-shadow(0 0 2px currentColor);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px currentColor);
+  }
+}
+
+@keyframes hy-halo {
+  0%,
+  100% {
+    opacity: 0.12;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ---------- Подвешенные шарики ---------- */
+
+.hy-hanging {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 240px;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.hy-hanging-item {
+  position: absolute;
+  top: 0;
+  display: block;
+  width: var(--hy-size);
+  height: calc(var(--hy-drop) + var(--hy-size));
+  transform-origin: 50% 0;
+  animation: hy-sway 7s ease-in-out infinite alternate;
+}
+
+.hy-hanging-string {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1.5px;
+  height: var(--hy-drop);
+  background: linear-gradient(#b08d57, #efd79c);
+  transform: translateX(-50%);
+}
+
+.hy-hanging-ball {
+  position: absolute;
+  top: calc(var(--hy-drop) - 3px);
+  left: 0;
+  display: block;
+  width: var(--hy-size);
+  height: var(--hy-size);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.92) 0 8%, transparent 32%),
+    radial-gradient(circle at 70% 80%, rgba(0, 0, 0, 0.22), transparent 56%),
+    var(--hy-tone);
+  box-shadow:
+    inset -6px -8px 14px rgba(0, 0, 0, 0.22),
+    inset 4px 5px 10px rgba(255, 255, 255, 0.3),
+    0 12px 22px -10px rgba(31, 42, 36, 0.45);
+}
+
+.hy-hanging-ball::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: calc(var(--hy-size) * 0.3);
+  height: 8px;
+  border-radius: 3px 3px 1px 1px;
+  background: linear-gradient(180deg, #ffe9a8, #b8860b);
+  transform: translateX(-50%);
+}
+
+.hy-hanging-shine {
+  position: absolute;
+  top: 18%;
+  left: 24%;
+  width: 24%;
+  height: 34%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  transform: rotate(-28deg);
+}
+
+.hy-tone-red {
+  --hy-tone: #c62828;
+}
+.hy-tone-gold {
+  --hy-tone: #d99a17;
+}
+.hy-tone-green {
+  --hy-tone: #2e7d32;
+}
+.hy-tone-blue {
+  --hy-tone: #1565c0;
+}
+.hy-tone-violet {
+  --hy-tone: #7b1fa2;
+}
+
+@keyframes hy-sway {
+  from {
+    transform: rotate(-3.4deg);
+  }
+  to {
+    transform: rotate(3.4deg);
+  }
+}
+
+/* ---------- Снег ---------- */
+
+.hy-snow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hy-snowflake {
+  position: absolute;
+  top: -28px;
+  color: #a9d3ec;
+  opacity: 0.72;
+  animation-name: hy-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  filter: drop-shadow(0 1px 1px rgba(21, 101, 192, 0.14));
+}
+
+.hy-snowflake--soft {
+  color: #ffffff;
+  opacity: 0.9;
+  filter: drop-shadow(0 1px 2px rgba(21, 101, 192, 0.18));
+}
+
+@keyframes hy-fall {
+  0% {
+    transform: translate3d(0, -8vh, 0) rotate(0deg);
+  }
+  100% {
+    transform: translate3d(28px, 112vh, 0) rotate(360deg);
+  }
+}
+
+/* ---------- Ёлка ---------- */
+
+.hy-tree {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hy-tree-tier {
+  fill: #2e7d32;
+  stroke: #1b5e20;
+  stroke-width: 1.6;
+}
+
+.hy-tree-snow {
+  fill: rgba(255, 255, 255, 0.82);
+}
+
+.hy-tree-trunk {
+  fill: #7a4b20;
+}
+
+.hy-tree-star {
+  fill: #f6c445;
+  filter: drop-shadow(0 0 6px rgba(246, 196, 69, 0.8));
+}
+
+.hy-tree-shadow {
+  fill: rgba(31, 42, 36, 0.12);
+}
+
+/* ---------- Подарки ---------- */
+
+.hy-gifts {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hy-gift-shadow {
+  fill: rgba(31, 42, 36, 0.1);
+}
+
+.hy-gift--red rect {
+  fill: #c62828;
+}
+.hy-gift--green rect {
+  fill: #2e7d32;
+}
+.hy-gift--gold rect {
+  fill: #d99a17;
+}
+
+.hy-gift-lid {
+  filter: brightness(1.12);
+}
+
+.hy-gift-ribbon {
+  fill: #f6d47a;
+}
+
+.hy-gift-bow {
+  fill: #f6d47a;
+  stroke: #c79a2a;
+  stroke-width: 1;
+}
+
+/* ---------- Ёлочный шарик-кнопка ---------- */
+
+.hy-orb {
+  --hy-orb-color: var(--hy-red);
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 60px;
+  height: 76px;
+  padding: 0 0 4px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: #fff;
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+
+.hy-orb:hover {
+  transform: translateY(-3px);
+}
+
+.hy-orb:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.hy-orb:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.hy-orb--red {
+  --hy-orb-color: #d32f2f;
+}
+.hy-orb--gold {
+  --hy-orb-color: #d99a17;
+}
+.hy-orb--green {
+  --hy-orb-color: #2e7d32;
+}
+.hy-orb--blue {
+  --hy-orb-color: #1565c0;
+}
+.hy-orb--violet {
+  --hy-orb-color: #7b1fa2;
+}
+
+.hy-orb-string {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 2px;
+  height: 18px;
+  background: linear-gradient(#8d6e3d, #d7b46a);
+  transform: translateX(-50%);
+}
+
+.hy-orb-cap {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  width: 16px;
+  height: 7px;
+  border-radius: 3px 3px 2px 2px;
+  background: linear-gradient(180deg, #ffe082, #c79000);
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.hy-orb-ball {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  color: #fff;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.82) 0 10%, transparent 34%),
+    radial-gradient(circle at 68% 78%, rgba(0, 0, 0, 0.2), transparent 55%),
+    var(--hy-orb-color);
+  box-shadow:
+    inset -7px -9px 16px rgba(0, 0, 0, 0.22),
+    inset 4px 5px 10px rgba(255, 255, 255, 0.28),
+    0 8px 16px rgba(31, 42, 36, 0.22);
+}
+
+.hy-orb.is-active .hy-orb-ball {
+  box-shadow:
+    inset -7px -9px 16px rgba(0, 0, 0, 0.2),
+    0 0 0 3px rgba(255, 255, 255, 0.9),
+    0 0 18px var(--hy-orb-color);
+}
+
+.hy-orb-shine {
+  position: absolute;
+  top: 9px;
+  left: 12px;
+  width: 12px;
+  height: 17px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: rotate(-28deg);
+  pointer-events: none;
+}
+
+.hy-orb-icon {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+}
+
+.hy-orb-icon svg {
+  width: 23px;
+  height: 23px;
+  stroke-width: 2.2;
+}
+
+/* ---------- Отсчёт ---------- */
+
+.hy-countdown {
+  position: relative;
+  border: 1px solid var(--hy-line);
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 238, 0.92));
+  box-shadow:
+    0 24px 54px -34px rgba(80, 50, 10, 0.45),
+    inset 0 1px 0 #ffffff;
+  padding: 16px 18px 18px;
+  color: var(--hy-ink);
+  text-align: center;
+  backdrop-filter: blur(12px);
+}
+
+.hy-countdown-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--hy-green);
+  margin-bottom: 12px;
+}
+
+.hy-countdown-label-line {
+  width: 26px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(46, 125, 50, 0.45));
+}
+
+.hy-countdown-label-line:last-child {
+  transform: scaleX(-1);
+}
+
+.hy-countdown-grid {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.hy-countdown-cell {
+  position: relative;
+  min-width: 74px;
+  padding: 10px 10px 9px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff, #fff7e6);
+  border: 1px solid rgba(184, 134, 11, 0.26);
+  box-shadow:
+    inset 0 1px 0 #ffffff,
+    0 14px 26px -22px rgba(120, 80, 10, 0.55);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hy-countdown-cell::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 10px;
+  height: 6px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, #ffe9a8, #b8860b);
+  transform: translateX(-50%);
+}
+
+.hy-countdown-cell:not(:last-child)::after {
+  content: ":";
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  transform: translate(50%, -50%);
+  font-size: 20px;
+  font-weight: 800;
+  color: rgba(198, 40, 40, 0.45);
+}
+
+.hy-countdown-value {
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--hy-red);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.hy-countdown-value.is-live {
+  animation: hy-tick 0.45s ease-out;
+}
+
+.hy-countdown-unit {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(31, 42, 36, 0.5);
+}
+
+.hy-countdown-finished {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--hy-red);
+}
+
+.hy-countdown--compact {
+  padding: 10px 12px;
+  border-radius: 18px;
+}
+
+.hy-countdown--compact .hy-countdown-label {
+  font-size: 9px;
+  margin-bottom: 7px;
+}
+
+.hy-countdown--compact .hy-countdown-cell {
+  min-width: 46px;
+  padding: 5px 6px;
+  border-radius: 11px;
+}
+
+.hy-countdown--compact .hy-countdown-value {
+  font-size: 18px;
+}
+
+.hy-countdown--compact .hy-countdown-unit {
+  font-size: 7px;
+}
+
+@keyframes hy-tick {
+  from {
+    transform: translateY(-4px) scale(0.94);
+    opacity: 0.35;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ---------- Кнопка мелодии ---------- */
+
+.hy-melody {
+  position: fixed;
+  right: clamp(14px, 3vw, 28px);
+  bottom: clamp(14px, 3vw, 26px);
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 48px;
+  padding: 0 18px 0 6px;
+  border: 1px solid rgba(184, 134, 11, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #2e7d32;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  box-shadow:
+    0 18px 40px -22px rgba(60, 40, 10, 0.5),
+    inset 0 1px 0 #ffffff;
+  backdrop-filter: blur(14px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hy-melody:active { cursor: grabbing; }
+.hy-melody.is-dragged { transition: none; cursor: grabbing; }
+
+.hy-melody:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 22px 44px -22px rgba(60, 40, 10, 0.55),
+    inset 0 1px 0 #ffffff;
+}
+
+.hy-melody-badge {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.8) 0 10%, transparent 34%),
+    radial-gradient(circle at 70% 78%, rgba(0, 0, 0, 0.18), transparent 55%),
+    linear-gradient(145deg, #2e7d32, #1b5e20);
+  box-shadow: inset -4px -6px 10px rgba(0, 0, 0, 0.2);
+}
+
+.hy-melody-badge svg {
+  width: 18px;
+  height: 18px;
+}
+
+.hy-melody-eq {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 16px;
+}
+
+.hy-melody-eq i {
+  display: block;
+  width: 3px;
+  height: 4px;
+  border-radius: 2px;
+  background: currentColor;
+  opacity: 0.45;
+}
+
+.hy-melody.is-playing .hy-melody-eq i {
+  opacity: 1;
+  animation: hy-eq 0.9s ease-in-out infinite alternate;
+}
+
+.hy-melody.is-playing .hy-melody-eq i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.hy-melody.is-playing .hy-melody-eq i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.hy-melody.is-playing .hy-melody-eq i:nth-child(4) {
+  animation-delay: 0.45s;
+}
+
+@keyframes hy-eq {
+  from {
+    height: 4px;
+  }
+  to {
+    height: 15px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hy-melody {
+    height: 44px;
+    padding: 0 12px 0 5px;
+    gap: 8px;
+    max-width: calc(100vw - 24px);
+    box-shadow: 0 14px 32px -20px rgba(60,40,10,.55), inset 0 1px 0 #fff;
+  }
+  .hy-melody-text { font-size: 11px; max-width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .hy-melody-badge { width: 34px; height: 34px; }
+  .hy-shell-melody:not(.is-dragged) {
+    right: 12px !important;
+    left: auto !important;
+    bottom: max(12px, calc(env(safe-area-inset-bottom, 0px) + 12px)) !important;
+  }
+}
+
+/* ---------- Рамка новогоднего чата ---------- */
+
+.hy-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.hy-frame-garland {
+  height: 22px;
+  top: -1px;
+  transform: scaleY(0.48);
+  transform-origin: top center;
+  z-index: 5;
+  opacity: 0.96;
+  filter: saturate(1.05);
+}
+
+.hy-frame-garland .hy-garland-bulb circle:first-of-type {
+  r: 6;
+}
+
+.hy-frame-snow .hy-snowflake {
+  color: rgba(25, 118, 210, 0.42);
+}
+
+.hy-frame > :not(.hy-garland):not(.hy-snow) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- Мессенджер в новогоднем стиле ---------- */
+
+.hy-messenger {
+  background:
+    radial-gradient(1000px 560px at 10% -8%, rgba(198, 40, 40, 0.1), transparent 60%),
+    radial-gradient(900px 520px at 92% 8%, rgba(46, 125, 50, 0.12), transparent 58%),
+    radial-gradient(760px 420px at 50% 108%, rgba(217, 154, 23, 0.12), transparent 55%),
+    linear-gradient(180deg, #fffefb 0%, #fff8ef 52%, #fff3e2 100%) !important;
+  color: var(--hy-ink);
+}
+.hy-messenger::before {
+  background-image: radial-gradient(rgba(184, 134, 11, 0.08) 0.7px, transparent 0.7px) !important;
+  opacity: 0.35 !important;
+}
+.hy-shell-backdrop { position: fixed !important; inset: 0; z-index: 0; }
+.hy-shell-melody {
+  position: fixed !important;
+  right: clamp(14px, 2.5vw, 24px);
+  bottom: max(14px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+  left: auto;
+  top: auto;
+  z-index: 120 !important;
+}
+.hy-shell-melody.is-dragged {
+  right: auto !important;
+  bottom: auto !important;
+}
+.hy-frame-backdrop { opacity: .8; }
+.hy-frame-backdrop .hy-backdrop-tree,
+.hy-frame-backdrop .hy-backdrop-gifts { opacity: .22; }
+
+/* Боковая панель / рельс */
+.hy-messenger .modern-sidebar {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 251, 244, 0.82)) !important;
+  border-right-color: rgba(184, 134, 11, 0.14) !important;
+}
+.hy-messenger .modern-rail {
+  background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,249,238,.92)) !important;
+  border-right-color: rgba(184, 134, 11, 0.14) !important;
+}
+.hy-messenger .modern-rail-btn:hover,
+.hy-messenger .modern-rail-btn.is-active {
+  color: var(--hy-red) !important;
+  background: rgba(198, 40, 40, 0.08) !important;
+  box-shadow: 0 10px 22px -16px rgba(198, 40, 40, 0.35) !important;
+}
+.hy-messenger .modern-chat-row.is-active {
+  box-shadow: 0 16px 38px -22px rgba(198, 40, 40, 0.25) !important;
+  border-color: rgba(184, 134, 11, 0.22) !important;
+}
+
+/* Шапка чата */
+.hy-chat .yc-appbar,
+.hy-chat header {
+  background: rgba(255, 253, 248, 0.82) !important;
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  border-bottom: 1px solid rgba(184, 134, 11, 0.16) !important;
+}
+
+/* Область сообщений */
+.hy-chat .modern-thread-bg {
+  background: transparent !important;
+}
+.hy-chat .modern-thread-bg::before {
+  background:
+    radial-gradient(circle at 15% 10%, rgba(198,40,40,.05), transparent 35%),
+    radial-gradient(circle at 85% 85%, rgba(46,125,50,.06), transparent 35%) !important;
+}
+
+/* Композер */
+.hy-chat .modern-composer,
+.hy-chat .yc-composer {
+  border-color: rgba(184, 134, 11, 0.24) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 16px 36px -28px rgba(80, 50, 10, 0.35), inset 0 1px 0 #fff !important;
+}
+
+/* Кнопки-шарики: SVG-иконки внутри, круглые ёлочные игрушки снаружи. */
+.hy-chat .yc-composer-icon,
+.hy-chat .yc-send,
+.hy-chat .modern-composer > button,
+.hy-chat header button.yc-appbar-action,
+.hy-chat header button.yc-appbar-back,
+.hy-chat .yc-appbar-action {
+  position: relative;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.82) 0 9%, transparent 33%),
+    radial-gradient(circle at 70% 78%, rgba(0, 0, 0, 0.18), transparent 55%),
+    var(--hy-red) !important;
+  box-shadow:
+    inset -5px -7px 12px rgba(0, 0, 0, 0.2),
+    0 8px 16px -8px rgba(198, 40, 40, 0.45) !important;
+  transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+  overflow: visible !important;
+}
+
+/* Чередуем цвета шариков */
+.hy-chat .modern-composer > button:nth-of-type(2),
+.hy-chat .yc-composer > button:nth-of-type(2),
+.hy-chat header .yc-appbar-action:nth-of-type(2) {
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,.82) 0 9%, transparent 33%),
+    radial-gradient(circle at 70% 78%, rgba(0,0,0,.18), transparent 55%),
+    var(--hy-green) !important;
+  box-shadow: inset -5px -7px 12px rgba(0,0,0,.2), 0 8px 16px -8px rgba(46,125,50,.45) !important;
+}
+.hy-chat .modern-composer > button:nth-of-type(3),
+.hy-chat .yc-composer > button:nth-of-type(3) {
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,.82) 0 9%, transparent 33%),
+    radial-gradient(circle at 70% 78%, rgba(0,0,0,.18), transparent 55%),
+    var(--hy-gold) !important;
+  box-shadow: inset -5px -7px 12px rgba(0,0,0,.18), 0 8px 16px -8px rgba(184,134,11,.45) !important;
+}
+.hy-chat .yc-send {
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,.82) 0 9%, transparent 33%),
+    radial-gradient(circle at 70% 78%, rgba(0,0,0,.18), transparent 55%),
+    var(--hy-green) !important;
+  box-shadow: inset -5px -7px 12px rgba(0,0,0,.2), 0 8px 16px -8px rgba(46,125,50,.5) !important;
+}
+
+/* Ниточка и колпачок шарика */
+.hy-chat .yc-composer-icon::before,
+.hy-chat .yc-send::before,
+.hy-chat .modern-composer > button::before,
+.hy-chat header button.yc-appbar-action::before,
+.hy-chat header button.yc-appbar-back::before,
+.hy-chat .yc-appbar-action::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  width: 10px;
+  height: 6px;
+  border-radius: 2px 2px 1px 1px;
+  background: linear-gradient(180deg, #ffe082, #b8860b);
+  transform: translateX(-50%);
+  box-shadow: 0 -3px 0 -1px #8d6e3d;
+  pointer-events: none;
+}
+
+.hy-chat .yc-composer-icon svg,
+.hy-chat .yc-send svg,
+.hy-chat .modern-composer > button svg,
+.hy-chat header button.yc-appbar-action svg,
+.hy-chat header button.yc-appbar-back svg,
+.hy-chat .yc-appbar-action svg {
+  width: 20px !important;
+  height: 20px !important;
+  color: #fff !important;
+  stroke: currentColor !important;
+}
+
+.hy-chat .yc-composer-icon:hover,
+.hy-chat .yc-send:hover,
+.hy-chat .modern-composer > button:hover,
+.hy-chat header button.yc-appbar-action:hover,
+.hy-chat header button.yc-appbar-back:hover,
+.hy-chat .yc-appbar-action:hover {
+  transform: translateY(-2px) scale(1.03) !important;
+}
+.hy-chat .yc-composer-icon:active,
+.hy-chat .yc-send:active,
+.hy-chat .modern-composer > button:active,
+.hy-chat header button:active {
+  transform: scale(0.96) !important;
+}
+
+/* Не ломаем кнопки внутри меню/поповеров, где они не должны быть шариками */
+.hy-chat [role="menu"] button,
+.hy-chat [data-radix-popper-content-wrapper] button,
+.hy-chat .modern-composer .absolute button {
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  color: inherit !important;
+  box-shadow: none !important;
+  transform: none !important;
+  overflow: hidden !important;
+}
+.hy-chat [role="menu"] button::before,
+.hy-chat [data-radix-popper-content-wrapper] button::before,
+.hy-chat .modern-composer .absolute button::before { display: none !important; }
+.hy-chat [role="menu"] button svg,
+.hy-chat [data-radix-popper-content-wrapper] button svg,
+.hy-chat .modern-composer .absolute button svg { color: inherit !important; stroke: currentColor !important; }
+
+/* Общие поверхности/модалки/кнопки внутри новогоднего интерфейса */
+.hy-messenger .modern-surface,
+.hy-messenger .modern-card,
+.hy-messenger [class*="rounded-"][class*="bg-white"] {
+  border-color: rgba(184, 134, 11, 0.16);
+}
+.hy-messenger .bg-accent {
+  background-color: var(--hy-red) !important;
+}
+.hy-messenger .text-accent {
+  color: var(--hy-red) !important;
+}
+.hy-messenger .border-accent {
+  border-color: rgba(198, 40, 40, 0.35) !important;
+}
+.hy-messenger .bg-accent-soft,
+.hy-messenger .bg-accent\/10,
+.hy-messenger .bg-accent\/15 {
+  background-color: rgba(198, 40, 40, 0.1) !important;
+}
+.hy-messenger button.bg-accent,
+.hy-messenger a.bg-accent {
+  background: linear-gradient(135deg, #c62828, #8e1b1b) !important;
+  box-shadow: 0 14px 30px -18px rgba(198, 40, 40, 0.65);
+}
+.hy-messenger input:focus,
+.hy-messenger textarea:focus {
+  outline-color: rgba(46, 125, 50, 0.35);
+}
+
+.hy-messenger ::selection {
+  background: rgba(198, 40, 40, 0.16);
+}
+
+@media (max-width: 640px) {
+  .hy-frame-garland { height: 16px; transform: scaleY(0.42); top: 0; }
+  .hy-chat header,
+  .hy-chat .yc-appbar {
+    padding-top: 4px;
+    background: rgba(255,252,247,.92) !important;
+    backdrop-filter: blur(16px) saturate(1.05);
+    -webkit-backdrop-filter: blur(16px) saturate(1.05);
+  }
+  .hy-chat .modern-composer,
+  .hy-chat .yc-composer {
+    border-radius: 22px !important;
+    margin: 0 8px max(8px, env(safe-area-inset-bottom, 0px));
+    padding: 4px;
+    background: rgba(255,255,255,.94) !important;
+  }
+  .hy-chat .yc-composer-icon,
+  .hy-chat .yc-send,
+  .hy-chat .modern-composer > button,
+  .hy-chat header button.yc-appbar-action,
+  .hy-chat header button.yc-appbar-back,
+  .hy-chat .yc-appbar-action {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    box-shadow: inset -4px -5px 10px rgba(0,0,0,.18), 0 6px 12px -8px rgba(198,40,40,.45) !important;
+  }
+  .hy-chat .yc-composer-icon::before,
+  .hy-chat .yc-send::before,
+  .hy-chat .modern-composer > button::before,
+  .hy-chat header button.yc-appbar-action::before,
+  .hy-chat header button.yc-appbar-back::before,
+  .hy-chat .yc-appbar-action::before { width: 8px; height: 5px; top: -6px; }
+  .hy-messenger .modern-sidebar {
+    background: linear-gradient(180deg, rgba(255,253,249,.97), rgba(255,246,234,.94)) !important;
+  }
+  .hy-messenger .modern-rail { display: none !important; }
+  .hy-messenger .modern-chat-row { margin-inline: 2px; }
+  .hy-shell-backdrop .hy-backdrop-gifts { display: none; }
+  .hy-shell-backdrop .hy-backdrop-tree--l1 { width: 96px; height: 126px; left: -24px; opacity: .35; }
+  .hy-shell-backdrop .hy-backdrop-tree--r1 { width: 104px; height: 136px; right: -24px; opacity: .35; }
+  .hy-shell-backdrop .hy-easter-egg { width: 22px !important; opacity: .1; }
+  .hy-frame-backdrop .hy-backdrop-tree,
+  .hy-frame-backdrop .hy-backdrop-gifts { display: none; }
+}
+
+/* ---------- Масштабный новогодний фон ---------- */
+.hy-backdrop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.hy-backdrop-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: .55;
+}
+.hy-backdrop-glow--red { width: 40vw; height: 40vw; left: -10vw; top: -12vw; background: rgba(198,40,40,.16); }
+.hy-backdrop-glow--green { width: 34vw; height: 34vw; right: -8vw; top: -8vw; background: rgba(46,125,50,.16); }
+.hy-backdrop-glow--gold { width: 36vw; height: 30vw; left: 32%; bottom: -14vw; background: rgba(217,154,23,.14); }
+.hy-backdrop-stars { position: absolute; inset: 0; }
+.hy-backdrop-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #f6d47a;
+  box-shadow: 0 0 10px rgba(246,212,122,.9);
+  animation: hy-star 4.8s ease-in-out infinite alternate;
+}
+@keyframes hy-star { from { opacity:.25; transform:scale(.7);} to { opacity:.9; transform:scale(1.3);} }
+.hy-backdrop-snow { z-index: 1; }
+.hy-backdrop-tree {
+  position: absolute;
+  bottom: -10px;
+  z-index: 1;
+  opacity: .9;
+  filter: drop-shadow(0 18px 30px rgba(31,42,36,.12));
+}
+.hy-backdrop-tree--l1 { left: -10px; width: 170px; height: 220px; opacity:.55; }
+.hy-backdrop-tree--l2 { left: 8%; width: 110px; height: 145px; bottom: 0; opacity:.35; }
+.hy-backdrop-tree--r1 { right: -6px; width: 190px; height: 245px; opacity:.6; }
+.hy-backdrop-tree--r2 { right: 9%; width: 100px; height: 132px; opacity:.32; }
+.hy-backdrop-gifts {
+  left: 50%;
+  bottom: -4px;
+  transform: translateX(-50%);
+  width: min(240px, 34vw);
+  opacity: .55;
+  z-index: 1;
+}
+.hy-easter-egg {
+  position: absolute;
+  z-index: 2;
+  opacity: .18;
+  border-radius: 8px;
+  transform: rotate(var(--hy-egg-rot, 0deg));
+  filter: saturate(.7) blur(.1px);
+  animation: hy-egg-float 10s ease-in-out infinite alternate;
+}
+.hy-easter-egg:hover { opacity: .75; filter: none; }
+@keyframes hy-egg-float {
+  from { transform: translateY(0) rotate(var(--hy-egg-rot, 0deg)); }
+  to { transform: translateY(-8px) rotate(calc(var(--hy-egg-rot, 0deg) + 4deg)); }
+}
+
+@media (max-width: 720px) {
+  .hy-backdrop-tree--l2, .hy-backdrop-tree--r2 { display:none; }
+  .hy-backdrop-tree--l1 { width: 120px; height: 155px; left:-20px; }
+  .hy-backdrop-tree--r1 { width: 130px; height: 168px; right:-20px; }
+  .hy-backdrop-gifts { width: 170px; opacity: .35; }
+  .hy-easter-egg { opacity: .12; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hy-garland-bulb,
+  .hy-garland-halo,
+  .hy-snowflake,
+  .hy-hanging-item,
+  .hy-melody-eq i,
+  .hy-backdrop-star,
+  .hy-easter-egg {
+    animation: none !important;
+  }
+}

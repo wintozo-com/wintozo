@@ -5,6 +5,7 @@ import {
   Check,
   CheckCheck,
   CircleAlert,
+  Clock3,
   Copy,
   Eye,
   EyeOff,
@@ -12,6 +13,7 @@ import {
   Loader2,
   LockKeyhole,
   ShieldCheck,
+  Snowflake,
   Sparkles,
   UserRound,
 } from "lucide-react";
@@ -36,6 +38,7 @@ import {
   useOobeShell,
   youPaletteStyle,
 } from "./OobeYouKit";
+import { HappyYearCountdown } from "../HappyYearDecor";
 
 interface Props {
   /** Есть ли сессия (во время проверки профиля профиль ещё null). */
@@ -46,6 +49,8 @@ interface Props {
   onFinish: () => void;
   /** Стиль OOBE (в 6.0 всегда Material You). */
   variant?: OobeVariant;
+  /** Новогоднее оформление WinChat 7.0: другие тексты и палитра. */
+  newYear?: boolean;
 }
 
 type Step = "welcome" | "auth" | "winpass" | "checking" | "success";
@@ -53,7 +58,7 @@ type Step = "welcome" | "auth" | "winpass" | "checking" | "success";
 const CHECK_STEPS = ["Аккаунт", "WinPro и подписка", "Безопасность профиля"];
 
 /**
- * OOBE первого скачивания WinChat 6.0 в стиле Material You:
+ * OOBE первого скачивания WinChat 7.0 в новогоднем стиле:
  * приветствие → регистрация / вход → WinPass → проверка → финал.
  * Фон и логотип живут теми же expressive-формами, что и бут-анимация.
  */
@@ -62,6 +67,7 @@ export default function OobeInstall({
   profile,
   onFinish,
   variant = "you",
+  newYear = false,
 }: Props) {
   const [step, setStep] = useState<Step>(() =>
     hasSession ? "checking" : "welcome",
@@ -257,7 +263,7 @@ export default function OobeInstall({
       {/* Живой фон из форм бут-анимации */}
       <OobeYouBackdrop />
 
-      <OobeYouTopBar subtitle={stepLabel} />
+      <OobeYouTopBar subtitle={stepLabel} badge={newYear ? "7.0" : "6.0"} />
 
       <main className="oobe-you-main">
         <OobeYouSteps value={stepIndex} total={3} />
@@ -265,22 +271,33 @@ export default function OobeInstall({
         {/* ============ ШАГ: ПРИВЕТСТВИЕ ============ */}
         {step === "welcome" && (
           <section key="welcome" className="oobe-you-step oobe-you-center">
-            <OobeMorphMark className="oobe-you-hero-mark" />
+            {newYear ? (
+              <NewYearMark className="oobe-you-hero-mark" />
+            ) : (
+              <OobeMorphMark className="oobe-you-hero-mark" />
+            )}
 
             <span className="oobe-you-eyebrow">
-              <Sparkles />
-              WinChat 6.0 · Material You
+              {newYear ? <Snowflake /> : <Sparkles />}
+              {newYear ? "WinChat 7.0 · Новый год" : "WinChat 6.0 · Material You"}
             </span>
 
             <h1 className="oobe-you-h1">
-              Установка завершена
-              <span className="oobe-you-grad">Добро пожаловать</span>
+              {newYear ? "С наступающим" : "Установка завершена"}
+              <span className="oobe-you-grad">
+                {newYear ? "2027 годом!" : "Добро пожаловать"}
+              </span>
             </h1>
 
             <p className="oobe-you-lead">
-              Всё готово к первому запуску. Создайте аккаунт или войдите —
-              и WinChat откроется в новой теме.
+              {newYear
+                ? "Праздничная установка завершена. Создайте аккаунт или войдите — и WinChat откроется в новогоднем стиле."
+                : "Всё готово к первому запуску. Создайте аккаунт или войдите — и WinChat откроется в новой теме."}
             </p>
+
+            {newYear && (
+              <HappyYearCountdown className="oobe-install-countdown" compact />
+            )}
 
             <div className="oobe-you-actions">
               <OobeYouButton
@@ -304,15 +321,31 @@ export default function OobeInstall({
             </div>
 
             <div className="oobe-you-chips">
-              <span className="oobe-you-chip">
-                <Sparkles /> Живые формы
-              </span>
-              <span className="oobe-you-chip">
-                <ShieldCheck /> Аккаунт защищён
-              </span>
-              <span className="oobe-you-chip">
-                <CheckCheck /> Готово к работе
-              </span>
+              {newYear ? (
+                <>
+                  <span className="oobe-you-chip">
+                    <Snowflake /> Гирлянды и шарики
+                  </span>
+                  <span className="oobe-you-chip">
+                    <Clock3 /> Отсчёт до 2027
+                  </span>
+                  <span className="oobe-you-chip">
+                    <ShieldCheck /> Аккаунт защищён
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="oobe-you-chip">
+                    <Sparkles /> Живые формы
+                  </span>
+                  <span className="oobe-you-chip">
+                    <ShieldCheck /> Аккаунт защищён
+                  </span>
+                  <span className="oobe-you-chip">
+                    <CheckCheck /> Готово к работе
+                  </span>
+                </>
+              )}
             </div>
           </section>
         )}
@@ -514,22 +547,28 @@ export default function OobeInstall({
         {/* ============ ШАГ: ФИНАЛ ============ */}
         {step === "success" && (
           <section key="success" className="oobe-you-step oobe-you-center">
-            <OobeMorphMark settle className="oobe-you-success-mark" />
+            {newYear ? (
+              <NewYearMark className="oobe-you-success-mark" />
+            ) : (
+              <OobeMorphMark settle className="oobe-you-success-mark" />
+            )}
 
             <span className="oobe-you-eyebrow">
-              <CheckCheck />
-              Всё готово
+              {newYear ? <Snowflake /> : <CheckCheck />}
+              {newYear ? "С Новым 2027 годом" : "Всё готово"}
             </span>
 
             <h1 className="oobe-you-h1">
-              Добро пожаловать
+              {newYear ? "С Новым годом" : "Добро пожаловать"}
               <span className="oobe-you-grad">
-                {profile?.nickname?.trim() || "в WinChat"}
+                {profile?.nickname?.trim() || (newYear ? "2027!" : "в WinChat")}
               </span>
             </h1>
 
             <p className="oobe-you-lead">
-              Аккаунт проверен. Внутри — чаты, каналы и новая тема Material You.
+              {newYear
+                ? "Аккаунт проверен. Внутри — чаты, каналы и новогоднее оформление WinChat 7.0."
+                : "Аккаунт проверен. Внутри — чаты, каналы и новая тема Material You."}
             </p>
 
             <div className="oobe-you-actions">
@@ -541,12 +580,34 @@ export default function OobeInstall({
                 <ShieldCheck /> Профиль защищён
               </span>
               <span className="oobe-you-chip">
-                <Sparkles /> Material You
+                {newYear ? <Snowflake /> : <Sparkles />}
+                {newYear ? "Новогодний стиль" : "Material You"}
               </span>
             </div>
           </section>
         )}
       </main>
+    </div>
+  );
+}
+
+/* ---------- Новогодний медальон WinChat ---------- */
+function NewYearMark({ className = "" }: { className?: string }) {
+  return (
+    <div className={`oobe-newyear-mark ${className}`} aria-hidden="true">
+      <span className="oobe-newyear-halo" />
+      <span className="oobe-newyear-ring" />
+      <img
+        src="/logo.jpg"
+        alt=""
+        decoding="async"
+        onError={(e) => {
+          e.currentTarget.style.display = "none";
+        }}
+      />
+      <span className="oobe-newyear-spark oobe-newyear-spark--a" />
+      <span className="oobe-newyear-spark oobe-newyear-spark--b" />
+      <span className="oobe-newyear-spark oobe-newyear-spark--c" />
     </div>
   );
 }

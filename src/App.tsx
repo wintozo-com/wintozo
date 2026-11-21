@@ -42,8 +42,8 @@ import Messenger from "./components/Messenger";
 import LegacyScreen from "./components/LegacyScreen";
 import YouLocked from "./components/YouLocked";
 import GlassLocked from "./components/GlassLocked";
-import OobeUpdate from "./components/oobe/OobeUpdate";
-import OobeInstall from "./components/oobe/OobeInstall";
+import OobeUpdate7 from "./components/oobe/OobeUpdate7";
+import OobeInstall7 from "./components/oobe/OobeInstall7";
 import type { OobeVariant } from "./components/oobe/OobeThemeChooser";
 /* OOBE прошлых версий (например 5.0) — назначается через терминал (/set oobe). */
 import OobeUpdate5 from "./components/oobe/OobeUpdate5";
@@ -58,8 +58,9 @@ import OobeUpdate5 from "./components/oobe/OobeUpdate5";
                     /events/themes/wintozo/*
    ============================================================ */
 const LEGACY_PREFIX = "/events/themes/wintozo";
-/** Прямая ссылка-превью OOBE 6.0 в браузере: /winchat_6_oobe */
+/** Прямые ссылки-превью OOBE в браузере: /winchat_6_oobe и /winchat_7_oobe */
 const OOBE_PREVIEW_PATH = "/winchat_6_oobe";
+const OOBE_PREVIEW_PATH_7 = "/winchat_7_oobe";
 const YOU_PREFIX = "/themes/you";
 const YOU_PREV_THEME_KEY = "winchat_you_prev_theme";
 const GLASS_PREFIX = "/themes/glass";
@@ -118,7 +119,7 @@ export default function App() {
   /* OOBE: приветствия после обновления и при первом скачивании */
   const [oobeUpdateShown, setOobeUpdateShown] = useState(true);
   const [oobeInstallShown, setOobeInstallShown] = useState(true);
-  /* OOBE в WinChat 6.0 всегда в стиле Material You — выбор в начале убран. */
+  /* OOBE в WinChat 7.0 — новогодний стиль, выбор варианта в начале убран. */
   const [oobeTheme] = useState<OobeVariant>("you");
   /* Лёгкий роутер: путь синхронизируется с экранами приложения */
   const path = useRoute();
@@ -180,14 +181,16 @@ export default function App() {
   }, [inviteChatId, session, profile]);
 
   /* ---------- OOBE: приветствия (телефоны − автоматически, ПК − по адресу) ---------- */
-  /* Прямая ссылка-превью OOBE: /winchat_6_oobe (в том числе со слэшем). */
+  /* Прямые ссылки-превью OOBE: /winchat_6_oobe и /winchat_7_oobe (со слэшем). */
   const isOobePreview =
     path === OOBE_PREVIEW_PATH ||
-    path.startsWith(`${OOBE_PREVIEW_PATH}/`);
+    path.startsWith(`${OOBE_PREVIEW_PATH}/`) ||
+    path === OOBE_PREVIEW_PATH_7 ||
+    path.startsWith(`${OOBE_PREVIEW_PATH_7}/`);
   const oobeForceUpdate = path.startsWith("/oobe_update");
   const oobeForceInstall = path.startsWith("/install_oobe") || isOobePreview;
   /* OOBE какой версии назначена пользователю через терминал (/set oobe):
-     «5.0» или «6.0» — покажется при следующем входе даже без обновления. */
+     «5.0», «6.0» или «7.0» — покажется при следующем входе даже без обновления. */
   const forcedOobeVersion = (profile?.oobe_version ?? "").trim();
   const showInstallOobe =
     !isStoreApp &&
@@ -215,17 +218,28 @@ export default function App() {
     }
   };
   const finishInstallOobe = () => {
-    /* /winchat_6_oobe и /install_oobe — превью, состояние не меняем. */
+    /* Прямые ссылки превью — состояние не меняем. */
     if (!oobeForceInstall) markOobeInstallDone();
     setOobeInstallShown(true);
+    /* После установки экран обновления показывать не нужно — даже в этой
+       же сессии, пока профиль уже загрузился (иначе OOBE activation мигает). */
+    setOobeUpdateShown(true);
     navigate(profile ? "/chats" : "/login");
+    if (!oobeForceInstall && profile?.oobe_version) {
+      setProfile({ ...profile, oobe_version: null });
+      void supabase
+        .from("profiles")
+        .update({ oobe_version: null })
+        .eq("id", profile.id)
+        .then(undefined, () => undefined);
+    }
   };
 
   useEffect(() => {
     try {
       // OOBE обновления показываем, пока пользователь не дошёл ключом
       // до текущей версии: 0 — не обновлялся, 1 — прошёл 5.0, 2 — closed beta
-      // 6.0, 3 — релиз 6.0 и т.д.
+      // 6.0, 3 — релиз 6.0, 4 — новогодний 7.0 closed beta и т.д.
       setOobeUpdateShown(readOobeUpdateKey() >= getOobeUpdateExpectedKey());
       setOobeInstallShown(localStorage.getItem(OOBE_INSTALL_KEY) === "1");
     } catch {
@@ -590,11 +604,11 @@ export default function App() {
   }, [profile, glassMode, path, youMode, themedMode]);
 
   if (!splashDone || booting || (session && !profile)) {
-    /* Прямая ссылка на OOBE (/winchat_6_oobe, /install_oobe) — без заставки,
+    /* Прямая ссылка на OOBE (/winchat_7_oobe, /install_oobe) — без заставки,
        чтобы экран можно было смотреть и отлаживать сразу. */
     if (!banned && oobeForceInstall) {
       return (
-        <OobeInstall
+        <OobeInstall7
           hasSession={false}
           profile={profile}
           onFinish={finishInstallOobe}
@@ -606,7 +620,7 @@ export default function App() {
        грузится: не перезапускаем boot, если сейчас идёт OOBE установки. */
     if (splashDone && !booting && !banned && showInstallOobe) {
       return (
-        <OobeInstall
+        <OobeInstall7
           hasSession={!!session}
           profile={null}
           onFinish={finishInstallOobe}
@@ -632,11 +646,11 @@ export default function App() {
     );
   }
 
-  /* ---------- OOBE: приветствия WinChat 6.0 (обновление / установка) ---------- */
+  /* ---------- OOBE: приветствия WinChat 7.0 (обновление / установка) ---------- */
   if (showInstallOobe) {
     document.title = "Добро пожаловать в WinChat";
     return (
-      <OobeInstall
+      <OobeInstall7
         hasSession={!!session}
         profile={profile}
         onFinish={finishInstallOobe}
@@ -646,7 +660,7 @@ export default function App() {
   }
   if (showUpdateOobe) {
     /* OOBE версии 5.0 — оригинальное приветствие пятой версии.
-     * В 6.0 показываем его в актуальном Material You-стиле. */
+     * В 7.0 по умолчанию показывается новогоднее OobeUpdate7. */
     if (forcedOobeVersion === "5.0") {
       document.title = "WinChat 5.0";
       return (
@@ -657,9 +671,9 @@ export default function App() {
         />
       );
     }
-    document.title = "WinChat 6.0";
+    document.title = "WinChat 7.0";
     return (
-      <OobeUpdate
+      <OobeUpdate7
         winPro={profile ? isWinProActive(profile) : session ? null : false}
         onFinish={finishUpdateOobe}
         variant={oobeTheme}

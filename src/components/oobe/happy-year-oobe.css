@@ -1,0 +1,1281 @@
+/* ============================================================
+   WinChat 7.0 — новогоднее OOBE (обновление и первое скачивание).
+   Белая тема, гирлянды, шарики, снег, отсчёт до 01.01.2027 00:00.
+   ============================================================ */
+
+.hy-oobe {
+  --hy-red: #c62828;
+  --hy-red-deep: #8e1b1b;
+  --hy-green: #2e7d32;
+  --hy-green-deep: #1b5e20;
+  --hy-gold: #b8860b;
+  --hy-gold-light: #f4d87c;
+  --hy-ink: #1d2a24;
+  --hy-muted: #5f6b63;
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  overflow-x: clip;
+  color: var(--hy-ink);
+  background:
+    radial-gradient(1100px 620px at 50% -12%, #ffffff 0%, rgba(255, 255, 255, 0) 64%),
+    radial-gradient(circle at 7% 10%, rgba(198, 40, 40, 0.1), transparent 30%),
+    radial-gradient(circle at 93% 8%, rgba(46, 125, 50, 0.13), transparent 32%),
+    radial-gradient(circle at 50% 108%, rgba(217, 154, 23, 0.16), transparent 52%),
+    linear-gradient(180deg, #ffffff 0%, #fffdf8 52%, #fff6e6 100%);
+  font-family: "Outfit", "Google Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hy-oobe *,
+.hy-oobe *::before,
+.hy-oobe *::after {
+  box-sizing: border-box;
+}
+
+/* Мелкая снежная пыль на фоне. */
+.hy-oobe::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: radial-gradient(rgba(21, 101, 192, 0.16) 1px, transparent 1px);
+  background-size: 26px 26px;
+  mask-image: linear-gradient(180deg, #000 0%, transparent 42%, transparent 74%, #000 100%);
+}
+
+/* Мягкая виньетка, чтобы центр «светился». */
+.hy-oobe::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(120, 80, 10, 0.06) 100%);
+}
+
+.hy-oobe-aurora {
+  position: absolute;
+  inset: -10% -20% auto;
+  height: 62vh;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 50% at 22% 30%, rgba(198, 40, 40, 0.14), transparent 70%),
+    radial-gradient(34% 46% at 76% 24%, rgba(46, 125, 50, 0.16), transparent 72%),
+    radial-gradient(30% 40% at 52% 6%, rgba(217, 154, 23, 0.14), transparent 70%);
+  filter: blur(26px);
+  animation: hy-aurora 18s ease-in-out infinite alternate;
+}
+
+@keyframes hy-aurora {
+  from {
+    transform: translate3d(-2%, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(3%, 2%, 0) scale(1.08);
+  }
+}
+
+/* ---------------- Декор ---------------- */
+
+.hy-oobe-garland-top {
+  top: -4px;
+  z-index: 3;
+}
+
+.hy-oobe-garland-bottom {
+  top: auto;
+  bottom: -8px;
+  transform: scaleY(-1);
+  opacity: 0.9;
+  z-index: 3;
+}
+
+.hy-oobe-hanging {
+  height: 260px;
+}
+
+.hy-oobe-snow {
+  z-index: 2;
+}
+
+.hy-oobe-tree--right {
+  right: 3.5vw;
+  bottom: 26px;
+  width: 148px;
+  height: 192px;
+  opacity: 0.92;
+  z-index: 1;
+}
+
+.hy-oobe-tree--left {
+  left: 2.5vw;
+  bottom: 120px;
+  width: 74px;
+  height: 96px;
+  opacity: 0.28;
+  z-index: 1;
+}
+
+.hy-oobe-gifts {
+  left: 2.5vw;
+  bottom: 14px;
+  width: 176px;
+  opacity: 0.95;
+  z-index: 1;
+}
+
+/* ---------------- Шапка ---------------- */
+
+.hy-oobe-header {
+  position: relative;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px clamp(18px, 5vw, 64px) 0;
+}
+
+.hy-oobe-brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+}
+
+.hy-oobe-logo {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  flex: 0 0 auto;
+  padding: 3px;
+  border-radius: 50%;
+  background: conic-gradient(from 20deg, #f4d87c, #c62828, #2e7d32, #f4d87c);
+  box-shadow:
+    0 12px 28px -14px rgba(198, 40, 40, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  overflow: hidden;
+}
+
+.hy-oobe-logo img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ffffff;
+}
+
+.hy-oobe-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  min-width: 0;
+}
+
+.hy-oobe-brand-text strong {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--hy-ink);
+}
+
+.hy-oobe-brand-text small {
+  margin-top: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--hy-green);
+}
+
+.hy-oobe-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(184, 134, 11, 0.32);
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--hy-red);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  box-shadow:
+    0 10px 24px -16px rgba(80, 50, 10, 0.45),
+    inset 0 1px 0 #ffffff;
+  backdrop-filter: blur(12px);
+}
+
+.hy-oobe-badge svg {
+  width: 16px;
+  height: 16px;
+  color: var(--hy-blue);
+}
+
+/* ---------------- Каркас ---------------- */
+
+.hy-oobe-main {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: clamp(18px, 3vw, 34px) clamp(16px, 5vw, 64px) 96px;
+}
+
+.hy-oobe-steps {
+  display: flex;
+  gap: 8px;
+}
+
+.hy-oobe-steps span {
+  width: 48px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(46, 125, 50, 0.14);
+  transition: background 0.3s ease;
+}
+
+.hy-oobe-steps span.is-active {
+  background: linear-gradient(90deg, #c62828, #d99a17);
+  box-shadow: 0 2px 10px rgba(217, 154, 23, 0.4);
+}
+
+/* ---------------- Открытка ---------------- */
+
+.hy-oobe-card {
+  position: relative;
+  width: min(780px, 100%);
+  padding: clamp(26px, 4.4vw, 54px) clamp(20px, 4.4vw, 56px) clamp(24px, 4vw, 46px);
+  border-radius: 38px;
+  border: 1px solid rgba(184, 134, 11, 0.28);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 252, 245, 0.95));
+  box-shadow:
+    0 44px 100px -52px rgba(80, 50, 10, 0.5),
+    0 10px 30px -24px rgba(80, 50, 10, 0.4),
+    0 0 0 9px rgba(255, 255, 255, 0.5),
+    0 0 0 10px rgba(184, 134, 11, 0.12),
+    inset 0 1px 0 #ffffff;
+  backdrop-filter: blur(18px) saturate(1.04);
+  text-align: center;
+  animation: hy-card-in 0.75s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hy-oobe-card::before {
+  content: "";
+  position: absolute;
+  inset: 15px;
+  border: 1px dashed rgba(184, 134, 11, 0.28);
+  border-radius: 27px;
+  pointer-events: none;
+}
+
+.hy-oobe-card--hero {
+  padding-top: clamp(64px, 7vw, 82px);
+}
+
+@keyframes hy-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Золотые уголки открытки. */
+.hy-oobe-corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  pointer-events: none;
+  border-color: rgba(184, 134, 11, 0.55);
+  border-style: solid;
+  border-width: 0;
+}
+
+.hy-oobe-corner--tl {
+  top: 26px;
+  left: 26px;
+  border-top-width: 2px;
+  border-left-width: 2px;
+  border-top-left-radius: 12px;
+}
+
+.hy-oobe-corner--tr {
+  top: 26px;
+  right: 26px;
+  border-top-width: 2px;
+  border-right-width: 2px;
+  border-top-right-radius: 12px;
+}
+
+.hy-oobe-corner--bl {
+  bottom: 26px;
+  left: 26px;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+  border-bottom-left-radius: 12px;
+}
+
+.hy-oobe-corner--br {
+  bottom: 26px;
+  right: 26px;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+  border-bottom-right-radius: 12px;
+}
+
+/* Печать-логотип над открыткой. */
+.hy-oobe-seal {
+  position: absolute;
+  top: -44px;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 88px;
+  padding: 5px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: conic-gradient(from 20deg, #f4d87c, #c62828, #2e7d32, #f4d87c);
+  box-shadow:
+    0 22px 44px -20px rgba(80, 50, 10, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.hy-oobe-seal::after {
+  content: "";
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.55);
+  pointer-events: none;
+}
+
+.hy-oobe-seal img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ffffff;
+}
+
+.hy-oobe-seal-ring {
+  position: absolute;
+  inset: -9px;
+  border-radius: 50%;
+  border: 1px solid rgba(184, 134, 11, 0.24);
+  animation: hy-seal-pulse 3.6s ease-in-out infinite;
+}
+
+@keyframes hy-seal-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.06);
+  }
+}
+
+/* ---------------- Текст ---------------- */
+
+.hy-oobe-eyebrow,
+.hy-oobe-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(46, 125, 50, 0.2);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--hy-green);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  box-shadow: 0 8px 20px -18px rgba(46, 125, 50, 0.5);
+}
+
+.hy-oobe-kicker {
+  border-color: rgba(184, 134, 11, 0.26);
+  color: var(--hy-red);
+}
+
+.hy-oobe-eyebrow svg,
+.hy-oobe-kicker svg {
+  width: 14px;
+  height: 14px;
+}
+
+.hy-oobe-title {
+  margin: 0 0 14px;
+  font-family: "Georgia", "Times New Roman", ui-serif, serif;
+  font-size: clamp(34px, 5.6vw, 58px);
+  line-height: 1.03;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--hy-ink);
+  text-wrap: balance;
+}
+
+.hy-oobe-title em {
+  font-style: normal;
+  background: linear-gradient(100deg, #b71c1c 0%, #e53935 36%, #c98a10 72%, #a56d06 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hy-oobe-title--small {
+  font-size: clamp(28px, 4.4vw, 42px);
+  margin-bottom: 12px;
+}
+
+.hy-oobe-rule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto 18px;
+  color: var(--hy-blue);
+}
+
+.hy-oobe-rule span {
+  width: min(92px, 22vw);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184, 134, 11, 0.55));
+}
+
+.hy-oobe-rule span:last-child {
+  transform: scaleX(-1);
+}
+
+.hy-oobe-rule svg {
+  width: 16px;
+  height: 16px;
+  opacity: 0.75;
+}
+
+.hy-oobe-greeting {
+  margin: 0 0 10px;
+  font-family: "Georgia", "Times New Roman", ui-serif, serif;
+  font-size: clamp(18px, 2.6vw, 24px);
+  line-height: 1.3;
+  color: var(--hy-ink);
+}
+
+.hy-oobe-greeting b {
+  color: var(--hy-red);
+  font-weight: 700;
+}
+
+.hy-oobe-subtitle {
+  max-width: 500px;
+  margin: 0 auto 24px;
+  font-size: 14.5px;
+  line-height: 1.62;
+  font-weight: 500;
+  color: var(--hy-muted);
+}
+
+.hy-oobe-subtitle--tight {
+  margin-bottom: 20px;
+}
+
+/* ---------------- 2027 ---------------- */
+
+.hy-oobe-year {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(6px, 2vw, 22px);
+  margin: 2px 0 22px;
+}
+
+.hy-oobe-year-tree {
+  position: static;
+  width: clamp(38px, 6vw, 58px);
+  height: auto;
+  opacity: 0.9;
+}
+
+.hy-oobe-year-tree--right {
+  transform: scaleX(-1);
+}
+
+.hy-oobe-year-digits {
+  font-family: "Georgia", "Times New Roman", ui-serif, serif;
+  font-size: clamp(52px, 10vw, 96px);
+  line-height: 0.86;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  background: linear-gradient(
+    180deg,
+    #fdf2c0 0%,
+    #ecc65a 28%,
+    #b8860b 55%,
+    #8a6206 72%,
+    #f4d87c 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 8px 18px rgba(160, 110, 10, 0.28));
+}
+
+/* ---------------- Отсчёт ---------------- */
+
+.hy-oobe-countdown {
+  max-width: 480px;
+  margin: 0 auto 26px;
+}
+
+/* ---------------- Действия ---------------- */
+
+.hy-oobe-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.hy-cta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(430px, 100%);
+  padding: 9px 14px 9px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  color: #ffffff;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  box-shadow:
+    0 22px 44px -22px rgba(27, 94, 32, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.hy-cta--red {
+  background: linear-gradient(135deg, #c62828, #8e1b1b);
+  box-shadow:
+    0 22px 44px -22px rgba(142, 27, 27, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.hy-cta:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 28px 52px -22px rgba(27, 94, 32, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.hy-cta--red:hover {
+  box-shadow:
+    0 28px 52px -22px rgba(142, 27, 27, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.hy-cta:active {
+  transform: translateY(0) scale(0.985);
+}
+
+.hy-cta-orb {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: #1b5e20;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.95) 0 10%, transparent 34%),
+    radial-gradient(circle at 70% 80%, rgba(0, 0, 0, 0.14), transparent 55%),
+    #ffffff;
+  box-shadow:
+    inset -5px -7px 12px rgba(0, 0, 0, 0.16),
+    0 6px 14px -4px rgba(0, 0, 0, 0.28);
+}
+
+.hy-cta--red .hy-cta-orb {
+  color: #b71c1c;
+}
+
+.hy-cta-orb svg {
+  width: 22px;
+  height: 22px;
+}
+
+.hy-cta-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.hy-cta-copy strong {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.hy-cta-copy small {
+  margin-top: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0.72;
+}
+
+.hy-cta-arrow {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-left: auto;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.hy-cta-arrow svg {
+  width: 17px;
+  height: 17px;
+}
+
+.hy-oobe-skip,
+.hy-oobe-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--hy-muted);
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.hy-oobe-skip:hover,
+.hy-oobe-back:hover {
+  color: var(--hy-red);
+  background: rgba(198, 40, 40, 0.06);
+}
+
+.hy-oobe-back svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ---------------- Что нового ---------------- */
+
+.hy-oobe-news-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 6px 0 22px;
+  text-align: left;
+}
+
+.hy-news-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 15px 16px;
+  border-radius: 22px;
+  border: 1px solid rgba(184, 134, 11, 0.2);
+  background: linear-gradient(160deg, #ffffff, #fffaf0);
+  box-shadow:
+    0 18px 38px -32px rgba(80, 50, 10, 0.55),
+    inset 0 1px 0 #ffffff;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.hy-news-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 26px 46px -32px rgba(80, 50, 10, 0.6),
+    inset 0 1px 0 #ffffff;
+}
+
+.hy-news-orb {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 48px;
+  height: 56px;
+  flex: 0 0 auto;
+}
+
+.hy-news-orb::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1.5px;
+  height: 11px;
+  background: linear-gradient(#b08d57, #efd79c);
+  transform: translateX(-50%);
+}
+
+.hy-news-ball {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.88) 0 10%, transparent 34%),
+    radial-gradient(circle at 70% 80%, rgba(0, 0, 0, 0.22), transparent 55%),
+    var(--hy-tone);
+  box-shadow:
+    inset -5px -7px 12px rgba(0, 0, 0, 0.22),
+    0 8px 16px -7px rgba(31, 42, 36, 0.45);
+}
+
+.hy-news-ball::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 14px;
+  height: 6px;
+  border-radius: 3px 3px 1px 1px;
+  background: linear-gradient(180deg, #ffe9a8, #b8860b);
+  transform: translateX(-50%);
+}
+
+.hy-news-ball svg {
+  width: 20px;
+  height: 20px;
+  stroke-width: 2;
+}
+
+.hy-news-copy {
+  min-width: 0;
+}
+
+.hy-news-copy h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--hy-ink);
+}
+
+.hy-news-copy p {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--hy-muted);
+}
+
+.hy-oobe-footnote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  margin: 0 0 20px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--hy-muted);
+}
+
+.hy-oobe-footnote svg {
+  width: 14px;
+  height: 14px;
+  color: var(--hy-green);
+}
+
+/* ---------------- Подвал ---------------- */
+
+.hy-oobe-footer {
+  position: relative;
+  z-index: 4;
+  padding: 0 24px 30px;
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(29, 42, 36, 0.32);
+}
+
+/* ============================================================
+   Установка (OobeInstall7)
+   ============================================================ */
+
+.hy-oobe--install {
+  padding-bottom: 0;
+}
+
+.hy-oobe--install .hy-garland,
+.hy-oobe--install .hy-hanging,
+.hy-oobe--install .hy-snow,
+.hy-oobe--install .hy-tree,
+.hy-oobe--install .hy-gifts {
+  position: fixed;
+}
+
+.hy-oobe--install .hy-oobe-garland-bottom {
+  position: fixed;
+}
+
+.hy-oobe--install .hy-oobe-tree--right {
+  opacity: 0.4;
+}
+
+.hy-oobe--install .hy-oobe-gifts {
+  opacity: 0.5;
+}
+
+.hy-oobe-watermark {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  font-family: "Georgia", "Times New Roman", ui-serif, serif;
+  font-size: clamp(200px, 34vw, 460px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(184, 134, 11, 0.1);
+  pointer-events: none;
+  user-select: none;
+}
+
+.oobe-install-countdown {
+  width: min(100%, 420px);
+  margin: 2px auto 4px;
+}
+
+/* Внутренний Material You-экран перекрашиваем в новогоднюю гамму. */
+.hy-oobe--install > .oobe-you-page,
+html.hy-oobe-install .oobe-you-page {
+  position: relative;
+  z-index: 5;
+  --you-primary: #2e7d32 !important;
+  --you-on-primary: #ffffff !important;
+  --you-primary-strong: #1b5e20 !important;
+  --you-primary-container: #dff0e2 !important;
+  --you-on-primary-container: #1b5e20 !important;
+  --you-secondary: #c62828 !important;
+  --you-on-secondary: #ffffff !important;
+  --you-secondary-container: #fdecec !important;
+  --you-on-secondary-container: #8e1b1b !important;
+  --you-tertiary: #b8860b !important;
+  --you-on-tertiary: #ffffff !important;
+  --you-tertiary-container: #fff3d6 !important;
+  --you-on-tertiary-container: #7a5200 !important;
+  --you-surface: #fffdf8 !important;
+  --you-surface-low: #fffdf8 !important;
+  --you-surface-container: #fffaf0 !important;
+  --you-surface-high: #fff6e6 !important;
+  --you-surface-highest: #ffefd6 !important;
+  --you-on-surface: #1d2a24 !important;
+  --you-on-surface-variant: #5f6b63 !important;
+  --you-outline: #b9a06a !important;
+  --you-outline-variant: #e8dcc0 !important;
+  color-scheme: light !important;
+  background: transparent !important;
+}
+
+.hy-oobe--install .oobe-you-bg {
+  display: none !important;
+}
+
+.hy-oobe--install .oobe-you-topbar {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 253, 248, 0.94),
+    rgba(255, 253, 248, 0.55) 70%,
+    transparent
+  );
+}
+
+.hy-oobe--install .oobe-you-brand-logo {
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(from 20deg, #f4d87c, #c62828, #2e7d32, #f4d87c);
+  box-shadow: 0 10px 22px -14px rgba(198, 40, 40, 0.55);
+}
+
+.hy-oobe--install .oobe-you-brand-logo img {
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+.hy-oobe--install .oobe-you-brand-text strong {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.hy-oobe--install .oobe-you-brand-text small {
+  color: #2e7d32;
+}
+
+.hy-oobe--install .oobe-you-version {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(184, 134, 11, 0.32);
+  color: #c62828;
+  box-shadow: 0 8px 18px -16px rgba(80, 50, 10, 0.5);
+}
+
+.hy-oobe--install .oobe-you-steps {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(184, 134, 11, 0.18);
+}
+
+.hy-oobe--install .oobe-you-eyebrow {
+  border: 1px solid rgba(46, 125, 50, 0.2);
+  background: rgba(255, 255, 255, 0.9);
+  color: #2e7d32;
+}
+
+.hy-oobe--install .oobe-you-h1,
+.hy-oobe--install .oobe-you-h2,
+.hy-oobe--install .oobe-you-card-title {
+  color: #1d2a24;
+}
+
+.hy-oobe--install .oobe-you-h1 .oobe-you-grad,
+.hy-oobe--install .oobe-you-h2 .oobe-you-grad {
+  background: linear-gradient(100deg, #b71c1c 0%, #e53935 42%, #c98a10 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hy-oobe--install .oobe-you-lead {
+  color: #5f6b63;
+}
+
+.hy-oobe--install .oobe-you-card {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid rgba(184, 134, 11, 0.24) !important;
+  border-radius: 26px !important;
+  box-shadow:
+    0 30px 70px -46px rgba(80, 50, 10, 0.55),
+    inset 0 1px 0 #ffffff !important;
+  backdrop-filter: blur(14px);
+}
+
+.hy-oobe--install .oobe-you-action-filled {
+  background: linear-gradient(135deg, #2e7d32, #1b5e20) !important;
+  color: #ffffff !important;
+  box-shadow: 0 20px 38px -20px rgba(46, 125, 50, 0.75) !important;
+}
+
+.hy-oobe--install .oobe-you-action-tonal {
+  background: #fff6e6 !important;
+  color: #7a5200 !important;
+  border: 1px solid rgba(184, 134, 11, 0.28) !important;
+}
+
+.hy-oobe--install .oobe-you-action-text {
+  color: #c62828 !important;
+}
+
+.hy-oobe--install .oobe-you-textbtn {
+  color: #c62828 !important;
+}
+
+.hy-oobe--install .oobe-you-chip {
+  border: 1px solid rgba(184, 134, 11, 0.24);
+  background: rgba(255, 255, 255, 0.82);
+  color: #5f6b63;
+}
+
+.hy-oobe--install .oobe-you-chip svg {
+  color: #c62828;
+}
+
+.hy-oobe--install .oobe-you-segmented {
+  background: rgba(255, 246, 230, 0.9);
+  border: 1px solid rgba(184, 134, 11, 0.2);
+}
+
+.hy-oobe--install .oobe-you-segmented-thumb {
+  background: #ffffff;
+  box-shadow: 0 8px 18px -14px rgba(80, 50, 10, 0.5);
+}
+
+.hy-oobe--install .oobe-you-segmented button[aria-selected="true"] {
+  color: #c62828;
+}
+
+.hy-oobe--install .oobe-you-field-box {
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(184, 134, 11, 0.24);
+}
+
+.hy-oobe--install .oobe-you-field-box:focus-within {
+  border-color: rgba(46, 125, 50, 0.55);
+  box-shadow: 0 0 0 4px rgba(46, 125, 50, 0.1);
+}
+
+.hy-oobe--install .oobe-you-field-box > svg {
+  color: #2e7d32;
+}
+
+.hy-oobe--install .oobe-you-code {
+  background: linear-gradient(135deg, #fff7e6, #ffffff);
+  border: 1px dashed rgba(184, 134, 11, 0.45);
+  color: #b71c1c;
+}
+
+.hy-oobe--install .oobe-you-winpass-cta {
+  color: #c62828;
+  border-color: rgba(184, 134, 11, 0.28);
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.hy-oobe--install .oobe-you-check-ring {
+  border-color: rgba(46, 125, 50, 0.22);
+}
+
+.hy-oobe--install .oobe-you-check-ring-inner {
+  border-color: rgba(198, 40, 40, 0.22);
+}
+
+/* Новогодний медальон на экране установки. */
+.oobe-newyear-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(132px, 34vw, 172px);
+  aspect-ratio: 1;
+  margin-bottom: clamp(18px, 3.4vh, 28px);
+}
+
+.oobe-newyear-halo {
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(217, 154, 23, 0.3), transparent 62%),
+    radial-gradient(circle at 30% 30%, rgba(198, 40, 40, 0.18), transparent 60%),
+    radial-gradient(circle at 70% 72%, rgba(46, 125, 50, 0.2), transparent 60%);
+  filter: blur(18px);
+  animation: hy-seal-pulse 5s ease-in-out infinite;
+}
+
+.oobe-newyear-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  padding: 7px;
+  background: conic-gradient(from 20deg, #f4d87c, #c62828, #2e7d32, #f4d87c);
+  box-shadow:
+    0 26px 50px -26px rgba(80, 50, 10, 0.6),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.oobe-newyear-ring::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.6);
+}
+
+.oobe-newyear-mark img {
+  position: relative;
+  z-index: 1;
+  width: calc(100% - 14px);
+  height: calc(100% - 14px);
+  border-radius: 50%;
+  object-fit: cover;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(184, 134, 11, 0.2);
+}
+
+.oobe-newyear-spark {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #f6c445;
+  box-shadow: 0 0 10px rgba(246, 196, 69, 0.9);
+  animation: hy-seal-pulse 2.6s ease-in-out infinite;
+}
+
+.oobe-newyear-spark--a {
+  top: 6%;
+  right: 8%;
+}
+
+.oobe-newyear-spark--b {
+  bottom: 14%;
+  left: 2%;
+  width: 5px;
+  height: 5px;
+  animation-delay: 0.8s;
+  background: #e53935;
+  box-shadow: 0 0 10px rgba(229, 57, 53, 0.9);
+}
+
+.oobe-newyear-spark--c {
+  top: 40%;
+  left: -4%;
+  width: 4px;
+  height: 4px;
+  animation-delay: 1.5s;
+  background: #43a047;
+  box-shadow: 0 0 10px rgba(67, 160, 71, 0.9);
+}
+
+/* ---------------- Мобильные ---------------- */
+
+@media (max-width: 760px) {
+  .hy-oobe-header {
+    padding-top: 18px;
+  }
+
+  .hy-oobe-brand-text strong {
+    font-size: 17px;
+  }
+
+  .hy-oobe-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .hy-oobe-badge {
+    height: 36px;
+    padding: 0 13px;
+    font-size: 12px;
+  }
+
+  .hy-oobe-card {
+    border-radius: 30px;
+  }
+
+  .hy-oobe-card::before {
+    inset: 11px;
+    border-radius: 22px;
+  }
+
+  .hy-oobe-corner {
+    display: none;
+  }
+
+  .hy-oobe-tree--right {
+    right: -14px;
+    bottom: 16px;
+    width: 98px;
+    height: 126px;
+    opacity: 0.5;
+  }
+
+  .hy-oobe-tree--left {
+    display: none;
+  }
+
+  .hy-oobe-gifts {
+    left: -18px;
+    bottom: 4px;
+    width: 132px;
+    opacity: 0.55;
+  }
+
+  .hy-oobe-main {
+    padding-bottom: 120px;
+  }
+
+  .hy-oobe-news-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .hy-oobe-news-grid .hy-news-card {
+    padding: 12px 14px;
+  }
+
+  .hy-oobe-watermark {
+    -webkit-text-stroke-width: 1px;
+  }
+
+  .hy-oobe-footer {
+    padding-bottom: 74px;
+  }
+}
+
+@media (max-width: 420px) {
+  .hy-oobe-title {
+    font-size: 32px;
+  }
+
+  .hy-oobe-year-digits {
+    font-size: 56px;
+  }
+
+  .hy-countdown-cell {
+    min-width: 62px;
+    padding: 8px 6px;
+  }
+
+  .hy-countdown-value {
+    font-size: 25px;
+  }
+
+  .hy-cta-copy strong {
+    font-size: 14px;
+  }
+
+  .hy-cta-copy small {
+    font-size: 10.5px;
+  }
+
+  .hy-cta-orb {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hy-oobe .hy-garland-bulb,
+  .hy-oobe .hy-garland-halo,
+  .hy-oobe .hy-snowflake,
+  .hy-oobe .hy-hanging-item,
+  .hy-oobe-aurora,
+  .hy-oobe-seal-ring,
+  .hy-oobe-card {
+    animation: none !important;
+  }
+}
