@@ -39,7 +39,9 @@ import {
   HappyYearGarland,
   HappyYearGifts,
   HappyYearHangingOrnaments,
+  HappyYearLoader,
   HappyYearMelody,
+  HappyYearThemeToggle,
   HappyYearSnow,
   HappyYearTree,
 } from "../HappyYearDecor";
@@ -268,6 +270,7 @@ export default function OobeInstall7({
       <HappyYearTree className="ny7-tree" />
       <HappyYearGifts className="ny7-gifts" />
       <HappyYearMelody className="ny7-melody" />
+      <HappyYearThemeToggle className="ny7-theme" />
 
       <header className="ny7-topbar">
         <div className="ny7-brand">
@@ -568,6 +571,7 @@ export default function OobeInstall7({
 
           {step === "checking" && (
             <div className="ny7-step ny7-step--center" key="checking">
+              <HappyYearLoader className="ny7-tree-loader" compact label="Готовим праздник…" />
               <div className="ny7-loader" aria-hidden="true">
                 <span />
                 <span />

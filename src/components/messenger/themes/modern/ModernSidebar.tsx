@@ -15,6 +15,7 @@ import Crown from "../../../Crown";
 import Verified from "../../../Verified";
 import { getChatThemeColors } from "../../../../lib/themes";
 import { cn } from "../../../../utils/cn";
+import { HappyYearGarland, HappyYearLoader } from "../../../HappyYearDecor";
 
 interface Props {
   me: Profile;
@@ -355,6 +356,7 @@ export default function Sidebar({
       className="modern-sidebar relative flex h-full w-full overflow-hidden border-black/8 bg-white md:border-r"
       style={{ borderColor: "rgba(0,0,0,0.06)" }}
     >
+      <HappyYearGarland className="hy-sidebar-garland" bulbs={16} />
       {/* Левая колонка-рейл (только десктоп) */}
       <div className="modern-rail hidden w-[78px] shrink-0 flex-col items-center px-2 py-4 md:flex">
         <button
@@ -413,7 +415,7 @@ export default function Sidebar({
       {/* Колонка со списком чатов */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Верхняя панель на телефоне */}
-        <div className="relative z-10 px-3 pt-4 pb-3 sm:px-4 sm:pt-5 md:hidden">
+        <div className="hy-phone-head relative z-10 px-3 pt-4 pb-3 sm:px-4 sm:pt-5 md:hidden">
         <div className="flex items-center gap-2.5">
           <button
             type="button"
@@ -610,6 +612,7 @@ export default function Sidebar({
           </div>
         ) : loading ? (
           <div className="space-y-2 px-1 pt-1">
+            <HappyYearLoader label="Украшаем чаты…" compact />
             {Array.from({ length: 7 }).map((_, i) => (
               <div key={i} className="flex animate-pulse items-center gap-3 rounded-[22px] bg-white/55 px-3 py-3.5">
                 <div className="h-12 w-12 rounded-2xl bg-black/8" />
@@ -672,7 +675,7 @@ export default function Sidebar({
 
       {/* Нижняя панель профиля + FAB (телефон) */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] sm:px-4 md:hidden">
-        <div className="pointer-events-auto rounded-[24px] border border-black/8 bg-white/80 p-2 shadow-[0_18px_45px_-24px_rgba(16,18,20,0.35)] backdrop-blur-xl">
+        <div className="hy-phone-dock pointer-events-auto rounded-[24px] border border-black/8 bg-white/80 p-2 shadow-[0_18px_45px_-24px_rgba(16,18,20,0.35)] backdrop-blur-xl">
           <div className="flex items-center gap-2">
             <button
               onClick={onOpenSettings}
@@ -689,7 +692,7 @@ export default function Sidebar({
               {fabOpen && (
                 <>
                   <button aria-label="Закрыть меню" className="fixed inset-0 z-20 cursor-default" onClick={() => setFabOpen(false)} />
-                  <div className="absolute right-0 bottom-[3.75rem] z-30 w-56 origin-bottom-right animate-scale-in rounded-[24px] border border-black/8 bg-white/96 p-2 shadow-[0_24px_60px_-20px_rgba(16,18,20,0.35)] backdrop-blur-xl">
+                  <div className="hy-phone-fab absolute right-0 bottom-[3.75rem] z-30 w-56 origin-bottom-right animate-scale-in rounded-[24px] border border-black/8 bg-white/96 p-2 shadow-[0_24px_60px_-20px_rgba(16,18,20,0.35)] backdrop-blur-xl">
                     <p className="px-3 pt-2 pb-1.5 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-black/35">Быстрое действие</p>
                     <button
                       onClick={() => { setFabOpen(false); onCreateGroup(); }}

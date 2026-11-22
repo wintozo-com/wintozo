@@ -45,6 +45,7 @@ import CallOverlay from "../../../CallOverlay";
 import Avatar from "../../../Avatar";
 import AudioMessage from "../../../AudioMessage";
 import VideoCircle from "../../../VideoCircle";
+import { HappyYearLoader } from "../../../HappyYearDecor";
 import VideoMessage from "../../../VideoMessage";
 import Verified from "../../../Verified";
 import { cn } from "../../../../utils/cn";
@@ -1288,6 +1289,7 @@ export default function ChatView({
               </div>
             ) : (
               <div className="modern-fade-in space-y-4 pt-6">
+                <HappyYearLoader label="Зажигаем гирлянды…" />
                 {[0, 1, 2, 3, 4].map((i) => (
                   <div key={i} className={cn("flex", i % 2 === 0 ? "justify-start" : "justify-end")}>
                     <div className={cn("max-w-[78%] space-y-2 rounded-[26px] border border-black/5 bg-white/70 p-3 shadow-sm", i % 2 === 0 ? "rounded-bl-lg" : "rounded-br-lg")}>
@@ -1525,15 +1527,15 @@ export default function ChatView({
                   </div>
 
                   {hasText ? (
-                    <button onClick={() => send()} disabled={sending || compressing} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-lg shadow-accent/30 transition hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-30" aria-label="Отправить сообщение">
+                    <button onClick={() => send()} disabled={sending || compressing} className="yc-send flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent text-white shadow-lg shadow-accent/30 transition hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-30" aria-label="Отправить сообщение">
                       {sending && !uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <ArrowUp className="h-5 w-5" strokeWidth={2.4} />}
                     </button>
                   ) : (
                     <div className="flex shrink-0 items-center gap-1.5">
-                      <button onClick={startVideoRecording} disabled={sending || compressing} className="hidden h-11 w-11 items-center justify-center rounded-full border border-black/8 bg-white/85 text-accent shadow-sm transition hover:-translate-y-0.5 hover:bg-white active:scale-95 disabled:opacity-40 sm:flex" aria-label="Записать видеокружок" title="Видеокружок">
+                      <button onClick={startVideoRecording} disabled={sending || compressing} className="yc-send yc-send-tonal hidden h-11 w-11 items-center justify-center rounded-full border border-black/8 bg-white/85 text-accent shadow-sm transition hover:-translate-y-0.5 hover:bg-white active:scale-95 disabled:opacity-40 sm:flex" aria-label="Записать видеокружок" title="Видеокружок">
                         <Video className="h-5 w-5" strokeWidth={1.9} />
                       </button>
-                      <button onClick={startRecording} disabled={sending || compressing} className="flex h-11 w-11 items-center justify-center rounded-full bg-accent text-white shadow-lg shadow-accent/30 transition hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-40" aria-label="Записать голосовое сообщение" title="Голосовое">
+                      <button onClick={startRecording} disabled={sending || compressing} className="yc-send flex h-11 w-11 items-center justify-center rounded-full bg-accent text-white shadow-lg shadow-accent/30 transition hover:-translate-y-0.5 hover:brightness-105 active:scale-95 disabled:opacity-40" aria-label="Записать голосовое сообщение" title="Голосовое">
                         {sending ? <Loader2 className="h-4.5 w-4.5 animate-spin" /> : <Mic className="h-5 w-5" strokeWidth={1.9} />}
                       </button>
                     </div>

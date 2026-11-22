@@ -24,6 +24,8 @@ import { normalizeWinpass, validateBio, validateNickname, validatePassword } fro
 import Avatar from "../../../Avatar";
 import CrownBadge from "../../../Crown";
 import Verified from "../../../Verified";
+import NyThemePicker from "../../../NyThemePicker";
+import { HappyYearGarland } from "../../../HappyYearDecor";
 import { cn } from "../../../../utils/cn";
 import {
   ALL_THEMES,
@@ -426,8 +428,9 @@ export default function AndroidSettings({
 
   return (
     <div className="modern-phone-settings fixed inset-0 z-[80] flex flex-col animate-fade-in">
+      <HappyYearGarland className="hy-modal-garland" bulbs={16} />
       {/* ================= ШАПКА ================= */}
-      <div className="shrink-0 border-b border-black/6 bg-white/75 px-4 pb-3 pt-[max(1rem,env(safe-area-inset-top,0px))] backdrop-blur-xl">
+      <div className="hy-phone-settings-head relative z-10 shrink-0 border-b border-black/6 bg-white/75 px-4 pb-3 pt-[max(1rem,env(safe-area-inset-top,0px))] backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-md items-center justify-between">
           {view === "menu" ? (
             <div className="flex items-center gap-2.5">
@@ -464,7 +467,7 @@ export default function AndroidSettings({
       </div>
 
       {/* ================= КОНТЕНТ ================= */}
-      <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-10 pt-5">
+      <div className="relative z-10 min-h-0 flex-1 overflow-y-auto px-4 pb-10 pt-5">
         <div className="mx-auto w-full max-w-md">
           {/* ---------------- ГЛАВНОЕ МЕНЮ ---------------- */}
           {view === "menu" && (
@@ -824,6 +827,7 @@ export default function AndroidSettings({
           {/* ---------------- КАСТОМИЗАЦИЯ ---------------- */}
           {view === "customization" && (
             <div className="animate-fade-in">
+              <NyThemePicker className="mb-5" />
               <span className="mb-3 flex items-center gap-2 text-[12px] font-bold text-black/45">
                 <Palette className="h-3.5 w-3.5" />
                 Палитра чатов

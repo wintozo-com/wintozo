@@ -9,7 +9,7 @@ import {
 import { directKey, uuid } from "../../../lib/utils";
 import Sidebar from "./modern/ModernSidebar";
 import HappyYearChatView from "../../HappyYearChatView";
-import { HappyYearBackdrop, HappyYearMelody } from "../../HappyYearDecor";
+import { HappyYearBackdrop, HappyYearMelody, HappyYearThemeToggle } from "../../HappyYearDecor";
 import SettingsModal from "./modern/ModernSettingsModal";
 import ChatInfoModal from "./modern/ModernChatInfoModal";
 import AndroidSettings from "./modern/ModernAndroidSettings";
@@ -145,7 +145,7 @@ function Placeholder({
     hour < 6 ? "Доброй ночи" : hour < 12 ? "Доброе утро" : hour < 18 ? "Добрый день" : "Добрый вечер";
 
   return (
-    <div className="dot-grid-dark relative flex h-full flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-[#fbfbfa] via-white to-accent-soft/25 px-4 text-center sm:px-8">
+    <div className="hy-empty dot-grid-dark relative flex h-full flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-[#fbfbfa] via-white to-accent-soft/25 px-4 text-center sm:px-8">
       <span
         aria-hidden
         className="pointer-events-none absolute -top-24 right-[-8rem] h-[30rem] w-[30rem] rounded-full bg-accent/10 blur-3xl"
@@ -187,7 +187,7 @@ function Placeholder({
       </div>
 
       <div className="modern-fade-in relative w-full max-w-3xl">
-        <div className="overflow-hidden rounded-[40px] border border-white/80 bg-white/72 p-6 shadow-[0_30px_90px_-32px_rgba(16,18,20,0.28)] backdrop-blur-2xl sm:p-10">
+        <div className="hy-empty-card overflow-hidden rounded-[40px] border border-white/80 bg-white/72 p-6 shadow-[0_30px_90px_-32px_rgba(16,18,20,0.28)] backdrop-blur-2xl sm:p-10">
           <div className="flex flex-col items-center gap-7 lg:flex-row lg:items-start lg:gap-8 lg:text-left">
             <div className="relative shrink-0">
               <div className="absolute inset-0 scale-110 rounded-[34px] bg-accent/15 blur-xl" aria-hidden />
@@ -597,6 +597,7 @@ export default function Messenger({
             storageKey="winchat_bg_new_year_music"
             label="Фоновая музыка"
           />
+          <HappyYearThemeToggle className="hy-shell-theme fixed" />
         </>
       )}
 

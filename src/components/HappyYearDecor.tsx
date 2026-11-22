@@ -6,8 +6,9 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { Volume2, VolumeX } from "lucide-react";
+import { MoonStar, Sun, Volume2, VolumeX } from "lucide-react";
 import code1 from "../bages/code_1.png";
+import { useNyDark } from "../lib/nyTheme";
 import "./happy-year.css";
 
 /* ============================================================
@@ -71,6 +72,13 @@ export function HappyYearGarland({
             />
             <circle cx={x} cy={y + 24} r="10" fill={color} />
             <circle cx={x - 3.5} cy={y + 20} r="2.6" className="hy-garland-shine" />
+            <g
+              className="hy-garland-spark"
+              transform={`translate(${x + 11} ${y + 17}) scale(${0.72 + (i % 3) * 0.22})`}
+              style={{ animationDelay: `${(i % 5) * 0.42}s` }}
+            >
+              <path d="M0 -6.5 1.7 -1.7 6.5 0 1.7 1.7 0 6.5 -1.7 1.7 -6.5 0 -1.7 -1.7Z" />
+            </g>
           </g>
         );
       })}
@@ -486,6 +494,78 @@ export function HappyYearMelody({
   );
 }
 
+/* ------------------------------------------------------------
+   Классическая тёмная тема WinChat 7.0.
+   Гирлянды и шарики начинают по-настоящему светиться.
+   ------------------------------------------------------------ */
+
+export function HappyYearThemeToggle({ className = "" }: { className?: string }) {
+  const [dark, setDark] = useNyDark();
+
+  return (
+    <button
+      type="button"
+      className={`hy-theme-toggle ${dark ? "is-dark" : ""} ${className}`}
+      onClick={() => setDark()}
+      aria-pressed={dark}
+      aria-label={dark ? "Включить светлую новогоднюю тему" : "Включить классическую тёмную тему"}
+      title={dark ? "Светлая новогодняя тема" : "Классическая тёмная тема"}
+    >
+      <span className="hy-theme-ball">
+        <span className="hy-theme-shine" aria-hidden="true" />
+        <span className="hy-theme-icon">{dark ? <Sun /> : <MoonStar />}</span>
+      </span>
+      <span className="hy-theme-text">{dark ? "Светлая" : "Тёмная"}</span>
+    </button>
+  );
+}
+
+/** Анимированная ёлка-загрузчик с мигающей гирляндой. */
+export function HappyYearLoader({
+  label,
+  className = "",
+  compact = false,
+}: {
+  label?: string;
+  className?: string;
+  compact?: boolean;
+}) {
+  return (
+    <div
+      className={`hy-loader ${compact ? "hy-loader--compact" : ""} ${className}`}
+      role="status"
+      aria-live="polite"
+    >
+      <svg className="hy-loader-tree" viewBox="0 0 120 156" width={compact ? 54 : 78} height={compact ? 70 : 101} aria-hidden="true">
+        <path className="hy-loader-tier" d="M60 10 34 54h15L22 92h22L14 126h92L78 92h22L73 54h15z" />
+        <path className="hy-loader-snow" d="M34 54h15L22 92h22l-8 8H14l26-46zm52 0H73l27 38H78l8 8h22L86 54z" />
+        <path className="hy-loader-trunk" d="M53 122h14v24H53z" />
+        <path className="hy-loader-star" d="M60 0l4.4 8.8 9.7 1.4-7 6.8 1.7 9.6-8.8-4.6-8.8 4.6 1.7-9.6-7-6.8 9.7-1.4z" />
+        {[
+          { cx: 46, cy: 58, fill: "#ff5252", delay: 0 },
+          { cx: 74, cy: 58, fill: "#ffd54f", delay: 0.35 },
+          { cx: 37, cy: 90, fill: "#69f0ae", delay: 0.7 },
+          { cx: 83, cy: 90, fill: "#ff5252", delay: 1.05 },
+          { cx: 60, cy: 76, fill: "#40c4ff", delay: 0.2 },
+          { cx: 52, cy: 114, fill: "#ffd54f", delay: 0.55 },
+          { cx: 72, cy: 114, fill: "#69f0ae", delay: 0.9 },
+        ].map((light, i) => (
+          <circle
+            key={i}
+            className="hy-loader-light"
+            cx={light.cx}
+            cy={light.cy}
+            r="4.4"
+            fill={light.fill}
+            style={{ animationDelay: `${light.delay}s` }}
+          />
+        ))}
+      </svg>
+      {label && <span className="hy-loader-label">{label}</span>}
+    </div>
+  );
+}
+
 /** Фоновый новогодний слой: снег, ёлки, огоньки, пасхалки. */
 export function HappyYearBackdrop({
   className = "",
@@ -536,8 +616,12 @@ export function HappyYearBackdrop({
       <HappyYearSnow className="hy-backdrop-snow" count={dense ? 34 : 24} />
       <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--l1" />
       <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--l2" />
+      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--l3" />
       <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--r1" />
       <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--r2" />
+      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--r3" />
+      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--c1" />
+      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--c2" />
       <HappyYearGifts className="hy-backdrop-gifts" />
       {easterEggs &&
         eggs.map((egg, i) => (

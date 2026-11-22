@@ -68,6 +68,21 @@
   fill: rgba(255, 255, 255, 0.82);
 }
 
+.hy-garland-spark {
+  fill: #fff7d6;
+  opacity: 0;
+  pointer-events: none;
+  animation: hy-garland-spark 2.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 3px #ffe9a3);
+}
+
+@keyframes hy-garland-spark {
+  0%, 64%, 100% { opacity: 0; }
+  72% { opacity: 1; }
+  80% { opacity: .35; }
+  88% { opacity: .9; }
+}
+
 @keyframes hy-twinkle {
   0%,
   100% {
@@ -687,9 +702,11 @@
   top: -1px;
   transform: scaleY(0.48);
   transform-origin: top center;
-  z-index: 5;
-  opacity: 0.96;
+  /* Гирлянда — только фон: никогда не перекрывает кнопки, чаты и настройки. */
+  z-index: 0;
+  opacity: 0.9;
   filter: saturate(1.05);
+  pointer-events: none;
 }
 
 .hy-frame-garland .hy-garland-bulb circle:first-of-type {
@@ -834,6 +851,18 @@
     radial-gradient(circle at 70% 78%, rgba(0,0,0,.18), transparent 55%),
     var(--hy-green) !important;
   box-shadow: inset -5px -7px 12px rgba(0,0,0,.2), 0 8px 16px -8px rgba(46,125,50,.5) !important;
+}
+.hy-chat .yc-send.yc-send-tonal {
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,.85) 0 9%, transparent 33%),
+    radial-gradient(circle at 70% 78%, rgba(0,0,0,.2), transparent 55%),
+    linear-gradient(145deg, #f0c250, #b8860b) !important;
+  box-shadow: inset -5px -7px 12px rgba(90,60,0,.25), 0 8px 16px -8px rgba(184,134,11,.55) !important;
+  color: #3a2a05 !important;
+}
+.hy-chat .yc-send.yc-send-tonal svg { color: #3a2a05 !important; stroke: currentColor !important; }
+.ny-dark .hy-chat .yc-send.yc-send-tonal {
+  box-shadow: inset -5px -7px 12px rgba(90,60,0,.3), 0 0 22px rgba(255,206,84,.55) !important;
 }
 
 /* Ниточка и колпачок шарика */
@@ -1022,8 +1051,12 @@
 }
 .hy-backdrop-tree--l1 { left: -10px; width: 170px; height: 220px; opacity:.55; }
 .hy-backdrop-tree--l2 { left: 8%; width: 110px; height: 145px; bottom: 0; opacity:.35; }
+.hy-backdrop-tree--l3 { left: 17%; width: 82px; height: 108px; bottom: 0; opacity:.22; }
 .hy-backdrop-tree--r1 { right: -6px; width: 190px; height: 245px; opacity:.6; }
 .hy-backdrop-tree--r2 { right: 9%; width: 100px; height: 132px; opacity:.32; }
+.hy-backdrop-tree--r3 { right: 18%; width: 78px; height: 104px; bottom: 0; opacity:.2; }
+.hy-backdrop-tree--c1 { left: 34%; width: 66px; height: 88px; bottom: 0; opacity:.13; }
+.hy-backdrop-tree--c2 { right: 33%; width: 58px; height: 78px; bottom: 0; opacity:.11; }
 .hy-backdrop-gifts {
   left: 50%;
   bottom: -4px;
@@ -1032,6 +1065,58 @@
   opacity: .55;
   z-index: 1;
 }
+/* ---------- Ёлка-загрузчик ---------- */
+.hy-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 0 14px;
+  color: var(--hy-green);
+}
+.hy-loader--compact { padding: 2px 0 8px; gap: 6px; }
+.hy-loader-tree {
+  overflow: visible;
+  filter: drop-shadow(0 14px 24px rgba(31, 42, 36, .16));
+  animation: hy-loader-sway 2.6s ease-in-out infinite;
+}
+.hy-loader-tier { fill: #2e7d32; }
+.hy-loader-snow { fill: #eef7ff; opacity: .9; }
+.hy-loader-trunk { fill: #7a4a1f; }
+.hy-loader-star {
+  fill: #f6c344;
+  filter: drop-shadow(0 0 8px rgba(246, 195, 68, .9));
+  animation: hy-loader-star 1.5s ease-in-out infinite;
+}
+.hy-loader-light {
+  filter: drop-shadow(0 0 6px currentColor);
+  animation: hy-loader-blink 1.25s ease-in-out infinite;
+}
+.hy-loader-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: rgba(29, 42, 36, .55);
+}
+@keyframes hy-loader-sway {
+  0%, 100% { transform: rotate(-1.6deg) translateY(0); }
+  50% { transform: rotate(1.6deg) translateY(-3px); }
+}
+@keyframes hy-loader-star {
+  0%, 100% { opacity: .65; transform: scale(.92); }
+  50% { opacity: 1; transform: scale(1.12); }
+}
+@keyframes hy-loader-blink {
+  0%, 100% { opacity: .35; }
+  50% { opacity: 1; }
+}
+.ny-dark .hy-loader-tier { fill: #1b5e20; }
+.ny-dark .hy-loader-snow { fill: #cfe2ff; opacity: .65; }
+.ny-dark .hy-loader-label { color: rgba(234, 242, 255, .6); }
+.ny-dark .hy-loader-tree { filter: drop-shadow(0 0 18px rgba(120, 255, 170, .35)); }
+.ny-dark .hy-loader-light { filter: drop-shadow(0 0 8px currentColor); }
+
 .hy-easter-egg {
   position: absolute;
   z-index: 2;
@@ -1055,9 +1140,696 @@
   .hy-easter-egg { opacity: .12; }
 }
 
+/* ---------- Переключатель классической тёмной темы ---------- */
+
+.hy-theme-toggle {
+  position: fixed;
+  left: clamp(14px, 3vw, 28px);
+  bottom: clamp(14px, 3vw, 26px);
+  z-index: 120;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 48px;
+  padding: 0 16px 0 6px;
+  border: 1px solid rgba(184, 134, 11, 0.3);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--hy-ink);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 18px 40px -22px rgba(60, 40, 10, 0.5), inset 0 1px 0 #fff;
+  backdrop-filter: blur(14px);
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.hy-theme-toggle:hover { transform: translateY(-2px); }
+.hy-theme-ball {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #fff;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,.82) 0 10%, transparent 34%),
+    radial-gradient(circle at 72% 80%, rgba(0,0,0,.25), transparent 60%),
+    linear-gradient(145deg, #2b4a7a, #0d1a30);
+  box-shadow: inset -4px -6px 10px rgba(0,0,0,.35), 0 6px 14px -8px rgba(10,20,40,.6);
+}
+.hy-theme-ball::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  width: 9px;
+  height: 5px;
+  border-radius: 2px 2px 1px 1px;
+  background: linear-gradient(180deg, #ffe082, #b8860b);
+  transform: translateX(-50%);
+  box-shadow: 0 -3px 0 -1px #8d6e3d;
+}
+.hy-theme-shine {
+  position: absolute;
+  top: 18%;
+  left: 22%;
+  width: 10px;
+  height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.75);
+  filter: blur(1px);
+  transform: rotate(-24deg);
+}
+.hy-theme-icon { display: grid; place-items: center; }
+.hy-theme-icon svg { width: 18px; height: 18px; }
+.hy-theme-toggle.is-dark {
+  background: rgba(12, 19, 32, .92);
+  border-color: rgba(255, 215, 120, .32);
+  color: #ffe6a3;
+  box-shadow: 0 18px 40px -22px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.hy-theme-toggle.is-dark .hy-theme-ball {
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255,255,255,.9) 0 10%, transparent 34%),
+    radial-gradient(circle at 72% 80%, rgba(0,0,0,.2), transparent 60%),
+    linear-gradient(145deg, #ffd66b, #c98a10);
+  box-shadow: inset -4px -6px 10px rgba(120,80,0,.4), 0 0 18px rgba(255,206,84,.55);
+}
+.hy-shell-theme {
+  position: fixed !important;
+  left: clamp(14px, 2.5vw, 24px);
+  bottom: max(14px, calc(env(safe-area-inset-bottom, 0px) + 14px));
+  right: auto;
+  top: auto;
+  z-index: 120 !important;
+}
+.ny7-theme {
+  position: fixed;
+  left: clamp(14px, 3vw, 28px);
+  bottom: clamp(14px, 3vw, 26px);
+  z-index: 30;
+}
+
+@media (max-width: 640px) {
+  .hy-theme-toggle {
+    height: 44px;
+    padding: 0 10px 0 5px;
+    gap: 7px;
+    font-size: 11px;
+  }
+  .hy-theme-ball { width: 34px; height: 34px; }
+  .hy-shell-theme {
+    left: 12px !important;
+    bottom: max(84px, calc(env(safe-area-inset-bottom, 0px) + 84px)) !important;
+  }
+  .ny7-theme { left: 12px; bottom: 12px; transform: scale(.92); transform-origin: bottom left; }
+  .hy-theme-text { display: none; }
+  .hy-theme-toggle { padding-right: 5px; }
+}
+
+/* ---------- Классическая тёмная тема: гирлянды и шарики светятся ---------- */
+
+html.ny-dark { color-scheme: dark; }
+html.ny-dark body { background: #070b14; }
+
+.ny-dark .hy-messenger {
+  background:
+    radial-gradient(1000px 620px at 12% -8%, rgba(46, 125, 50, .22), transparent 62%),
+    radial-gradient(900px 560px at 92% 6%, rgba(198, 40, 40, .2), transparent 60%),
+    radial-gradient(760px 480px at 50% 112%, rgba(217, 154, 23, .16), transparent 58%),
+    linear-gradient(180deg, #080d18 0%, #0a1120 52%, #070b14 100%) !important;
+  color: #eaf2ff;
+}
+.ny-dark .hy-messenger::before {
+  background-image: radial-gradient(rgba(255, 236, 170, .1) 0.8px, transparent 0.8px) !important;
+  opacity: .55 !important;
+}
+.ny-dark .hy-messenger .modern-sidebar,
+.ny-dark .hy-messenger .modern-rail {
+  background: linear-gradient(180deg, rgba(13, 20, 34, .96), rgba(8, 12, 22, .94)) !important;
+  border-right-color: rgba(255, 215, 120, .14) !important;
+}
+.ny-dark .hy-messenger .modern-rail-btn { color: rgba(234, 242, 255, .55) !important; }
+.ny-dark .hy-messenger .modern-rail-btn:hover,
+.ny-dark .hy-messenger .modern-rail-btn.is-active {
+  color: #ffd479 !important;
+  background: rgba(255, 206, 84, .1) !important;
+  box-shadow: 0 10px 24px -16px rgba(255, 206, 84, .5) !important;
+}
+.ny-dark .hy-messenger .modern-chat-row {
+  background: rgba(255, 255, 255, .035) !important;
+  border-color: rgba(255, 215, 120, .08) !important;
+  color: #eaf2ff !important;
+}
+.ny-dark .hy-messenger .modern-chat-row:hover {
+  background: rgba(255, 255, 255, .06) !important;
+  border-color: rgba(255, 215, 120, .2) !important;
+}
+.ny-dark .hy-messenger .modern-chat-row span[style*="color"],
+.ny-dark .hy-messenger .modern-chat-row p span[style*="color"] { color: #eaf2ff !important; }
+.ny-dark .hy-messenger .modern-chat-row .text-black\/45,
+.ny-dark .hy-messenger .modern-chat-row .text-black\/40 { color: rgba(234, 242, 255, .5) !important; }
+.ny-dark .hy-messenger .bg-black\/\[0\.05\] { background: rgba(255, 255, 255, .08) !important; }
+
+.ny-dark .hy-chat header,
+.ny-dark .hy-chat .yc-appbar {
+  background: rgba(9, 14, 26, .86) !important;
+  border-bottom-color: rgba(255, 215, 120, .16) !important;
+}
+.ny-dark .hy-chat .modern-feed,
+.ny-dark .hy-chat .modern-thread-bg {
+  background:
+    radial-gradient(700px 480px at 12% 6%, rgba(46, 125, 50, .14), transparent 58%),
+    radial-gradient(620px 420px at 88% 92%, rgba(198, 40, 40, .13), transparent 58%),
+    linear-gradient(180deg, #0a1120 0%, #080d18 100%) !important;
+}
+.ny-dark .hy-chat .modern-bubble-other {
+  background: #121b2c !important;
+  color: #eaf2ff !important;
+  border-color: rgba(255, 215, 120, .14) !important;
+  box-shadow: 0 14px 32px -22px rgba(0, 0, 0, .9), inset 0 1px 0 rgba(255, 255, 255, .05) !important;
+}
+.ny-dark .hy-chat .modern-bubble-own {
+  background: linear-gradient(135deg, #2e7d32, #0f3f27) !important;
+  color: #f2fff5 !important;
+  border-color: rgba(120, 255, 170, .28) !important;
+  box-shadow: 0 16px 38px -20px rgba(46, 125, 50, .6), inset 0 1px 0 rgba(255, 255, 255, .12) !important;
+}
+.ny-dark .hy-chat .modern-date-chip {
+  background: rgba(255, 215, 120, .1) !important;
+  border-color: rgba(255, 215, 120, .2) !important;
+  color: #ffdf9b !important;
+}
+.ny-dark .hy-chat .modern-composer,
+.ny-dark .hy-chat .yc-composer {
+  background: rgba(13, 20, 34, .94) !important;
+  border-color: rgba(255, 215, 120, .24) !important;
+  box-shadow: 0 18px 40px -28px rgba(0, 0, 0, .9), inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+}
+.ny-dark .hy-chat .modern-composer textarea,
+.ny-dark .hy-chat .yc-composer-input { color: #eaf2ff !important; }
+.ny-dark .hy-chat .modern-composer textarea::placeholder { color: rgba(234, 242, 255, .38) !important; }
+.ny-dark .hy-chat .modern-composer > button,
+.ny-dark .hy-chat .yc-composer-icon {
+  color: rgba(234, 242, 255, .7) !important;
+}
+.ny-dark .hy-chat .modern-composer > button:hover,
+.ny-dark .hy-chat .yc-composer-icon:hover {
+  background: rgba(255, 215, 120, .12) !important;
+  color: #ffd479 !important;
+}
+.ny-dark .hy-chat .yc-send,
+.ny-dark .hy-chat .modern-composer > button.yc-send { color: #fff !important; }
+.ny-dark .hy-chat footer,
+.ny-dark .hy-chat .sticky.bottom-0 {
+  background: rgba(9, 14, 26, .9) !important;
+  border-top-color: rgba(255, 215, 120, .12) !important;
+}
+.ny-dark .hy-messenger .text-ink,
+.ny-dark .hy-messenger .text-ink-soft { color: #eaf2ff !important; }
+.ny-dark .hy-messenger .text-black\/70,
+.ny-dark .hy-messenger .text-black\/60,
+.ny-dark .hy-messenger .text-black\/50 { color: rgba(234, 242, 255, .72) !important; }
+.ny-dark .hy-messenger .text-black\/45,
+.ny-dark .hy-messenger .text-black\/40,
+.ny-dark .hy-messenger .text-black\/35,
+.ny-dark .hy-messenger .text-black\/30 { color: rgba(234, 242, 255, .48) !important; }
+.ny-dark .hy-messenger .bg-white { background-color: rgba(18, 27, 44, .92) !important; }
+.ny-dark .hy-messenger .bg-white\/97,
+.ny-dark .hy-messenger .bg-white\/96,
+.ny-dark .hy-messenger .bg-white\/95,
+.ny-dark .hy-messenger .bg-white\/90,
+.ny-dark .hy-messenger .bg-white\/85,
+.ny-dark .hy-messenger .bg-white\/80,
+.ny-dark .hy-messenger .bg-white\/75,
+.ny-dark .hy-messenger .bg-white\/70,
+.ny-dark .hy-messenger .bg-white\/60 { background-color: rgba(18, 27, 44, .82) !important; }
+.ny-dark .hy-messenger .border-black\/8,
+.ny-dark .hy-messenger .border-black\/10,
+.ny-dark .hy-messenger .border-black\/5 { border-color: rgba(255, 215, 120, .12) !important; }
+.ny-dark .hy-messenger .ring-black\/5,
+.ny-dark .hy-messenger .ring-black\/8 { --tw-ring-color: rgba(255, 215, 120, .14) !important; }
+.ny-dark .hy-messenger input,
+.ny-dark .hy-messenger textarea { color: #eaf2ff; }
+.ny-dark .hy-messenger input::placeholder,
+.ny-dark .hy-messenger textarea::placeholder { color: rgba(234, 242, 255, .38); }
+
+/* Светящиеся гирлянды, шарики, снег */
+.ny-dark .hy-garland { filter: drop-shadow(0 0 10px rgba(255, 214, 110, .55)); }
+.ny-dark .hy-garland-wire { stroke: #6ee7a2; opacity: .55; }
+.ny-dark .hy-garland-wire--light { stroke: rgba(255, 255, 255, .3); }
+.ny-dark .hy-garland-halo { opacity: .5; filter: blur(8px); }
+.ny-dark .hy-garland-cap { fill: #f0c250; }
+.ny-dark .hy-hanging-ball {
+  box-shadow:
+    inset -6px -8px 14px rgba(0, 0, 0, .55),
+    inset 4px 5px 10px rgba(255, 255, 255, .16),
+    0 0 26px var(--hy-tone),
+    0 10px 24px -10px rgba(0, 0, 0, .8) !important;
+}
+.ny-dark .hy-hanging-string { background: linear-gradient(180deg, rgba(255, 215, 120, .1), rgba(255, 215, 120, .55)); }
+.ny-dark .hy-tree-star { filter: drop-shadow(0 0 8px #ffd54f); }
+.ny-dark .hy-tree-tier { fill: #123a2a; }
+.ny-dark .hy-tree-snow { fill: #dbe9ff; opacity: .8; }
+.ny-dark .hy-snowflake { color: rgba(200, 225, 255, .55); }
+.ny-dark .hy-backdrop-star { box-shadow: 0 0 14px rgba(255, 225, 140, 1); }
+.ny-dark .hy-backdrop-glow--red { background: rgba(198, 40, 40, .3); }
+.ny-dark .hy-backdrop-glow--green { background: rgba(46, 125, 50, .3); }
+.ny-dark .hy-backdrop-glow--gold { background: rgba(217, 154, 23, .24); }
+.ny-dark .hy-easter-egg { opacity: .1; filter: saturate(.5) brightness(.8); }
+.ny-dark .hy-easter-egg:hover { opacity: .5; }
+
+/* Тёмное новогоднее OOBE */
+.ny-dark .ny7 {
+  --ny-ink: #f1f6ff;
+  --ny-muted: #a9b8cf;
+  --ny-line: rgba(255, 215, 120, .22);
+  --ny-card: rgba(14, 21, 36, .9);
+  color: #eaf2ff;
+  background:
+    radial-gradient(900px 560px at 50% -10%, rgba(46, 125, 50, .22) 0%, transparent 62%),
+    radial-gradient(circle at 8% 12%, rgba(198, 40, 40, .24), transparent 30%),
+    radial-gradient(circle at 92% 10%, rgba(46, 125, 50, .2), transparent 32%),
+    radial-gradient(circle at 50% 110%, rgba(217, 154, 23, .2), transparent 52%),
+    linear-gradient(180deg, #080d18 0%, #0a1120 52%, #070b14 100%);
+}
+.ny-dark .ny7::before { opacity: .3; background-image: radial-gradient(rgba(200, 225, 255, .16) 1px, transparent 1px); }
+.ny-dark .ny7::after { background: radial-gradient(120% 90% at 50% 42%, transparent 48%, rgba(0, 0, 0, .35) 100%); }
+.ny-dark .ny7-brand-copy strong { color: #f1f6ff; }
+.ny-dark .ny7-badge { background: rgba(255, 255, 255, .06); color: #ffd479; border-color: rgba(255, 215, 120, .28); }
+.ny-dark .ny7-panel {
+  background: linear-gradient(180deg, rgba(16, 24, 40, .96), rgba(10, 15, 27, .94));
+  border-color: rgba(255, 215, 120, .22);
+  box-shadow: 0 40px 90px -50px rgba(0, 0, 0, .9), 0 0 0 8px rgba(255, 255, 255, .03), 0 0 0 9px rgba(255, 215, 120, .08), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.ny-dark .ny7-panel::before { border-color: rgba(255, 215, 120, .18); }
+.ny-dark .ny7-hero-title, .ny-dark .ny7-step h2, .ny-dark .ny7-winpass-card h3 { color: #f1f6ff; }
+.ny-dark .ny7-hero-text, .ny-dark .ny7-step p, .ny-dark .ny7-winpass-card p { color: #a9b8cf; }
+.ny-dark .ny7-field-box { background: rgba(255, 255, 255, .055); border-color: rgba(255, 215, 120, .18); }
+.ny-dark .ny7-field-box input { color: #f1f6ff; }
+.ny-dark .ny7-field-box input::placeholder { color: rgba(200, 215, 240, .45); }
+.ny-dark .ny7-field-box > svg { color: #7ee2a8; }
+.ny-dark .ny7-tabs { background: rgba(255, 255, 255, .05); border-color: rgba(255, 215, 120, .14); }
+.ny-dark .ny7-tab-thumb { background: rgba(255, 255, 255, .12); }
+.ny-dark .ny7-tabs button { color: #a9b8cf; }
+.ny-dark .ny7-tabs button[aria-selected="true"] { color: #ffd479; }
+.ny-dark .ny7-secondary { color: #ffd479; background: rgba(255, 255, 255, .05); border-color: rgba(255, 215, 120, .24); }
+.ny-dark .ny7-secondary:hover { background: rgba(255, 255, 255, .1); }
+.ny-dark .ny7-chips span, .ny-dark .ny7-check, .ny-dark .ny7-news-card { background: rgba(255, 255, 255, .05); border-color: rgba(255, 215, 120, .14); }
+.ny-dark .ny7-news-card { box-shadow: 0 14px 30px -28px rgba(0, 0, 0, .8), inset 0 1px 0 rgba(255, 255, 255, .05); }
+.ny-dark .ny7-news-card h3 { color: #f1f6ff; }
+.ny-dark .ny7-news-card p, .ny-dark .ny7-footnote { color: #a9b8cf; }
+.ny-dark .ny7-code { background: linear-gradient(135deg, rgba(255, 215, 120, .1), rgba(255, 255, 255, .04)); color: #ffd479; }
+.ny-dark .ny7-check.is-on { background: rgba(255, 255, 255, .08); border-color: rgba(126, 226, 168, .24); color: #f1f6ff; }
+.ny-dark .ny7-progress span { background: rgba(255, 255, 255, .12); }
+.ny-dark .ny7-garland { filter: drop-shadow(0 0 14px rgba(255, 214, 110, .5)); }
+.ny-dark .ny7-tree { opacity: .7; }
+.ny-dark .ny7-gifts { opacity: .55; }
+
+@media (max-width: 640px) {
+  .ny-dark .hy-theme-toggle {
+    background: rgba(12, 19, 32, .92);
+    border-color: rgba(255, 215, 120, .3);
+  }
+}
+
+/* ---------- Переключатель темы в Настройках → Кастомизация ---------- */
+
+.ny-theme-picker { display: flex; flex-direction: column; gap: 10px; }
+.ny-theme-picker-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(29, 42, 36, .5);
+}
+.ny-theme-picker-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ny-theme-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border: 2px solid transparent;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .72);
+  text-align: left;
+  cursor: pointer;
+  transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.ny-theme-card:hover { transform: translateY(-1px); }
+.ny-theme-card.is-active {
+  border-color: #2e7d32;
+  box-shadow: 0 12px 26px -18px rgba(46, 125, 50, .6);
+}
+.ny-theme-card--dark { background: #0d1424; }
+.ny-theme-card--dark.is-active {
+  border-color: #d9a017;
+  box-shadow: 0 14px 30px -16px rgba(217, 160, 23, .55), 0 0 0 3px rgba(217, 160, 23, .12);
+}
+.ny-theme-card-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 3px 2px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #1d2a24;
+}
+.ny-theme-card--dark .ny-theme-card-copy { color: #eaf2ff; }
+.ny-theme-check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  box-shadow: 0 4px 10px -4px rgba(0, 0, 0, .5);
+}
+.ny-theme-card--dark .ny-theme-check { background: linear-gradient(135deg, #f0c250, #b8860b); color: #3a2a05; }
+.ny-theme-preview {
+  position: relative;
+  display: block;
+  height: 64px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.ny-theme-preview--light {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(198, 40, 40, .12), transparent 42%),
+    linear-gradient(180deg, #ffffff, #fff3e2);
+  border: 1px solid rgba(184, 134, 11, .18);
+}
+.ny-theme-preview--dark {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(255, 206, 84, .18), transparent 45%),
+    radial-gradient(circle at 18% 82%, rgba(46, 125, 50, .22), transparent 46%),
+    linear-gradient(180deg, #0a1120, #070b14);
+  border: 1px solid rgba(255, 215, 120, .2);
+}
+.ny-theme-preview-garland {
+  position: absolute;
+  top: 4px;
+  left: 7px;
+  right: 7px;
+  height: 6px;
+  border-radius: 999px;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 6px,
+    #c62828 6px 10px,
+    transparent 10px 16px,
+    #2e7d32 16px 20px,
+    transparent 20px 26px,
+    #f6b93b 26px 30px
+  );
+  opacity: .85;
+}
+.ny-theme-preview--dark .ny-theme-preview-garland {
+  filter: drop-shadow(0 0 5px rgba(255, 214, 110, .85));
+  opacity: 1;
+}
+.ny-theme-preview-row {
+  position: absolute;
+  left: 10px;
+  right: 34px;
+  top: 20px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(29, 42, 36, .12);
+}
+.ny-theme-preview-row--short { top: 34px; right: 52px; }
+.ny-theme-preview--dark .ny-theme-preview-row { background: rgba(234, 242, 255, .16); }
+.ny-theme-preview-ball {
+  position: absolute;
+  bottom: 7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset -2px -3px 5px rgba(0, 0, 0, .28);
+}
+.ny-theme-preview-ball::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 5px;
+  height: 3px;
+  border-radius: 1px;
+  background: #b8860b;
+  transform: translateX(-50%);
+}
+.ny-theme-preview-ball--red { right: 28px; background: radial-gradient(circle at 32% 24%, rgba(255,255,255,.8) 0 16%, transparent 40%), #c62828; }
+.ny-theme-preview-ball--green { right: 16px; bottom: 12px; background: radial-gradient(circle at 32% 24%, rgba(255,255,255,.8) 0 16%, transparent 40%), #2e7d32; }
+.ny-theme-preview-ball--gold { right: 5px; background: radial-gradient(circle at 32% 24%, rgba(255,255,255,.8) 0 16%, transparent 40%), #d99a17; }
+.ny-theme-preview--dark .ny-theme-preview-ball--red { box-shadow: inset -2px -3px 5px rgba(0,0,0,.3), 0 0 12px rgba(255, 70, 70, .85); }
+.ny-theme-preview--dark .ny-theme-preview-ball--green { box-shadow: inset -2px -3px 5px rgba(0,0,0,.3), 0 0 12px rgba(90, 255, 150, .8); }
+.ny-theme-preview--dark .ny-theme-preview-ball--gold { box-shadow: inset -2px -3px 5px rgba(0,0,0,.3), 0 0 14px rgba(255, 210, 90, .9); }
+
+/* ---------- Тёмная тема: пустой экран и настройки ---------- */
+
+.ny-dark .hy-empty {
+  background:
+    radial-gradient(720px 480px at 12% 4%, rgba(46, 125, 50, .16), transparent 58%),
+    radial-gradient(680px 440px at 88% 96%, rgba(198, 40, 40, .14), transparent 58%),
+    linear-gradient(180deg, #0a1120 0%, #080d18 100%) !important;
+  color: #eaf2ff !important;
+}
+.ny-dark .hy-empty-card {
+  background: rgba(14, 21, 36, .88) !important;
+  border-color: rgba(255, 215, 120, .2) !important;
+  box-shadow: 0 40px 100px -50px rgba(0, 0, 0, .95), inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+}
+.ny-dark .hy-empty h1 { color: #f1f6ff !important; }
+.ny-dark .hy-empty p { color: #a9b8cf !important; }
+.ny-dark .hy-empty .text-ink { color: #eaf2ff !important; }
+.ny-dark .hy-empty .text-black\/45,
+.ny-dark .hy-empty .text-black\/50 { color: rgba(234, 242, 255, .55) !important; }
+.ny-dark .hy-empty .bg-white,
+.ny-dark .hy-empty .bg-white\/90,
+.ny-dark .hy-empty .bg-white\/85,
+.ny-dark .hy-empty .bg-white\/75,
+.ny-dark .hy-empty .bg-white\/72 { background-color: rgba(255, 255, 255, .06) !important; }
+.ny-dark .hy-empty .border-black\/6,
+.ny-dark .hy-empty .border-black\/8,
+.ny-dark .hy-empty .border-black\/10 { border-color: rgba(255, 215, 120, .14) !important; }
+.ny-dark .hy-empty .bg-accent-soft { background: rgba(46, 125, 50, .16) !important; }
+.ny-dark .hy-empty .text-accent { color: #7ee2a8 !important; }
+.ny-dark .hy-empty .from-amber-50 { --tw-gradient-from: rgba(217, 154, 23, .18) !important; }
+.ny-dark .hy-empty .to-white { --tw-gradient-to: rgba(18, 27, 44, .9) !important; }
+.ny-dark .hy-empty .text-amber-900 { color: #ffd479 !important; }
+.ny-dark .hy-empty .text-amber-500 { color: #ffd479 !important; }
+.ny-dark .hy-empty .bg-ink { background: #2e7d32 !important; }
+.ny-dark .hy-empty .shadow-ink\/20 { --tw-shadow-color: rgba(46, 125, 50, .4) !important; }
+
+.ny-dark .modern-modal {
+  background: linear-gradient(180deg, rgba(16, 24, 40, .985), rgba(10, 15, 27, .97)) !important;
+  border-color: rgba(255, 215, 120, .2) !important;
+  color: #eaf2ff !important;
+  box-shadow: 0 50px 120px -50px rgba(0, 0, 0, .95) !important;
+}
+.ny-dark .modern-modal .modern-section { background: rgba(255, 255, 255, .04) !important; border-color: rgba(255, 215, 120, .12) !important; }
+.ny-dark .modern-modal .text-ink,
+.ny-dark .modern-modal .text-ink-soft { color: #eaf2ff !important; }
+.ny-dark .modern-modal .text-black\/70,
+.ny-dark .modern-modal .text-black\/60,
+.ny-dark .modern-modal .text-black\/50,
+.ny-dark .modern-modal .text-black\/45 { color: rgba(234, 242, 255, .62) !important; }
+.ny-dark .modern-modal .text-black\/40,
+.ny-dark .modern-modal .text-black\/35 { color: rgba(234, 242, 255, .42) !important; }
+.ny-dark .modern-modal .bg-white,
+.ny-dark .modern-modal .bg-white\/70,
+.ny-dark .modern-modal .bg-white\/60 { background-color: rgba(255, 255, 255, .06) !important; }
+.ny-dark .modern-modal .bg-paper { background: rgba(255, 255, 255, .04) !important; }
+.ny-dark .modern-modal .border-black\/10,
+.ny-dark .modern-modal .border-black\/8,
+.ny-dark .modern-modal .border-black\/6,
+.ny-dark .modern-modal .border-black\/5 { border-color: rgba(255, 215, 120, .14) !important; }
+.ny-dark .modern-modal input,
+.ny-dark .modern-modal textarea,
+.ny-dark .modern-modal select {
+  background: rgba(255, 255, 255, .06) !important;
+  border-color: rgba(255, 215, 120, .18) !important;
+  color: #eaf2ff !important;
+}
+.ny-dark .modern-modal input::placeholder,
+.ny-dark .modern-modal textarea::placeholder { color: rgba(234, 242, 255, .35) !important; }
+.ny-dark .modern-modal .ny-theme-picker-label { color: rgba(234, 242, 255, .55); }
+
+/* Шапка настроек, вкладки и поиск — не белым по белому */
+.ny-dark .modern-modal .from-white\/90 { --tw-gradient-from: rgba(18, 27, 44, .92) !important; }
+.ny-dark .modern-modal .to-white\/40 { --tw-gradient-to: rgba(10, 15, 27, .4) !important; }
+.ny-dark .modern-modal .from-white { --tw-gradient-from: rgba(255, 255, 255, .06) !important; }
+.ny-dark .modern-modal .to-accent-soft\/25 { --tw-gradient-to: rgba(46, 125, 50, .12) !important; }
+.ny-dark .modern-modal .via-white { --tw-gradient-via: rgba(255, 255, 255, .05) !important; }
+.ny-dark .modern-modal .to-accent-soft\/30 { --tw-gradient-to: rgba(46, 125, 50, .14) !important; }
+.ny-dark .modern-modal .bg-black\/\[0\.03\] { background-color: rgba(255, 255, 255, .06) !important; }
+.ny-dark .modern-modal .bg-white\/70:hover { background-color: rgba(255, 255, 255, .1) !important; }
+.ny-dark .modern-modal .ring-black\/6 { --tw-ring-color: rgba(255, 215, 120, .14) !important; }
+.ny-dark .modern-modal .shadow-sm { --tw-shadow-color: rgba(0, 0, 0, .5) !important; }
+.ny-dark .modern-modal .text-accent { color: #7ee2a8 !important; }
+.ny-dark .modern-modal .bg-accent { background-color: #2e7d32 !important; }
+.ny-dark .modern-modal .bg-ink { background-color: #2e7d32 !important; }
+.ny-dark .modern-modal .hover\:bg-black\/5:hover { background-color: rgba(255, 255, 255, .08) !important; }
+.ny-dark .modern-modal .hover\:text-ink:hover { color: #eaf2ff !important; }
+
+/* Поиск в сайдбаре */
+.ny-dark .hy-messenger .bg-white\/90 { background-color: rgba(255, 255, 255, .07) !important; }
+.ny-dark .hy-messenger input.bg-white\/90 { color: #eaf2ff !important; }
+.ny-dark .hy-messenger .placeholder\:text-black\/35::placeholder { color: rgba(234, 242, 255, .38) !important; }
+.ny-dark .hy-messenger .focus\:bg-white:focus { background-color: rgba(255, 255, 255, .1) !important; }
+.ny-dark .hy-messenger .border-accent\/40 { border-color: rgba(126, 226, 168, .4) !important; }
+
+/* Дополнительные ёлки и гирлянды в тёмной теме светятся сильнее */
+.ny-dark .hy-backdrop-tree { filter: drop-shadow(0 0 18px rgba(80, 220, 140, .22)); }
+.ny-dark .hy-backdrop-tree--l3,
+.ny-dark .hy-backdrop-tree--r3,
+.ny-dark .hy-backdrop-tree--c1,
+.ny-dark .hy-backdrop-tree--c2 { opacity: .32; }
+
+/* Декоративные гирлянды в сайдбаре и настройках — строго за контентом */
+.modern-sidebar { isolation: isolate; }
+.hy-sidebar-garland {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 26px;
+  /* За контентом, но поверх фона сайдбара: не двигает и не перекрывает кнопки. */
+  z-index: -1;
+  opacity: .42;
+  transform: scaleY(.36);
+  transform-origin: top center;
+  pointer-events: none;
+}
+.hy-modal-garland {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  z-index: 0;
+  opacity: .5;
+  transform: scaleY(.4);
+  transform-origin: top center;
+  pointer-events: none;
+}
+.ny-dark .hy-sidebar-garland,
+.ny-dark .hy-modal-garland { opacity: .75; filter: drop-shadow(0 0 10px rgba(255, 214, 110, .5)); }
+
+/* ---------- Док-бар телефона (никнейм + плюс) ---------- */
+
+.hy-phone-dock {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(198, 40, 40, .08), transparent 46%),
+    linear-gradient(180deg, rgba(255, 255, 255, .96), rgba(255, 248, 238, .93)) !important;
+  border-color: rgba(184, 134, 11, .22) !important;
+  box-shadow: 0 18px 45px -24px rgba(60, 40, 10, .38), inset 0 1px 0 #fff !important;
+}
+.hy-phone-fab {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .98), rgba(255, 250, 242, .97)) !important;
+  border-color: rgba(184, 134, 11, .22) !important;
+  box-shadow: 0 24px 60px -20px rgba(60, 40, 10, .38), inset 0 1px 0 #fff !important;
+}
+.ny-dark .hy-messenger .hy-phone-dock,
+.ny-dark .hy-messenger .hy-phone-fab {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(198, 40, 40, .18), transparent 48%),
+    radial-gradient(circle at 92% 100%, rgba(46, 125, 50, .16), transparent 52%),
+    linear-gradient(180deg, rgba(17, 26, 44, .97), rgba(9, 14, 26, .96)) !important;
+  border-color: rgba(255, 215, 120, .24) !important;
+  box-shadow:
+    0 22px 55px -24px rgba(0, 0, 0, .95),
+    inset 0 1px 0 rgba(255, 255, 255, .08) !important;
+  color: #eaf2ff !important;
+}
+.ny-dark .hy-messenger .hy-phone-dock .modern-chat-row {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+.ny-dark .hy-messenger .hy-phone-dock .modern-chat-row:hover {
+  background: rgba(255, 255, 255, .07) !important;
+  border-color: rgba(255, 215, 120, .18) !important;
+}
+.ny-dark .hy-messenger .hy-phone-dock .text-black\/40,
+.ny-dark .hy-messenger .hy-phone-dock .text-black\/35,
+.ny-dark .hy-messenger .hy-phone-fab .text-black\/40,
+.ny-dark .hy-messenger .hy-phone-fab .text-black\/35 { color: rgba(234, 242, 255, .52) !important; }
+.ny-dark .hy-messenger .hy-phone-fab .text-ink { color: #eaf2ff !important; }
+.ny-dark .hy-messenger .hy-phone-fab .bg-ink { background: #2e7d32 !important; }
+.ny-dark .hy-messenger .hy-phone-fab .bg-black\/6 { background: rgba(255, 215, 120, .18) !important; }
+.ny-dark .hy-messenger .hy-phone-fab .bg-amber-400\/12 { background: rgba(255, 206, 84, .14) !important; }
+.ny-dark .hy-messenger .hy-phone-fab .text-amber-600 { color: #ffd479 !important; }
+.ny-dark .hy-messenger .hy-phone-fab .hover\:bg-black\/\[0\.04\]:hover {
+  background: rgba(255, 255, 255, .08) !important;
+}
+
+/* Верхняя панель телефона */
+.ny-dark .hy-messenger .hy-phone-head .text-ink { color: #eaf2ff !important; }
+.ny-dark .hy-messenger .hy-phone-head .text-black\/40 { color: rgba(234, 242, 255, .5) !important; }
+.ny-dark .hy-messenger .hy-phone-head .bg-white { background: rgba(255, 255, 255, .07) !important; }
+.ny-dark .hy-messenger .hy-phone-head .bg-white\/80 { background: rgba(255, 255, 255, .07) !important; }
+.ny-dark .hy-messenger .hy-phone-head .border-black\/8 { border-color: rgba(255, 215, 120, .18) !important; }
+.ny-dark .hy-messenger .hy-phone-head .text-black\/55 { color: rgba(234, 242, 255, .6) !important; }
+
+/* ---------- Настройки на телефоне ---------- */
+
+.hy-messenger .modern-phone-settings {
+  background:
+    radial-gradient(820px 460px at 100% -12%, rgba(198, 40, 40, .1), transparent 60%),
+    radial-gradient(700px 420px at 0% 108%, rgba(46, 125, 50, .1), transparent 58%),
+    linear-gradient(180deg, #fffefb 0%, #fff8ef 55%, #fff3e2 100%) !important;
+}
+.ny-dark .hy-messenger .modern-phone-settings {
+  background:
+    radial-gradient(760px 460px at 12% -6%, rgba(46, 125, 50, .2), transparent 60%),
+    radial-gradient(700px 420px at 92% 104%, rgba(198, 40, 40, .16), transparent 60%),
+    linear-gradient(180deg, #080d18 0%, #0a1120 52%, #070b14 100%) !important;
+  color: #eaf2ff !important;
+}
+.ny-dark .hy-messenger .modern-phone-settings > div:first-child {
+  background: rgba(9, 14, 26, .9) !important;
+  border-bottom-color: rgba(255, 215, 120, .16) !important;
+}
+.ny-dark .hy-messenger .modern-phone-settings .text-ink { color: #eaf2ff !important; }
+.ny-dark .hy-messenger .modern-phone-settings .text-black\/50,
+.ny-dark .hy-messenger .modern-phone-settings .text-black\/45,
+.ny-dark .hy-messenger .modern-phone-settings .text-black\/40 { color: rgba(234, 242, 255, .58) !important; }
+.ny-dark .hy-messenger .modern-phone-settings .text-black\/35 { color: rgba(234, 242, 255, .42) !important; }
+.ny-dark .hy-messenger .modern-phone-settings .bg-white,
+.ny-dark .hy-messenger .modern-phone-settings .bg-white\/75,
+.ny-dark .hy-messenger .modern-phone-settings .bg-white\/70,
+.ny-dark .hy-messenger .modern-phone-settings .bg-white\/60 { background-color: rgba(255, 255, 255, .06) !important; }
+.ny-dark .hy-messenger .modern-phone-settings .bg-black\/\[0\.04\],
+.ny-dark .hy-messenger .modern-phone-settings .bg-black\/\[0\.03\] { background-color: rgba(255, 255, 255, .07) !important; }
+.ny-dark .hy-messenger .modern-phone-settings .border-black\/6,
+.ny-dark .hy-messenger .modern-phone-settings .border-black\/8,
+.ny-dark .hy-messenger .modern-phone-settings .border-black\/10 { border-color: rgba(255, 215, 120, .14) !important; }
+.ny-dark .hy-messenger .modern-phone-settings .bg-paper { background: rgba(255, 255, 255, .04) !important; }
+.ny-dark .hy-messenger .modern-phone-settings .bg-ink { background: #2e7d32 !important; }
+.ny-dark .hy-messenger .modern-phone-settings .text-accent { color: #7ee2a8 !important; }
+.ny-dark .hy-messenger .modern-phone-settings input,
+.ny-dark .hy-messenger .modern-phone-settings textarea {
+  background: rgba(255, 255, 255, .06) !important;
+  border-color: rgba(255, 215, 120, .18) !important;
+  color: #eaf2ff !important;
+}
+.ny-dark .hy-messenger .modern-phone-settings input::placeholder,
+.ny-dark .hy-messenger .modern-phone-settings textarea::placeholder { color: rgba(234, 242, 255, .35) !important; }
+.ny-dark .hy-messenger .modern-phone-settings .hover\:bg-white:hover { background: rgba(255, 255, 255, .1) !important; }
+.ny-dark .hy-messenger .modern-phone-settings .hover\:bg-black\/5:hover { background: rgba(255, 255, 255, .08) !important; }
+
 @media (prefers-reduced-motion: reduce) {
   .hy-garland-bulb,
   .hy-garland-halo,
+  .hy-garland-spark,
   .hy-snowflake,
   .hy-hanging-item,
   .hy-melody-eq i,

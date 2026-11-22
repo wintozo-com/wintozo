@@ -18,6 +18,7 @@ import {
   HappyYearGifts,
   HappyYearHangingOrnaments,
   HappyYearMelody,
+  HappyYearThemeToggle,
   HappyYearSnow,
   HappyYearTree,
 } from "../HappyYearDecor";
@@ -86,6 +87,7 @@ export default function OobeUpdate7({ winPro, onFinish, variant = "you" }: Props
       <HappyYearTree className="ny7-tree" />
       <HappyYearGifts className="ny7-gifts" />
       <HappyYearMelody className="ny7-melody" />
+      <HappyYearThemeToggle className="ny7-theme" />
 
       <header className="ny7-topbar">
         <div className="ny7-brand">

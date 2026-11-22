@@ -23,6 +23,8 @@ import { ANIMATIONS, getAnimationId, saveAnimationId } from "../../../../lib/ani
 import { getBootStyle, saveBootStyle, type BootStyle } from "../../../../lib/bootAnimation";
 import BootStylePicker from "../../../BootStylePicker";
 import YouShapePicker from "../../../YouShapePicker";
+import NyThemePicker from "../../../NyThemePicker";
+import { HappyYearGarland } from "../../../HappyYearDecor";
 import {
   APP_VERSION,
   DOWNLOAD_URL,
@@ -380,10 +382,11 @@ export default function SettingsModal({
             : "modern-modal rounded-t-[30px] bg-white/95 sm:rounded-[32px]"
         )}
       >
+        <HappyYearGarland className="hy-modal-garland" bulbs={18} />
         {/* Шапка */}
         <div
           className={cn(
-            "flex shrink-0 items-center justify-between border-b px-5 py-4 sm:px-8 sm:pt-7 sm:pb-4",
+            "relative z-10 flex shrink-0 items-center justify-between border-b px-5 py-4 sm:px-8 sm:pt-7 sm:pb-4",
             you
               ? "border-[var(--you-outline-variant)] sm:border-0 sm:pb-0"
               : "border-black/5 bg-gradient-to-r from-white to-accent-soft/25"
@@ -428,7 +431,7 @@ export default function SettingsModal({
         {/* Вкладки — новая навигация */}
         <div
           className={cn(
-            "shrink-0 px-4 py-3 sm:px-8",
+            "relative z-10 shrink-0 px-4 py-3 sm:px-8",
             you
               ? "border-b border-[var(--you-outline-variant)]"
               : "border-b border-black/5 bg-gradient-to-b from-white/90 to-white/40"
@@ -480,7 +483,7 @@ export default function SettingsModal({
         <div
           ref={scrollRef}
           className={cn(
-            "min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:px-7 sm:pt-5 sm:pb-8",
+            "relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:px-7 sm:pt-5 sm:pb-8",
             you ? "text-[var(--you-on-surface)]" : "bg-gradient-to-b from-transparent via-transparent to-black/[0.01]"
           )}
         >
@@ -600,6 +603,7 @@ export default function SettingsModal({
 
           {/* ===== Кастомизация ===== */}
           <div className={showTab("customization")}>
+            <NyThemePicker className="mb-6" />
             <div>
               <span className={cn("mb-3 flex items-center gap-2 text-[12px] font-bold", you ? "text-[var(--you-on-surface-variant)]" : "text-black/45")}>
                 <Palette className="h-3.5 w-3.5" />
