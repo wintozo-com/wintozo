@@ -561,6 +561,46 @@
   font-size: 7px;
 }
 
+/* Компактная строка отсчёта для телефона */
+.hy-countdown--inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(184, 134, 11, .24);
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 1px 0 #fff;
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--hy-ink);
+  backdrop-filter: blur(8px);
+}
+.hy-countdown-inline-label {
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--hy-green);
+}
+.hy-countdown-inline-value { color: rgba(31, 42, 36, .62); }
+.hy-countdown-inline-value strong { font-size: 13px; color: var(--hy-red); }
+.hy-countdown-inline-clock {
+  font-variant-numeric: tabular-nums;
+  color: var(--hy-red);
+  letter-spacing: .04em;
+}
+.hy-countdown-inline-finished { color: var(--hy-red); font-size: 11px; }
+.ny-dark .hy-countdown--inline {
+  background: rgba(255, 255, 255, .07);
+  border-color: rgba(255, 215, 120, .3);
+  box-shadow: 0 0 18px -6px rgba(255, 206, 84, .45), inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+.ny-dark .hy-countdown-inline-label { color: #7ee2a8; }
+.ny-dark .hy-countdown-inline-value { color: rgba(234, 242, 255, .68); }
+.ny-dark .hy-countdown-inline-value strong,
+.ny-dark .hy-countdown-inline-clock { color: #ffd479; }
+
 @keyframes hy-tick {
   from {
     transform: translateY(-4px) scale(0.94);
@@ -670,6 +710,84 @@
     height: 15px;
   }
 }
+
+/* ---------- Карточка новогодней музыки в Настройках ---------- */
+
+.ny-music-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid rgba(184, 134, 11, 0.22);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #ffffff, #fff8ef);
+  box-shadow: 0 14px 30px -26px rgba(80, 50, 10, 0.45), inset 0 1px 0 #fff;
+}
+.ny-music-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  color: #fff;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.8) 0 10%, transparent 34%),
+    radial-gradient(circle at 70% 78%, rgba(0, 0, 0, 0.18), transparent 55%),
+    linear-gradient(145deg, #c62828, #8e1b1b);
+  box-shadow: inset -4px -6px 10px rgba(0, 0, 0, 0.2);
+}
+.ny-music-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+.ny-music-copy b {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--hy-ink);
+}
+.ny-music-copy small {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: rgba(31, 42, 36, 0.5);
+}
+
+/* Компактная кнопка мелодии — обычная кнопка внутри карточки, не плавающая. */
+.hy-melody--compact {
+  position: static !important;
+  height: 40px;
+  padding: 0 14px 0 5px;
+  gap: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 10px 22px -18px rgba(60, 40, 10, 0.45), inset 0 1px 0 #fff;
+  cursor: pointer;
+}
+.hy-melody--compact:hover { transform: translateY(-1px); }
+.hy-melody--compact .hy-melody-badge { width: 30px; height: 30px; }
+.hy-melody--compact .hy-melody-badge svg { width: 15px; height: 15px; }
+.hy-melody--compact .hy-melody-text {
+  font-size: 11.5px;
+  max-width: 84px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ny-dark .ny-music-card {
+  background: linear-gradient(180deg, rgba(18, 27, 44, 0.92), rgba(11, 17, 30, 0.9));
+  border-color: rgba(255, 215, 120, 0.22);
+  box-shadow: 0 16px 34px -26px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.ny-dark .ny-music-copy b { color: #eaf2ff; }
+.ny-dark .ny-music-copy small { color: rgba(234, 242, 255, 0.5); }
+.ny-dark .hy-melody--compact {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 215, 120, 0.3);
+}
+.ny-dark .hy-melody--compact .hy-melody-text { color: #ffd479; }
 
 @media (max-width: 640px) {
   .hy-melody {
@@ -1138,6 +1256,9 @@
   .hy-backdrop-tree--r1 { width: 130px; height: 168px; right:-20px; }
   .hy-backdrop-gifts { width: 170px; opacity: .35; }
   .hy-easter-egg { opacity: .12; }
+  .hy-braided { height: 60px; }
+  .hy-mini-trees { height: 36px; }
+  .hy-mini-tree { opacity: 0.18; }
 }
 
 /* ---------- Переключатель классической тёмной темы ---------- */
@@ -1646,7 +1767,9 @@ html.ny-dark body { background: #070b14; }
 .ny-dark .modern-modal .text-black\/35 { color: rgba(234, 242, 255, .42) !important; }
 .ny-dark .modern-modal .bg-white,
 .ny-dark .modern-modal .bg-white\/70,
-.ny-dark .modern-modal .bg-white\/60 { background-color: rgba(255, 255, 255, .06) !important; }
+.ny-dark .modern-modal .bg-white\/60,
+.ny-dark .modern-modal .bg-white\/95 { background-color: rgba(255, 255, 255, .06) !important; }
+.ny-dark .modern-modal { background: rgba(12, 18, 32, .95) !important; }
 .ny-dark .modern-modal .bg-paper { background: rgba(255, 255, 255, .04) !important; }
 .ny-dark .modern-modal .border-black\/10,
 .ny-dark .modern-modal .border-black\/8,
@@ -1656,11 +1779,50 @@ html.ny-dark body { background: #070b14; }
 .ny-dark .modern-modal textarea,
 .ny-dark .modern-modal select {
   background: rgba(255, 255, 255, .06) !important;
+  background-color: rgba(255, 255, 255, .06) !important;
   border-color: rgba(255, 215, 120, .18) !important;
   color: #eaf2ff !important;
 }
 .ny-dark .modern-modal input::placeholder,
 .ny-dark .modern-modal textarea::placeholder { color: rgba(234, 242, 255, .35) !important; }
+
+/* Поле никнейма в настройках: гарантированно читаемый текст в обеих темах. */
+.ny-nickname-input {
+  background: #ffffff;
+  color: #1d2a24;
+  border-color: rgba(0, 0, 0, 0.1);
+}
+.ny-dark .ny-nickname-input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #eaf2ff !important;
+  border-color: rgba(255, 215, 120, 0.18) !important;
+}
+[data-you-scheme="dark"] .ny-nickname-input {
+  background: var(--you-surface-highest);
+  color: var(--you-on-surface);
+  border-color: var(--you-outline-variant);
+}
+.ny-nickname-input::placeholder { color: rgba(31, 42, 36, 0.35); }
+.ny-dark .ny-nickname-input::placeholder { color: rgba(234, 242, 255, 0.35) !important; }
+[data-you-scheme="dark"] .ny-nickname-input::placeholder { color: var(--you-on-surface-variant); }
+
+/* Поле никнейма в настройках — всегда читаемый текст. */
+.modern-modal input[type="text"],
+.modern-modal textarea {
+  color: var(--hy-ink) !important;
+}
+.modern-modal input[type="text"]::placeholder,
+.modern-modal textarea::placeholder {
+  color: rgba(31, 42, 36, 0.35) !important;
+}
+/* Тёмная тема: поле никнейма — светлый текст. */
+html.ny-dark .modern-modal input[type="text"],
+html.ny-dark .modern-modal textarea {
+  background: rgba(255, 255, 255, .06) !important;
+  color: #eaf2ff !important;
+}
+html.ny-dark .modern-modal input[type="text"]::placeholder,
+html.ny-dark .modern-modal textarea::placeholder { color: rgba(234, 242, 255, .35) !important; }
 .ny-dark .modern-modal .ny-theme-picker-label { color: rgba(234, 242, 255, .55); }
 
 /* Шапка настроек, вкладки и поиск — не белым по белому */
@@ -1725,6 +1887,77 @@ html.ny-dark body { background: #070b14; }
 .ny-dark .hy-modal-garland { opacity: .75; filter: drop-shadow(0 0 10px rgba(255, 214, 110, .5)); }
 
 /* ---------- Док-бар телефона (никнейм + плюс) ---------- */
+
+.hy-messenger .hy-phone-head {
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba(198, 40, 40, .06), transparent 52%),
+    linear-gradient(180deg, rgba(255, 252, 247, .96), rgba(255, 247, 236, .9)) !important;
+}
+.hy-phone-hero {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border: 1px solid rgba(184, 134, 11, .2);
+  border-radius: 22px;
+  background:
+    radial-gradient(120% 120% at 100% 0%, rgba(46, 125, 50, .08), transparent 55%),
+    linear-gradient(180deg, #ffffff, #fff7ea);
+  box-shadow: 0 16px 34px -26px rgba(80, 50, 10, .5), inset 0 1px 0 #fff;
+}
+.hy-phone-logo { box-shadow: 0 8px 18px -10px rgba(80, 50, 10, .45); }
+.hy-phone-kicker {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--hy-green);
+}
+.hy-phone-title { margin-top: 2px; }
+.hy-phone-dialogs { white-space: nowrap; }
+.ny-dark .hy-messenger .hy-phone-head {
+  background: linear-gradient(180deg, rgba(9, 14, 26, .96), rgba(8, 12, 22, .9)) !important;
+}
+.ny-dark .hy-messenger .hy-phone-hero {
+  background:
+    radial-gradient(120% 120% at 100% 0%, rgba(255, 206, 84, .1), transparent 55%),
+    linear-gradient(180deg, rgba(18, 27, 44, .96), rgba(11, 17, 30, .94));
+  border-color: rgba(255, 215, 120, .24);
+  box-shadow: 0 18px 40px -26px rgba(0, 0, 0, .95), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+.ny-dark .hy-messenger .hy-phone-kicker { color: #7ee2a8; }
+.ny-dark .hy-messenger .hy-phone-title { color: #f1f6ff !important; }
+.ny-dark .hy-messenger .hy-phone-dialogs { color: rgba(234, 242, 255, .5) !important; }
+
+.hy-phone-search input {
+  background: linear-gradient(180deg, #ffffff, #fff9f0) !important;
+  border-color: rgba(184, 134, 11, .22) !important;
+  box-shadow: 0 12px 26px -24px rgba(80, 50, 10, .55), inset 0 1px 0 #fff !important;
+}
+.hy-phone-search svg { color: rgba(184, 134, 11, .6) !important; }
+.hy-phone-filters button[aria-selected="true"] {
+  background: linear-gradient(135deg, #c62828, #8e1b1b) !important;
+  color: #fff !important;
+  box-shadow: 0 10px 22px -14px rgba(198, 40, 40, .65) !important;
+}
+.ny-dark .hy-messenger .hy-phone-search input {
+  background: rgba(255, 255, 255, .06) !important;
+  border-color: rgba(255, 215, 120, .22) !important;
+  color: #eaf2ff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+}
+.ny-dark .hy-messenger .hy-phone-search input::placeholder { color: rgba(234, 242, 255, .38) !important; }
+.ny-dark .hy-messenger .hy-phone-search svg { color: rgba(255, 212, 121, .65) !important; }
+.ny-dark .hy-messenger .hy-phone-filters button {
+  background: rgba(255, 255, 255, .05) !important;
+  color: rgba(234, 242, 255, .6) !important;
+  --tw-ring-color: rgba(255, 215, 120, .14) !important;
+}
+.ny-dark .hy-messenger .hy-phone-filters button[aria-selected="true"] {
+  background: linear-gradient(135deg, #2e7d32, #1b5e20) !important;
+  color: #f2fff5 !important;
+  box-shadow: 0 10px 22px -14px rgba(46, 125, 50, .7) !important;
+}
 
 .hy-phone-dock {
   background:
@@ -1794,11 +2027,16 @@ html.ny-dark body { background: #070b14; }
     linear-gradient(180deg, #080d18 0%, #0a1120 52%, #070b14 100%) !important;
   color: #eaf2ff !important;
 }
-.ny-dark .hy-messenger .modern-phone-settings > div:first-child {
+.hy-messenger .hy-phone-settings-head {
+  background:
+    radial-gradient(circle at 6% 0%, rgba(198, 40, 40, .07), transparent 46%),
+    linear-gradient(180deg, rgba(255, 255, 255, .93), rgba(255, 249, 240, .88)) !important;
+  border-bottom-color: rgba(184, 134, 11, .18) !important;
+}
+.ny-dark .hy-messenger .modern-phone-settings .hy-phone-settings-head {
   background: rgba(9, 14, 26, .9) !important;
   border-bottom-color: rgba(255, 215, 120, .16) !important;
-}
-.ny-dark .hy-messenger .modern-phone-settings .text-ink { color: #eaf2ff !important; }
+}.ny-dark .hy-messenger .modern-phone-settings .text-ink { color: #eaf2ff !important; }
 .ny-dark .hy-messenger .modern-phone-settings .text-black\/50,
 .ny-dark .hy-messenger .modern-phone-settings .text-black\/45,
 .ny-dark .hy-messenger .modern-phone-settings .text-black\/40 { color: rgba(234, 242, 255, .58) !important; }
@@ -1826,6 +2064,472 @@ html.ny-dark body { background: #070b14; }
 .ny-dark .hy-messenger .modern-phone-settings .hover\:bg-white:hover { background: rgba(255, 255, 255, .1) !important; }
 .ny-dark .hy-messenger .modern-phone-settings .hover\:bg-black\/5:hover { background: rgba(255, 255, 255, .08) !important; }
 
+/* ---------- Двухрядная гирлянда-косичка (мобильная) ---------- */
+
+.hy-braided {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 72px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.hy-braided-wire {
+  fill: none;
+  stroke: #2e7d32;
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.6;
+}
+.hy-braided-wire--top { stroke: #388e3c; }
+.hy-braided-wire--bot { stroke: #2e7d32; }
+
+.hy-braided-bulb {
+  animation: hy-braided-twinkle 2.4s ease-in-out infinite;
+}
+.hy-braided-halo {
+  fill: currentColor;
+  opacity: 0;
+  filter: blur(4px);
+  animation: hy-halo 2.4s ease-in-out infinite;
+}
+.hy-braided-shine {
+  fill: rgba(255, 255, 255, 0.8);
+}
+.hy-braided-weave {
+  fill: none;
+  stroke: rgba(46, 125, 50, 0.35);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 3;
+}
+
+@keyframes hy-braided-twinkle {
+  0%, 100% { opacity: 0.6; filter: drop-shadow(0 0 2px currentColor); }
+  50% { opacity: 1; filter: drop-shadow(0 0 8px currentColor); }
+}
+
+/* ---------- Снежинки-балерины ---------- */
+
+.hy-dancers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.hy-dancer {
+  position: absolute;
+  top: -20px;
+  animation-name: hy-dance;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  filter: drop-shadow(0 0 4px rgba(169, 211, 236, 0.3));
+}
+
+@keyframes hy-dance {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  5% { opacity: 0.85; }
+  90% { opacity: 0.85; }
+  100% {
+    transform: translate3d(-40px, 110vh, 0) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ---------- Снеговик-пасхалка ---------- */
+
+.hy-snowman {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 3;
+  transition: transform 0.2s ease;
+  animation: hy-snowman-bounce 3s ease-in-out infinite;
+}
+
+.hy-snowman:hover {
+  transform: scale(1.12) rotate(-4deg);
+}
+.hy-snowman:active {
+  transform: scale(0.94);
+}
+
+@keyframes hy-snowman-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-4px) rotate(1.5deg); }
+  75% { transform: translateY(-2px) rotate(-1deg); }
+}
+
+/* ---------- Падающие звёзды ---------- */
+
+.hy-shooting {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.hy-shooting-star {
+  position: absolute;
+  opacity: 0;
+  animation-name: hy-shoot;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes hy-shoot {
+  0%, 78% {
+    opacity: 0;
+    transform: translate(0, 0) rotate(45deg) scale(0.5);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(45deg) scale(1);
+  }
+  88% {
+    opacity: 1;
+    transform: translate(120px, 120px) rotate(45deg) scale(1.1);
+  }
+  92%, 100% {
+    opacity: 0;
+    transform: translate(200px, 200px) rotate(45deg) scale(0.3);
+  }
+}
+
+/* ---------- Секретный шарик ---------- */
+
+.hy-secret-trigger {
+  position: fixed;
+  bottom: 60px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  z-index: 100;
+}
+
+.hy-secret-dot {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 6px rgba(255, 215, 0, 0.6);
+  animation: hy-secret-pulse 3s ease-in-out infinite;
+}
+
+@keyframes hy-secret-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.4); }
+}
+
+.hy-secret-reveal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  animation: hy-secret-pop 0.4s ease-out;
+  pointer-events: none;
+}
+
+.hy-secret-reveal svg circle[fill] {
+  animation: hy-secret-rotate 2s linear infinite;
+}
+
+@keyframes hy-secret-pop {
+  from { transform: translate(-50%, -50%) scale(0.4); opacity: 0; }
+  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes hy-secret-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.hy-secret-count {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #f6b93b;
+  margin-top: 4px;
+  animation: hy-secret-fade 4s ease-out forwards;
+}
+
+@keyframes hy-secret-fade {
+  0%, 60% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* ---------- Мини-ёлочки ---------- */
+
+.hy-mini-trees {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.hy-mini-tree {
+  position: absolute;
+  bottom: 0;
+  opacity: 0.25;
+  animation: hy-mini-sway 5s ease-in-out infinite alternate;
+}
+
+@keyframes hy-mini-sway {
+  from { transform: rotate(-2deg); }
+  to { transform: rotate(2deg); }
+}
+
+/* ---------- Телефон: боковые мобильные гирлянды ---------- */
+
+@media (max-width: 640px) {
+  .hy-mobile-garland-left {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 18px;
+    z-index: 2;
+    pointer-events: none;
+    overflow: visible;
+  }
+  .hy-mobile-garland-left::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0 20px,
+      #e53935 20px 28px,
+      transparent 28px 48px,
+      #ffca28 48px 56px,
+      transparent 56px 76px,
+      #43a047 76px 84px,
+      transparent 84px 104px,
+      #1e88e5 104px 112px,
+      transparent 112px 132px,
+      #ab47bc 132px 140px,
+      transparent 140px 160px
+    );
+    mask-image: radial-gradient(circle at 50% 50%, black 60%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, black 60%, transparent 70%);
+    mask-size: 16px 16px;
+    -webkit-mask-size: 16px 16px;
+    mask-repeat: repeat-y;
+    -webkit-mask-repeat: repeat-y;
+    animation: hy-side-glow 3s ease-in-out infinite;
+  }
+  .hy-mobile-garland-right {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 18px;
+    z-index: 2;
+    pointer-events: none;
+  }
+  .hy-mobile-garland-right::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      180deg,
+      transparent 0 20px,
+      #ab47bc 20px 28px,
+      transparent 28px 48px,
+      #1e88e5 48px 56px,
+      transparent 56px 76px,
+      #43a047 76px 84px,
+      transparent 84px 104px,
+      #ffca28 104px 112px,
+      transparent 112px 132px,
+      #e53935 132px 140px,
+      transparent 140px 160px
+    );
+    mask-image: radial-gradient(circle at 50% 50%, black 60%, transparent 70%);
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, black 60%, transparent 70%);
+    mask-size: 16px 16px;
+    -webkit-mask-size: 16px 16px;
+    mask-repeat: repeat-y;
+    -webkit-mask-repeat: repeat-y;
+    animation: hy-side-glow 3s ease-in-out 1.5s infinite;
+  }
+  @keyframes hy-side-glow {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.9; }
+  }
+}
+
+/* ---------- Пузыри сообщений в новогоднем стиле ---------- */
+
+.hy-messenger .hy-chat .modern-bubble-own {
+  background: linear-gradient(135deg, #2e7d32, #1b5e20) !important;
+  color: #f2fff5 !important;
+  border-color: rgba(255, 215, 120, .4) !important;
+  box-shadow:
+    0 16px 34px -22px rgba(46, 125, 50, .7),
+    inset 0 1px 0 rgba(255, 255, 255, .16) !important;
+}
+.hy-messenger .hy-chat .modern-bubble-other {
+  background: linear-gradient(180deg, #ffffff, #fffaf2) !important;
+  color: var(--hy-ink) !important;
+  border-color: rgba(184, 134, 11, .2) !important;
+  box-shadow:
+    0 14px 30px -24px rgba(80, 50, 10, .4),
+    inset 0 1px 0 #fff !important;
+}
+.hy-messenger .hy-chat .modern-date-chip {
+  background: rgba(255, 255, 255, .78) !important;
+  border-color: rgba(184, 134, 11, .22) !important;
+  color: rgba(31, 42, 36, .55) !important;
+  box-shadow: 0 8px 18px -16px rgba(80, 50, 10, .5) !important;
+}
+.ny-dark .hy-messenger .hy-chat .modern-bubble-own {
+  background: linear-gradient(135deg, #2e7d32, #0f3f27) !important;
+  color: #f2fff5 !important;
+  border-color: rgba(120, 255, 170, .28) !important;
+  box-shadow:
+    0 16px 38px -20px rgba(46, 125, 50, .6),
+    inset 0 1px 0 rgba(255, 255, 255, .12) !important;
+}
+.ny-dark .hy-messenger .hy-chat .modern-bubble-other {
+  background: #121b2c !important;
+  color: #eaf2ff !important;
+  border-color: rgba(255, 215, 120, .14) !important;
+  box-shadow:
+    0 14px 32px -22px rgba(0, 0, 0, .9),
+    inset 0 1px 0 rgba(255, 255, 255, .05) !important;
+}
+.ny-dark .hy-messenger .hy-chat .modern-date-chip {
+  background: rgba(255, 215, 120, .1) !important;
+  border-color: rgba(255, 215, 120, .2) !important;
+  color: #ffdf9b !important;
+}
+
+/* ---------- Телефон: шапка чата, лента, композер ---------- */
+
+@media (max-width: 640px) {
+  .hy-chat header {
+    gap: 7px;
+    padding: 8px 10px;
+    background: linear-gradient(180deg, rgba(255, 253, 249, .97), rgba(255, 247, 236, .92)) !important;
+    border-bottom-color: rgba(184, 134, 11, .2) !important;
+    box-shadow: 0 8px 22px -20px rgba(80, 50, 10, .5) !important;
+  }
+  .hy-chat header > button:first-of-type {
+    background: rgba(184, 134, 11, .1) !important;
+    color: var(--hy-ink) !important;
+  }
+  .hy-chat header .flex.items-center.gap-1 {
+    border-radius: 16px !important;
+    background: rgba(255, 255, 255, .72) !important;
+    border-color: rgba(184, 134, 11, .18) !important;
+  }
+  .hy-chat .modern-feed {
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-top: 18px;
+    padding-bottom: 18px;
+    background:
+      radial-gradient(420px 320px at 100% 0%, rgba(198, 40, 40, .07), transparent 62%),
+      radial-gradient(380px 300px at 0% 100%, rgba(46, 125, 50, .07), transparent 60%),
+      linear-gradient(180deg, #fffdf8 0%, #fff8ef 100%) !important;
+  }
+  .hy-messenger .hy-chat .modern-bubble-own,
+  .hy-messenger .hy-chat .modern-bubble-other { border-radius: 20px !important; }
+  .hy-chat .modern-date-chip {
+    font-size: 10px !important;
+    padding: 4px 10px !important;
+  }
+  .hy-chat footer,
+  .hy-chat .sticky.bottom-0 {
+    padding-bottom: max(6px, env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  /* Список чатов на телефоне */
+  .hy-messenger .modern-chat-row {
+    border-radius: 20px !important;
+    background: rgba(255, 255, 255, .6) !important;
+    border-color: rgba(184, 134, 11, .1) !important;
+    box-shadow: 0 10px 24px -26px rgba(80, 50, 10, .5) !important;
+  }
+  .hy-messenger .modern-chat-row.is-active {
+    background: linear-gradient(135deg, rgba(198, 40, 40, .1), rgba(255, 255, 255, .98)) !important;
+    border-color: rgba(198, 40, 40, .24) !important;
+    box-shadow: 0 16px 34px -22px rgba(198, 40, 40, .4) !important;
+  }
+  .hy-messenger .modern-chat-row.is-active::after {
+    content: "";
+    position: absolute;
+    top: 16px;
+    bottom: 16px;
+    right: 6px;
+    width: 4px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, #f0c250, #c62828);
+    box-shadow: 0 0 10px rgba(255, 206, 84, .7);
+  }
+  .hy-messenger .modern-chat-row .bg-black\/\[0\.05\] {
+    background: rgba(184, 134, 11, .14) !important;
+    color: rgba(120, 80, 10, .8) !important;
+  }
+  .ny-dark .hy-messenger .modern-chat-row {
+    background: rgba(255, 255, 255, .035) !important;
+    border-color: rgba(255, 215, 120, .1) !important;
+    box-shadow: 0 12px 26px -26px rgba(0, 0, 0, .9) !important;
+  }
+  .ny-dark .hy-messenger .modern-chat-row.is-active {
+    background: linear-gradient(135deg, rgba(198, 40, 40, .24), rgba(18, 27, 44, .97)) !important;
+    border-color: rgba(255, 215, 120, .3) !important;
+    box-shadow: 0 16px 38px -22px rgba(255, 206, 84, .35) !important;
+  }
+  .ny-dark .hy-messenger .modern-chat-row .bg-black\/\[0\.05\] {
+    background: rgba(255, 215, 120, .14) !important;
+    color: #ffd479 !important;
+  }
+
+  .ny-dark .hy-chat header {
+    background: linear-gradient(180deg, rgba(9, 14, 26, .97), rgba(8, 12, 22, .92)) !important;
+    border-bottom-color: rgba(255, 215, 120, .18) !important;
+    box-shadow: 0 10px 26px -22px rgba(0, 0, 0, .9) !important;
+  }
+  .ny-dark .hy-chat header > button:first-of-type {
+    background: rgba(255, 215, 120, .12) !important;
+    color: #ffd479 !important;
+  }
+  .ny-dark .hy-chat header .flex.items-center.gap-1 {
+    background: rgba(255, 255, 255, .05) !important;
+    border-color: rgba(255, 215, 120, .2) !important;
+  }
+  .ny-dark .hy-chat .modern-feed {
+    background:
+      radial-gradient(420px 320px at 100% 0%, rgba(198, 40, 40, .14), transparent 62%),
+      radial-gradient(380px 300px at 0% 100%, rgba(46, 125, 50, .14), transparent 60%),
+      linear-gradient(180deg, #0a1120 0%, #080d18 100%) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .hy-garland-bulb,
   .hy-garland-halo,
@@ -1834,7 +2538,13 @@ html.ny-dark body { background: #070b14; }
   .hy-hanging-item,
   .hy-melody-eq i,
   .hy-backdrop-star,
-  .hy-easter-egg {
+  .hy-easter-egg,
+  .hy-braided-bulb,
+  .hy-dancer,
+  .hy-snowman,
+  .hy-shooting-star,
+  .hy-secret-dot,
+  .hy-mini-tree {
     animation: none !important;
   }
 }

@@ -9,7 +9,7 @@ import {
 import { directKey, uuid } from "../../../lib/utils";
 import Sidebar from "./modern/ModernSidebar";
 import HappyYearChatView from "../../HappyYearChatView";
-import { HappyYearBackdrop, HappyYearMelody, HappyYearThemeToggle } from "../../HappyYearDecor";
+import { HappyYearBackdrop } from "../../HappyYearDecor";
 import SettingsModal from "./modern/ModernSettingsModal";
 import ChatInfoModal from "./modern/ModernChatInfoModal";
 import AndroidSettings from "./modern/ModernAndroidSettings";
@@ -590,14 +590,6 @@ export default function Messenger({
       ) : (
         <>
           <HappyYearBackdrop className="hy-shell-backdrop fixed" dense easterEggs />
-          <HappyYearMelody
-            className="hy-shell-melody fixed"
-            track="bg"
-            volume={0.16}
-            storageKey="winchat_bg_new_year_music"
-            label="Фоновая музыка"
-          />
-          <HappyYearThemeToggle className="hy-shell-theme fixed" />
         </>
       )}
 

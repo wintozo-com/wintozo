@@ -15,7 +15,7 @@ import Crown from "../../../Crown";
 import Verified from "../../../Verified";
 import { getChatThemeColors } from "../../../../lib/themes";
 import { cn } from "../../../../utils/cn";
-import { HappyYearGarland, HappyYearLoader } from "../../../HappyYearDecor";
+import { HappyYearCountdown, HappyYearGarland, HappyYearLoader } from "../../../HappyYearDecor";
 
 interface Props {
   me: Profile;
@@ -415,24 +415,28 @@ export default function Sidebar({
       {/* Колонка со списком чатов */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Верхняя панель на телефоне */}
-        <div className="hy-phone-head relative z-10 px-3 pt-4 pb-3 sm:px-4 sm:pt-5 md:hidden">
-        <div className="flex items-center gap-2.5">
+        <div className="hy-phone-head relative z-10 px-3 pt-[max(0.75rem,env(safe-area-inset-top,0px))] pb-3 sm:px-4 sm:pt-5 md:hidden">
+        <div className="hy-phone-hero">
           <button
             type="button"
             onClick={onLogoTap}
-            className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-[18px] bg-white shadow-md ring-1 ring-black/5 transition active:scale-95"
+            className="hy-phone-logo flex h-12 w-12 items-center justify-center overflow-hidden rounded-[18px] bg-white shadow-md ring-1 ring-black/5 transition active:scale-95"
             aria-label="WinChat"
           >
             <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
           </button>
           <div className="min-w-0 flex-1">
-            <p className="text-[18px] font-extrabold tracking-tight text-ink leading-none sm:text-[20px]">WinChat</p>
-            <p className="mt-1 text-[11px] font-semibold text-black/40">{chats.length} диалогов</p>
+            <p className="hy-phone-kicker">С наступающим · 2027</p>
+            <p className="hy-phone-title text-[20px] font-extrabold tracking-tight text-ink leading-none">WinChat</p>
+            <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+              <HappyYearCountdown inline />
+              <span className="hy-phone-dialogs text-[11px] font-semibold text-black/40">{chats.length} диалогов</span>
+            </div>
           </div>
           {isAdmin && (
             <button
               onClick={onOpenTerminal}
-              className="modern-icon-btn flex h-10 w-10 items-center justify-center rounded-2xl border border-emerald-200/70 bg-emerald-50/80 text-emerald-700 hover:bg-emerald-50"
+              className="modern-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-emerald-200/70 bg-emerald-50/80 text-emerald-700 hover:bg-emerald-50"
               aria-label="Admin Terminal"
               title="Admin Terminal"
             >
@@ -441,7 +445,7 @@ export default function Sidebar({
           )}
           <button
             onClick={onOpenSettings}
-            className="modern-icon-btn flex h-10 w-10 items-center justify-center rounded-2xl border border-black/8 bg-white/80 text-black/55 hover:bg-white hover:text-ink"
+            className="modern-icon-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-black/8 bg-white/80 text-black/55 hover:bg-white hover:text-ink"
             aria-label="Настройки"
             title="Настройки"
           >
@@ -449,7 +453,7 @@ export default function Sidebar({
           </button>
         </div>
 
-        <div className="relative mt-3">
+        <div className="hy-phone-search relative mt-3">
           <Search className="pointer-events-none absolute top-1/2 left-4 h-4.5 w-4.5 -translate-y-1/2 text-black/35" />
           <input
             value={query}
@@ -469,7 +473,7 @@ export default function Sidebar({
         </div>
 
         {!searchMode && (
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist" aria-label="Фильтр чатов">
+          <div className="hy-phone-filters mt-3 flex gap-2 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" role="tablist" aria-label="Фильтр чатов">
             {FILTERS.map((item) => (
               <button
                 key={item.id}

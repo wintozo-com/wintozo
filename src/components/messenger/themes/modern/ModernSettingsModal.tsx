@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Bug, Camera, Check, CircleAlert, History, Info, Loader2, Lock, LogOut, Palette, RefreshCw, Settings2, Sparkles, ShieldCheck, User, X } from "lucide-react";
+import { Bug, Camera, Check, CircleAlert, History, Info, Loader2, Lock, LogOut, Music2, Palette, RefreshCw, Settings2, Sparkles, ShieldCheck, User, X } from "lucide-react";
 import { isGlassGranted, isVerified, supabase, type Profile, type VerifyLevel } from "../../../../lib/supabase";
 import { filesUpload } from "../../../../lib/blobStorage";
 import { badgeCodes, BADGE_IMAGES, BADGE_LABELS } from "../../../../lib/badges";
@@ -24,7 +24,7 @@ import { getBootStyle, saveBootStyle, type BootStyle } from "../../../../lib/boo
 import BootStylePicker from "../../../BootStylePicker";
 import YouShapePicker from "../../../YouShapePicker";
 import NyThemePicker from "../../../NyThemePicker";
-import { HappyYearGarland } from "../../../HappyYearDecor";
+import { HappyYearGarland, HappyYearMelody } from "../../../HappyYearDecor";
 import {
   APP_VERSION,
   DOWNLOAD_URL,
@@ -191,7 +191,7 @@ export default function SettingsModal({
     // версией предложится снова только после следующей перезаливки.
     markOtaSeen(aboutOta);
     try {
-      const res = await installOta(aboutOta.url);
+      const res = await installOta(aboutOta.url, aboutOta.version);
       if (res.fallback) {
         setOtaBusy(false);
         setOtaState(null);
@@ -546,7 +546,7 @@ export default function SettingsModal({
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && saveProfile()}
-                  className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-[15px] font-semibold outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
+                  className="ny-nickname-input w-full rounded-2xl border border-black/10 px-4 py-3.5 text-[15px] font-semibold outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
                   placeholder="Ваш никнейм"
                 />
               </div>
@@ -561,7 +561,7 @@ export default function SettingsModal({
                   onChange={(e) => setBio(e.target.value.slice(0, 160))}
                   rows={3}
                   placeholder="Пара слов о вас — это описание увидят собеседники"
-                  className="w-full resize-none rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm font-medium outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
+                  className="w-full resize-none rounded-2xl border border-black/10 px-4 py-3.5 text-sm font-medium outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
                 />
               </div>
 
@@ -604,6 +604,25 @@ export default function SettingsModal({
           {/* ===== Кастомизация ===== */}
           <div className={showTab("customization")}>
             <NyThemePicker className="mb-6" />
+
+            {/* Новогодняя музыка — ёлочный шарик-переключатель */}
+            <div className="ny-music-card mb-6">
+              <span className="ny-music-icon" aria-hidden="true">
+                <Music2 className="h-4 w-4" />
+              </span>
+              <span className="ny-music-copy">
+                <b>Новогодняя мелодия</b>
+                <small>Тихая фоновая музыка в мессенджере</small>
+              </span>
+              <HappyYearMelody
+                compact
+                track="bg"
+                volume={0.16}
+                storageKey="winchat_bg_new_year_music"
+                label="Фоновая музыка"
+              />
+            </div>
+
             <div>
               <span className={cn("mb-3 flex items-center gap-2 text-[12px] font-bold", you ? "text-[var(--you-on-surface-variant)]" : "text-black/45")}>
                 <Palette className="h-3.5 w-3.5" />

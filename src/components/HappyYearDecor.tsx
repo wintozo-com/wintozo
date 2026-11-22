@@ -3,6 +3,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useCallback,
   type CSSProperties,
   type ReactNode,
 } from "react";
@@ -17,6 +18,7 @@ import "./happy-year.css";
    ============================================================ */
 
 const GARLAND_COLORS = ["#d32f2f", "#f6b93b", "#2e7d32", "#1976d2", "#8e24aa"];
+const NY_MOBILE_GARLAND_COLORS = ["#e53935", "#ffca28", "#43a047", "#1e88e5", "#8e24aa", "#ff7043", "#ab47bc"];
 
 /** Гирлянда с провисающей нитью и светящимися лампочками. */
 export function HappyYearGarland({
@@ -273,9 +275,11 @@ function pad(value: number): string {
 /** Отсчёт до 01.01.2027 00:00 (по местному времени устройства). */
 export function HappyYearCountdown({
   compact = false,
+  inline = false,
   className = "",
 }: {
   compact?: boolean;
+  inline?: boolean;
   className?: string;
 }) {
   const [now, setNow] = useState(() => Date.now());
@@ -291,6 +295,26 @@ export function HappyYearCountdown({
   const minutes = Math.floor((diff % 3_600_000) / 60_000);
   const seconds = Math.floor((diff % 60_000) / 1000);
   const finished = diff === 0;
+
+  if (inline) {
+    return (
+      <div className={`hy-countdown hy-countdown--inline ${className}`} role="timer" aria-live="off">
+        {finished ? (
+          <span className="hy-countdown-inline-finished">С Новым 2027 годом!</span>
+        ) : (
+          <>
+            <span className="hy-countdown-inline-label">До 2027</span>
+            <span className="hy-countdown-inline-value">
+              <strong>{days}</strong> дн
+            </span>
+            <span className="hy-countdown-inline-clock">
+              {pad(hours)}:{pad(minutes)}:{pad(seconds)}
+            </span>
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -350,12 +374,15 @@ export function HappyYearMelody({
   volume = 0.32,
   storageKey = MELODY_KEY,
   label = "Новогодняя мелодия",
+  compact = false,
 }: {
   className?: string;
   track?: keyof typeof MELODY_URLS;
   volume?: number;
   storageKey?: string;
   label?: string;
+  /** Компактный режим: только значок шарика с нотой — для настроек. */
+  compact?: boolean;
 }) {
   const [playing, setPlaying] = useState(false);
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
@@ -476,20 +503,26 @@ export function HappyYearMelody({
     <button
       ref={btnRef}
       type="button"
-      className={`hy-melody ${playing ? "is-playing" : ""} ${pos ? "is-dragged" : ""} ${className}`}
-      style={pos ? { left: pos.x, top: pos.y, right: "auto", bottom: "auto" } : undefined}
+      className={`hy-melody ${playing ? "is-playing" : ""} ${compact ? "hy-melody--compact" : ""} ${pos ? "is-dragged" : ""} ${className}`}
+      style={pos && !compact ? { left: pos.x, top: pos.y, right: "auto", bottom: "auto" } : undefined}
       onClick={toggle}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
+      onPointerDown={compact ? undefined : onPointerDown}
+      onPointerMove={compact ? undefined : onPointerMove}
+      onPointerUp={compact ? undefined : onPointerUp}
+      onPointerCancel={compact ? undefined : onPointerUp}
       aria-pressed={playing}
       aria-label={playing ? `Выключить: ${label}` : `Включить: ${label}`}
-      title={playing ? "Выключить музыку (можно перетащить)" : `${label} (можно перетащить)`}
+      title={playing ? `Выключить: ${label}` : `Включить: ${label}`}
     >
-      <span className="hy-melody-badge">{playing ? <Volume2 /> : <VolumeX />}</span>
-      <span className="hy-melody-eq" aria-hidden="true"><i /><i /><i /><i /></span>
-      <span className="hy-melody-text">{playing ? label : "Включить музыку"}</span>
+      {compact ? (
+        <span className="hy-melody-badge">{playing ? <Volume2 /> : <VolumeX />}</span>
+      ) : (
+        <>
+          <span className="hy-melody-badge">{playing ? <Volume2 /> : <VolumeX />}</span>
+          <span className="hy-melody-eq" aria-hidden="true"><i /><i /><i /><i /></span>
+          <span className="hy-melody-text">{playing ? label : "Включить музыку"}</span>
+        </>
+      )}
     </button>
   );
 }
@@ -562,6 +595,319 @@ export function HappyYearLoader({
         ))}
       </svg>
       {label && <span className="hy-loader-label">{label}</span>}
+    </div>
+  );
+}
+
+/** Двухрядная гирлянда-косичка (для телефона — ярче и компактнее). */
+export function HappyYearBraidedGarland({
+  className = "",
+  bulbsPerRow = 12,
+}: {
+  className?: string;
+  bulbsPerRow?: number;
+}) {
+  const step = 42;
+  const width = bulbsPerRow * step;
+  const topSegments: string[] = [];
+  const bottomSegments: string[] = [];
+  for (let i = 0; i < bulbsPerRow; i++) {
+    const x = i * step + step / 2;
+    topSegments.push(`Q ${x} 22 ${(i + 1) * step} 4`);
+    bottomSegments.push(`Q ${x} 52 ${(i + 1) * step} 36`);
+  }
+
+  return (
+    <svg
+      className={`hy-braided ${className}`}
+      viewBox={`0 0 ${width} 72`}
+      width="100%"
+      height={72}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {/* верхний ряд */}
+      <path className="hy-braided-wire hy-braided-wire--top" d={`M 0 4 ${topSegments.join(" ")}`} />
+      {Array.from({ length: bulbsPerRow }, (_, i) => {
+        const x = i * step + step / 2;
+        const color = NY_MOBILE_GARLAND_COLORS[i % NY_MOBILE_GARLAND_COLORS.length];
+        return (
+          <g key={`t${i}`} className="hy-braided-bulb hy-braided-bulb--top" style={{ color, animationDelay: `${(i % 6) * 0.25}s` }}>
+            <circle cx={x} cy={22} r="12" className="hy-braided-halo" />
+            <line x1={x} y1={14} x2={x} y2={20} />
+            <circle cx={x} cy={22} r="7" fill={color} />
+            <circle cx={x - 2} cy={20} r="1.8" className="hy-braided-shine" />
+          </g>
+        );
+      })}
+      {/* нижний ряд */}
+      <path className="hy-braided-wire hy-braided-wire--bot" d={`M 0 36 ${bottomSegments.join(" ")}`} />
+      {Array.from({ length: bulbsPerRow }, (_, i) => {
+        const x = i * step + step / 2;
+        const color = NY_MOBILE_GARLAND_COLORS[(i + 2) % NY_MOBILE_GARLAND_COLORS.length];
+        return (
+          <g key={`b${i}`} className="hy-braided-bulb hy-braided-bulb--bot" style={{ color, animationDelay: `${(i % 6) * 0.25 + 0.3}s` }}>
+            <circle cx={x} cy={52} r="12" className="hy-braided-halo" />
+            <line x1={x} y1={44} x2={x} y2={50} />
+            <circle cx={x} cy={52} r="7" fill={color} />
+            <circle cx={x - 2} cy={50} r="1.8" className="hy-braided-shine" />
+          </g>
+        );
+      })}
+      {/* косичка между рядами */}
+      <path className="hy-braided-weave" d={Array.from({ length: bulbsPerRow - 1 }, (_, i) => {
+        const x1 = i * step + step * 0.75;
+        const y1 = 18;
+        const x2 = (i + 1) * step + step * 0.25;
+        const y2 = 40;
+        return `${i === 0 ? "M" : "L"} ${x1} ${y1} Q ${(x1 + x2) / 2} 30 ${x2} ${y2}`;
+      }).join(" ")} />
+    </svg>
+  );
+}
+
+/** Снежинки-балерины — кружатся по экрану как танцовщицы. */
+export function HappyYearSnowflakeDancers({ className = "" }: { className?: string }) {
+  const dancers = useMemo(
+    () =>
+      Array.from({ length: 8 }, (_, i) => ({
+        left: (i * 13 + 5) % 90 + 5,
+        delay: i * 0.8,
+        duration: 18 + i * 2,
+        size: 14 + (i % 3) * 6,
+        color: i % 2 === 0 ? "#a9d3ec" : "#ffffff",
+      })),
+    [],
+  );
+
+  return (
+    <div className={`hy-dancers ${className}`} aria-hidden="true">
+      {dancers.map((d, i) => (
+        <svg
+          key={i}
+          className="hy-dancer"
+          style={{
+            left: `${d.left}%`,
+            width: d.size,
+            height: d.size,
+            animationDelay: `${d.delay}s`,
+            animationDuration: `${d.duration}s`,
+            color: d.color,
+          }}
+          viewBox="0 0 24 24"
+        >
+          <g stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" fill="none">
+            <path d="M12 2v20M12 2l-4 4M12 2l4 4M2 12h20M4 4l2 2M18 4l-2 2M4 20l2-2M18 20l-2-2" />
+            <circle cx="12" cy="12" r="3" />
+          </g>
+        </svg>
+      ))}
+    </div>
+  );
+}
+
+/** Катающийся снеговик — пасхалка внизу экрана. */
+export function HappyYearRollingSnowman({
+  className = "",
+  onClick,
+}: {
+  className?: string;
+  onClick?: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={`hy-snowman ${className}`}
+      onClick={onClick}
+      aria-label="Снеговик-пасхалка"
+      title="Нажми на снеговика!"
+    >
+      <svg viewBox="0 0 80 90" width={72} height={81} aria-hidden="true">
+        {/* тень */}
+        <ellipse cx="40" cy="86" rx="30" ry="4" fill="rgba(0,0,0,0.08)" />
+        {/* низ */}
+        <circle cx="40" cy="68" r="22" fill="#fff" stroke="#d6e8f0" strokeWidth="1" />
+        {/* середина */}
+        <circle cx="40" cy="46" r="16" fill="#fff" stroke="#d6e8f0" strokeWidth="1" />
+        {/* голова */}
+        <circle cx="40" cy="28" r="13" fill="#fff" stroke="#d6e8f0" strokeWidth="1" />
+        {/* глаза */}
+        <circle cx="35" cy="25" r="2" fill="#1d2a24" />
+        <circle cx="45" cy="25" r="2" fill="#1d2a24" />
+        {/* морковка */}
+        <path d="M40 27l10 4-10 3z" fill="#ff7043" />
+        {/* улыбка */}
+        <path d="M34 32 Q40 36 46 32" stroke="#1d2a24" strokeWidth="1.2" fill="none" strokeLinecap="round" />
+        {/* шапка */}
+        <rect x="30" y="10" width="20" height="18" rx="3" fill="#1d2a24" />
+        <rect x="26" y="24" width="28" height="4" rx="2" fill="#1d2a24" />
+        {/* шарф */}
+        <rect x="28" y="36" width="24" height="6" rx="3" fill="#e53935" />
+        <rect x="46" y="36" width="6" height="14" rx="3" fill="#e53935" />
+        {/* пуговицы */}
+        <circle cx="40" cy="42" r="1.5" fill="#1d2a24" />
+        <circle cx="40" cy="50" r="1.5" fill="#1d2a24" />
+        <circle cx="40" cy="58" r="1.5" fill="#1d2a24" />
+        {/* руки-палки */}
+        <line x1="24" y1="44" x2="10" y2="34" stroke="#7a4b20" strokeWidth="2" strokeLinecap="round" />
+        <line x1="56" y1="44" x2="70" y2="38" stroke="#7a4b20" strokeWidth="2" strokeLinecap="round" />
+        {/* ведро на руке */}
+        <rect x="66" y="28" width="8" height="10" rx="2" fill="#5f6b63" />
+      </svg>
+    </button>
+  );
+}
+
+/** Падающая звезда — пролетает по экрану раз в несколько секунд. */
+export function HappyYearShootingStars({ className = "" }: { className?: string }) {
+  const stars = useMemo(
+    () =>
+      Array.from({ length: 5 }, (_, i) => ({
+        delay: i * 7 + 3,
+        duration: 2.2,
+        startX: 10 + i * 18,
+        startY: 5 + (i % 3) * 12,
+      })),
+    [],
+  );
+
+  return (
+    <div className={`hy-shooting ${className}`} aria-hidden="true">
+      {stars.map((s, i) => (
+        <div
+          key={i}
+          className="hy-shooting-star"
+          style={{
+            left: `${s.startX}%`,
+            top: `${s.startY}%`,
+            animationDelay: `${s.delay}s`,
+            animationDuration: `${s.duration}s`,
+          }}
+        >
+          <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true">
+            <line x1="0" y1="0" x2="36" y2="36" stroke="#f6d47a" strokeWidth="2.5" strokeLinecap="round" />
+            <circle cx="36" cy="36" r="3" fill="#f6d47a" />
+            <circle cx="36" cy="36" r="6" fill="none" stroke="#f6d47a" strokeWidth="0.8" opacity="0.5" />
+          </svg>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Секретный мигающий шарик с конфетти — появляется случайно. */
+export function HappyYearSecretOrb({ className = "" }: { className?: string }) {
+  const [visible, setVisible] = useState(false);
+  const [count, setCount] = useState(0);
+
+  const activate = useCallback(() => {
+    setVisible(true);
+    setCount((c) => c + 1);
+    setTimeout(() => setVisible(false), 4000);
+  }, []);
+
+  useEffect(() => {
+    const show = () => {
+      const delay = 15000 + Math.random() * 25000;
+      const timer = setTimeout(() => {
+        setVisible(true);
+        setTimeout(() => setVisible(false), 3500);
+      }, delay);
+      return () => clearTimeout(timer);
+    };
+    const cleanup = show();
+    return cleanup;
+  }, []);
+
+  if (!visible) {
+    return (
+      <button
+        type="button"
+        className={`hy-secret-trigger ${className}`}
+        onClick={activate}
+        aria-label="Секретный шарик"
+        title="Что-то мерцает...?"
+      >
+        <span className="hy-secret-dot" />
+      </button>
+    );
+  }
+
+  return (
+    <div className="hy-secret-reveal" aria-hidden="true">
+      <svg viewBox="0 0 120 120" width={120} height={120}>
+        <circle cx="60" cy="60" r="48" fill="url(#hy-secret-grad)">
+          <animate attributeName="r" values="44;50;44" dur="1.2s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="48" cy="46" r="12" fill="rgba(255,255,255,0.45)" />
+        {/* конфетти */}
+        {[0, 1, 2, 3, 4, 5].map((i) => {
+          const angle = (i * 60 * Math.PI) / 180;
+          const r = 56;
+          return (
+            <circle
+              key={i}
+              cx={60 + Math.cos(angle) * r}
+              cy={60 + Math.sin(angle) * r}
+              r={2.5 + (i % 2)}
+              fill={["#e53935", "#ffca28", "#43a047", "#1e88e5", "#ab47bc", "#ff7043"][i]}
+            >
+              <animateTransform
+                attributeName="transform"
+                type="rotate"
+                values={`${i * 60} 60 60;${i * 60 + 360} 60 60`}
+                dur="3s"
+                repeatCount="indefinite"
+              />
+            </circle>
+          );
+        })}
+        <defs>
+          <radialGradient id="hy-secret-grad">
+            <stop offset="0%" stopColor="#ffd54f" />
+            <stop offset="60%" stopColor="#ff7043" />
+            <stop offset="100%" stopColor="#e53935" />
+          </radialGradient>
+        </defs>
+      </svg>
+      {count > 0 && (
+        <span className="hy-secret-count">✨ x{count}</span>
+      )}
+    </div>
+  );
+}
+
+/** Мини-ёлочки-заполнители для пустых мест. */
+export function HappyYearMiniTrees({ className = "" }: { className?: string }) {
+  const trees = useMemo(
+    () => Array.from({ length: 6 }, (_, i) => ({
+      left: (i * 17 + 3) % 85 + 5,
+      size: 20 + (i % 3) * 12,
+      delay: i * 0.5,
+    })),
+    [],
+  );
+
+  return (
+    <div className={`hy-mini-trees ${className}`} aria-hidden="true">
+      {trees.map((t, i) => (
+        <svg
+          key={i}
+          className="hy-mini-tree"
+          style={{
+            left: `${t.left}%`,
+            width: t.size,
+            height: t.size * 1.3,
+            animationDelay: `${t.delay}s`,
+          }}
+          viewBox="0 0 40 52"
+        >
+          <path d="M20 2 10 18h6L6 32h8l-8 14h32l-8-14h8l-10-14h6z" fill="#2e7d32" />
+          <path d="M10 18h6L6 32h8l-4 4H6l10-14zm20 0h-8l10 14h8l-4 4h-8l10-14z" fill="rgba(255,255,255,0.7)" />
+          <path d="M20 0l2.5 5 5.5.8-4 3.9 1 5.3-5-2.6-5 2.6 1-5.3-4-3.9 5.5-.8z" fill="#f6c445" />
+        </svg>
+      ))}
     </div>
   );
 }
