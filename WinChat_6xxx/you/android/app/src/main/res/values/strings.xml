@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">WinChat You</string>
+    <string name="title_activity_main">WinChat You</string>
+    <string name="package_name">com.winchat.you</string>
+    <string name="custom_url_scheme">com.winchat.you</string>
+</resources>

@@ -1,0 +1,2726 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Roboto", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-app: "Roboto", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+  --color-ink: #101214;
+  --color-ink-soft: #454a52;
+  --color-paper: #f5f5f2;
+  --color-accent: #2b4fff;
+  --color-accent-soft: #e8edff;
+
+  /* Тёмная тема (переключается классом .theme-dark на <html>) */
+  --color-paper-dark: #0f0f13;
+  --color-card-dark: #1a1a24;
+  --color-ink-dark: #e0e7ff;
+
+  --animate-msg-in: msg-in 0.28s cubic-bezier(0.21, 1.02, 0.65, 1) both;
+  --animate-fade-in: fade-in 0.2s ease both;
+  --animate-scale-in: scale-in 0.24s cubic-bezier(0.2, 1.1, 0.45, 1) both;
+  --animate-slide-up: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-dot-blink: dot-blink 1.1s ease-in-out infinite;
+  --animate-drift: drift 14s ease-in-out infinite alternate;
+}
+
+/* Тема может переопределять переменные через inline-стили на <html> */
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* ---------- Тёмный режим палитры ---------- */
+.theme-dark body {
+  color: var(--color-ink-dark);
+}
+.theme-dark .surface {
+  background: var(--color-card-dark);
+}
+.theme-dark .text-muted {
+  color: rgb(255 255 255 / 0.5);
+}
+
+@keyframes msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes dot-blink {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate(-8%, -6%) scale(1);
+  }
+  to {
+    transform: translate(10%, 8%) scale(1.15);
+  }
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* Тема может переопределять переменные через inline-стили на <html> */
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(16, 18, 20, 0.18) transparent;
+}
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(16, 18, 20, 0.18);
+  border-radius: 999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 18, 20, 0.32);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+.dot-grid-dark {
+  background-image: radial-gradient(rgba(16, 18, 20, 0.1) 1px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+/* ---------- PC: главный экран — комфортная колонка чата ---------- */
+
+@media (min-width: 1280px) {
+  .winchat-main-area {
+    max-width: 880px;
+    margin-inline: auto;
+  }
+}
+
+.typing-dot {
+  animation: var(--animate-dot-blink);
+}
+.typing-dot:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.typing-dot:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* ---------- WinPro ---------- */
+
+.winpro-crown-glow {
+  filter: drop-shadow(0 0 3px rgba(255, 200, 0, 0.55));
+}
+
+.winpro-card {
+  background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 45%, #0f0f1a 100%);
+  box-shadow: 0 12px 40px -12px rgba(255, 180, 0, 0.35);
+}
+
+.winpro-shine {
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(255, 215, 0, 0.16) 45%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 215, 0, 0.16) 55%,
+    transparent 70%
+  );
+  background-size: 300% 100%;
+  animation: winpro-shine 4.5s linear infinite;
+}
+
+@keyframes winpro-shine {
+  from {
+    background-position: 180% 0;
+  }
+  to {
+    background-position: -80% 0;
+  }
+}
+
+.winpro-celebrate {
+  animation: winpro-celebrate 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes winpro-celebrate {
+  from {
+    opacity: 0;
+    transform: scale(0.86) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.winpro-crown-pop {
+  animation: winpro-crown-pop 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes winpro-crown-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.2) rotate(-25deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.14) rotate(6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+.winpro-rays {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(255, 215, 0, 0.12) 12deg,
+    transparent 24deg,
+    transparent 48deg,
+    rgba(255, 215, 0, 0.1) 60deg,
+    transparent 72deg
+  );
+  animation: winpro-rays 14s linear infinite;
+}
+
+@keyframes winpro-rays {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.winpro-particle {
+  top: -12%;
+  animation-name: winpro-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  opacity: 0;
+}
+
+@keyframes winpro-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  12% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.75;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(520px) rotate(180deg);
+  }
+}
+
+/* Фоновая анимация WinPro (включается в CSS-классами на <html>) */
+.winpro-bg-gold-dust::after,
+.winpro-bg-aurora::after,
+.winpro-bg-crown-rain::after,
+.winpro-bg-gradient-shift::after,
+.winpro-bg-ripple::after,
+.winpro-bg-nebula::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* OOBE: фоновые анимации WinPro поверх приветствия не нужны.
+   На телефонах их полноэкранный слой выглядит как мерцание цветами
+   и перегружает GPU вместе с backdrop-filter карточек. */
+html.oobe-active::after,
+html.oobe-active .winpro-glow-overlay {
+  display: none !important;
+  animation: none !important;
+}
+
+/* ===================== ЗОЛОТАЯ ПЫЛЬ — яркая, плотная ===================== */
+.winpro-bg-gold-dust::after {
+  background-image:
+    radial-gradient(circle, rgba(255, 215, 0, 0.85) 1.5px, transparent 2px),
+    radial-gradient(circle, rgba(255, 255, 200, 0.6) 1px, transparent 1.4px);
+  background-size: 36px 36px, 24px 24px;
+  background-position: 0 0, 12px 12px;
+  animation: winpro-dust 6s ease-in-out infinite alternate;
+}
+
+@keyframes winpro-dust {
+  0% {
+    opacity: 0.5;
+    background-position: 0 0, 12px 12px;
+  }
+  50% {
+    opacity: 0.85;
+    background-position: 18px 20px, 0 0;
+  }
+  100% {
+    opacity: 0.7;
+    background-position: 36px 36px, 18px 18px;
+  }
+}
+
+/* ===================== ПОЛЯРНОЕ СИЯНИЕ — яркое, глубокое ===================== */
+.winpro-bg-aurora::after {
+  background:
+    radial-gradient(
+      ellipse 60% 50% at 10% 15%,
+      rgba(0, 255, 136, 0.45),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 55% 45% at 90% 25%,
+      rgba(0, 191, 255, 0.4),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 65% 55% at 45% 90%,
+      rgba(155, 89, 182, 0.45),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 40% 35% at 70% 70%,
+      rgba(0, 220, 180, 0.3),
+      transparent 50%
+    );
+  animation: winpro-aurora 10s ease-in-out infinite alternate;
+}
+
+@keyframes winpro-aurora {
+  0% {
+    opacity: 0.75;
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  33% {
+    opacity: 0.95;
+    transform: translateY(-18px) scale(1.08) rotate(1.5deg);
+  }
+  66% {
+    opacity: 0.85;
+    transform: translateY(10px) scale(1.04) rotate(-1deg);
+  }
+  100% {
+    opacity: 0.9;
+    transform: translateY(-8px) scale(1.06) rotate(0.8deg);
+  }
+}
+
+/* ===================== ДОЖДЬ КРОН — насыщенный ===================== */
+.winpro-bg-crown-rain::after {
+  background-image:
+    radial-gradient(circle, rgba(255, 200, 0, 0.8) 2.5px, transparent 3px),
+    radial-gradient(circle, rgba(255, 255, 200, 0.5) 1.5px, transparent 2px);
+  background-size: 80px 120px, 50px 80px;
+  background-position: 0 0, 25px 40px;
+  animation: winpro-rain 10s linear infinite;
+}
+
+@keyframes winpro-rain {
+  from {
+    background-position: 0 -120px, 25px -40px;
+  }
+  to {
+    background-position: 0 120px, 25px 80px;
+  }
+}
+
+/* ===================== ПЛАВНЫЙ ГРАДИЕНТ — новый ===================== */
+.winpro-bg-gradient-shift::after {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 215, 0, 0.12) 0%,
+    rgba(255, 140, 0, 0.15) 20%,
+    rgba(124, 58, 237, 0.12) 40%,
+    rgba(0, 150, 255, 0.1) 60%,
+    rgba(0, 210, 143, 0.12) 80%,
+    rgba(255, 215, 0, 0.12) 100%
+  );
+  background-size: 400% 400%;
+  animation: winpro-gradient-shift 15s ease infinite;
+}
+
+@keyframes winpro-gradient-shift {
+  0% {
+    background-position: 0% 50%;
+    opacity: 0.7;
+  }
+  25% {
+    opacity: 1;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 0.8;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.7;
+  }
+}
+
+/* ===================== PULSE RIPPLE — новый ===================== */
+.winpro-bg-ripple::after {
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(124, 58, 237, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.12) 0%, transparent 60%);
+  animation: winpro-ripple 8s ease-in-out infinite;
+}
+
+@keyframes winpro-ripple {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  25% {
+    opacity: 0.9;
+    transform: scale(1.08);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  75% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+/* ===================== NEBULA — новый, космический ===================== */
+.winpro-bg-nebula::after {
+  background:
+    radial-gradient(ellipse 70% 60% at 25% 20%, rgba(139, 92, 246, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 75% 80%, rgba(236, 72, 153, 0.25) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 45% at 50% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 35% at 85% 25%, rgba(255, 215, 0, 0.2) 0%, transparent 45%);
+  animation: winpro-nebula 18s ease-in-out infinite alternate;
+}
+
+@keyframes winpro-nebula {
+  0% {
+    opacity: 0.6;
+    transform: translateX(-5%) translateY(3%) rotate(-2deg) scale(1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translateX(3%) translateY(-5%) rotate(1deg) scale(1.05);
+  }
+  100% {
+    opacity: 0.8;
+    transform: translateX(5%) translateY(-3%) rotate(2deg) scale(1.02);
+  }
+}
+
+/* ===================== СВЕЧЕНИЕ ФОНА — общий glow ===================== */
+.winpro-glow-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    ellipse 80% 60% at 50% 40%,
+    rgba(255, 215, 0, 0.06) 0%,
+    transparent 70%
+  );
+  animation: winpro-glow-pulse 6s ease-in-out infinite;
+}
+
+@keyframes winpro-glow-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ===================== ПЛАВНЫЕ ПЕРЕХОДЫ МЕЖДУ ЭКРАНАМИ ===================== */
+.winchat-page-transition {
+  animation: winchat-page-fade 0.4s cubic-bezier(0.21, 1.02, 0.65, 1) both;
+}
+
+@keyframes winchat-page-fade {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ===================== SWEEP SHINE — бегущий блеск ===================== */
+.winpro-sweep-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.winpro-sweep-shine::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 215, 0, 0.12) 45%,
+    rgba(255, 255, 255, 0.18) 50%,
+    rgba(255, 215, 0, 0.12) 55%,
+    transparent 100%
+  );
+  transform: skewX(-18deg);
+  animation: winpro-sweep 5s ease-in-out infinite;
+}
+
+@keyframes winpro-sweep {
+  0% {
+    left: -60%;
+  }
+  40%, 100% {
+    left: 120%;
+  }
+}
+
+/* ============================================================
+   WINCHAT YOU — Material You
+   Тональные поверхности, крупные формы и динамическая палитра.
+   Значения --you-* выставляет applyYouPalette() (lib/materialYou.ts).
+   ============================================================ */
+
+:root {
+  /* Фолбэк-палитра (Lavender, baseline Material 3) — чтобы You-экраны
+     выглядели правильно даже до применения темы. */
+  --you-primary: #6750a4;
+  --you-on-primary: #ffffff;
+  --you-primary-container: #eaddff;
+  --you-on-primary-container: #21005d;
+  --you-secondary-container: #e8def8;
+  --you-on-secondary-container: #1d192b;
+  --you-tertiary: #7d5260;
+  --you-surface: #fef7ff;
+  --you-surface-low: #f7f2fa;
+  --you-surface-container: #f3edf7;
+  --you-surface-high: #ece6f0;
+  --you-surface-highest: #e6e0e9;
+  --you-on-surface: #1d1b20;
+  --you-on-surface-variant: #49454f;
+  --you-outline: #79747e;
+  --you-outline-variant: #cac4d0;
+  /* Форма (настраивается в WinChat You) */
+  --you-r: 24px;
+  --you-r-sm: 16px;
+  --you-r-lg: 32px;
+  --you-shape-clip: none;
+}
+
+.theme-you body {
+  background: var(--you-surface);
+  color: var(--you-on-surface);
+}
+
+/* ---------- Оболочка ---------- */
+.you-shell {
+  background:
+    radial-gradient(
+      ellipse 60% 50% at 100% -10%,
+      color-mix(in srgb, var(--you-primary) 10%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 55% 45% at 0% 110%,
+      color-mix(in srgb, var(--you-tertiary) 12%, transparent),
+      transparent 65%
+    ),
+    var(--you-surface);
+}
+
+.you-sidebar {
+  background: color-mix(in srgb, var(--you-surface-low) 94%, transparent);
+  border-color: var(--you-outline-variant);
+}
+
+.you-chat {
+  background:
+    radial-gradient(
+      ellipse 70% 50% at 85% -10%,
+      color-mix(in srgb, var(--you-primary) 9%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 60% 45% at 0% 100%,
+      color-mix(in srgb, var(--you-tertiary) 10%, transparent),
+      transparent 60%
+    ),
+    var(--you-surface);
+}
+
+.you-appbar {
+  background: color-mix(in srgb, var(--you-surface) 82%, transparent);
+  border-color: color-mix(in srgb, var(--you-outline-variant) 65%, transparent);
+}
+
+.you-bottombar {
+  background: color-mix(in srgb, var(--you-surface) 88%, transparent);
+  border-color: color-mix(in srgb, var(--you-outline-variant) 65%, transparent);
+}
+
+.you-logo {
+  background: linear-gradient(135deg, var(--you-primary), var(--you-primary-strong) 60%, var(--you-secondary));
+  color: var(--you-on-primary);
+  box-shadow: 0 12px 26px -12px color-mix(in srgb, var(--you-primary) 75%, transparent);
+}
+
+.you-chip {
+  background: var(--you-secondary-container);
+  color: var(--you-on-secondary-container);
+}
+
+/* ---------- Поиск ---------- */
+.you-search {
+  background: var(--you-surface-high);
+  border-color: transparent;
+  border-radius: 9999px;
+  color: var(--you-on-surface);
+}
+.you-search::placeholder {
+  color: var(--you-on-surface-variant);
+}
+.you-search:focus {
+  background: var(--you-surface-highest);
+  border-color: transparent;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--you-primary) 18%, transparent);
+}
+
+/* ---------- Строки списка ---------- */
+.you-row-selected {
+  background: var(--you-secondary-container);
+  color: var(--you-on-secondary-container);
+  border-radius: 22px;
+  box-shadow: none;
+}
+.you-row-hover:hover {
+  background: color-mix(in srgb, var(--you-surface-container) 75%, transparent);
+}
+
+/* ---------- Сообщения ---------- */
+.you-msg-own {
+  background: var(--you-primary);
+  color: var(--you-on-primary);
+  border-radius: 24px 24px 8px 24px;
+  box-shadow: 0 3px 12px -6px color-mix(in srgb, var(--you-primary) 55%, transparent);
+}
+.you-msg-other {
+  background: var(--you-surface-high);
+  color: var(--you-on-surface);
+  border-radius: 24px 24px 24px 8px;
+  box-shadow: none;
+}
+.you-date-chip {
+  background: var(--you-surface-container);
+  color: var(--you-on-surface-variant);
+}
+
+/* ---------- Композер ---------- */
+.you-composer {
+  background: var(--you-surface-high);
+  border-color: transparent;
+  border-radius: 28px;
+  box-shadow: none;
+}
+.you-composer:focus-within {
+  background: var(--you-surface-highest);
+  border-color: transparent;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--you-primary) 16%, transparent);
+}
+.you-fab {
+  background: var(--you-primary);
+  color: var(--you-on-primary);
+  border-radius: 9999px;
+  box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--you-primary) 80%, transparent);
+}
+.you-fab:hover {
+  filter: brightness(1.06);
+}
+.you-fab-tonal {
+  background: var(--you-primary-container);
+  color: var(--you-on-primary-container);
+  border-radius: 9999px;
+}
+.you-fab-tonal:hover {
+  filter: brightness(1.03);
+}
+
+/* ---------- Экран-заглушка /themes/you ---------- */
+.you-gate {
+  background: var(--you-surface);
+  color: var(--you-on-surface);
+}
+.you-gate-ambient {
+  position: fixed;
+  inset: -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 45% 40% at 20% 20%,
+      color-mix(in srgb, var(--you-primary) 26%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 45% 40% at 82% 30%,
+      color-mix(in srgb, var(--you-tertiary) 22%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 60% 45% at 50% 100%,
+      color-mix(in srgb, var(--you-secondary-container) 70%, transparent),
+      transparent 70%
+    );
+  filter: blur(18px);
+  animation: you-float 16s ease-in-out infinite alternate;
+}
+.you-gate-card {
+  background: color-mix(in srgb, var(--you-surface-low) 92%, white);
+  border: 1px solid color-mix(in srgb, var(--you-outline-variant) 70%, transparent);
+}
+.you-gate-shine {
+  position: absolute;
+  top: -35%;
+  left: -10%;
+  right: -10%;
+  height: 55%;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    color-mix(in srgb, var(--you-primary) 24%, transparent),
+    transparent 70%
+  );
+  filter: blur(26px);
+  pointer-events: none;
+}
+.you-gate-dot {
+  animation: you-pop 3.2s ease-in-out infinite;
+}
+
+@keyframes you-float {
+  from {
+    transform: translate3d(-3%, -2%, 0) scale(1) rotate(-2deg);
+  }
+  to {
+    transform: translate3d(4%, 3%, 0) scale(1.08) rotate(2deg);
+  }
+}
+
+@keyframes you-pop {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.08);
+  }
+}
+
+/* Плавная смена «обоев» Material You */
+.theme-you body,
+.you-shell,
+.you-chat,
+.you-sidebar,
+.you-appbar,
+.you-bottombar,
+.you-composer,
+.you-msg-other {
+  transition:
+    background-color 0.35s ease,
+    border-color 0.35s ease,
+    color 0.35s ease;
+}
+
+/* ============================================================
+   WINCHAT YOU — expressive layer
+   Насыщенные «обои», органические блобы, крупные пилюли.
+   Идёт после базового блока и переопределяет его.
+   ============================================================ */
+
+:root {
+  --you-primary-strong: #5b2ee0;
+  --you-secondary: #ff7a6b;
+  --you-on-secondary: #4a0f08;
+  --you-tertiary-container: #d7f5b0;
+  --you-on-tertiary-container: #1e3700;
+}
+
+/* ---------- Фон с блобами ---------- */
+.you-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.you-blob {
+  position: absolute;
+  display: block;
+  filter: blur(34px);
+  opacity: 0.62;
+  will-change: transform;
+}
+.you-blob-a {
+  width: 68vmax;
+  height: 62vmax;
+  top: -30vmax;
+  right: -22vmax;
+  background: var(--you-secondary);
+  border-radius: 46% 54% 62% 38% / 48% 38% 62% 52%;
+  animation: you-blob-drift 22s ease-in-out infinite alternate;
+}
+.you-blob-b {
+  width: 58vmax;
+  height: 56vmax;
+  left: -26vmax;
+  bottom: -26vmax;
+  background: var(--you-primary);
+  border-radius: 58% 42% 38% 62% / 44% 56% 44% 56%;
+  opacity: 0.42;
+  animation: you-blob-drift 28s ease-in-out infinite alternate-reverse;
+}
+.you-blob-c {
+  width: 34vmax;
+  height: 30vmax;
+  right: 18vmax;
+  bottom: -16vmax;
+  background: var(--you-tertiary);
+  border-radius: 62% 38% 54% 46% / 56% 44% 56% 44%;
+  opacity: 0.4;
+  animation: you-blob-drift 18s ease-in-out infinite alternate;
+}
+.you-blob-d {
+  width: 26vmax;
+  height: 24vmax;
+  left: 28vmax;
+  top: 22vmax;
+  background: var(--you-primary-container);
+  border-radius: 42% 58% 34% 66% / 52% 42% 58% 48%;
+  opacity: 0.55;
+  animation: you-blob-drift 24s ease-in-out infinite alternate-reverse;
+}
+
+/* Цветок-«облако» как в Material 3 Expressive */
+.you-flower {
+  position: absolute;
+  left: -9vmax;
+  top: 42%;
+  width: 40vmax;
+  height: 40vmax;
+  opacity: 0.9;
+  animation: you-flower-spin 60s linear infinite;
+}
+
+.you-squiggle {
+  position: absolute;
+  right: 4vmax;
+  top: 16%;
+  width: 30vmax;
+  height: 30vmax;
+  opacity: 0.25;
+}
+
+@keyframes you-blob-drift {
+  from {
+    transform: translate3d(-2%, -2%, 0) scale(1) rotate(-3deg);
+  }
+  to {
+    transform: translate3d(4%, 3%, 0) scale(1.12) rotate(4deg);
+  }
+}
+
+@keyframes you-flower-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Оболочка и панели ---------- */
+.you-shell {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      ellipse 60% 55% at 90% -10%,
+      color-mix(in srgb, var(--you-secondary) 32%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 55% 50% at 0% 105%,
+      color-mix(in srgb, var(--you-primary) 34%, transparent),
+      transparent 68%
+    ),
+    var(--you-surface);
+}
+.you-shell .you-front {
+  position: relative;
+  z-index: 1;
+}
+
+.you-sidebar {
+  background: color-mix(in srgb, var(--you-surface-low) 74%, transparent);
+  border-color: color-mix(in srgb, var(--you-outline-variant) 75%, transparent);
+  backdrop-filter: blur(26px) saturate(1.15);
+}
+
+.you-chat {
+  background: color-mix(in srgb, var(--you-surface) 84%, transparent);
+  backdrop-filter: blur(22px) saturate(1.08);
+}
+
+.you-appbar {
+  background: color-mix(in srgb, var(--you-surface) 62%, transparent);
+  border-color: transparent;
+  backdrop-filter: blur(18px) saturate(1.1);
+}
+
+.you-bottombar {
+  background: color-mix(in srgb, var(--you-surface) 70%, transparent);
+  border-color: transparent;
+  backdrop-filter: blur(18px) saturate(1.1);
+}
+
+.you-logo {
+  background: linear-gradient(140deg, var(--you-primary), var(--you-primary-strong) 60%, var(--you-secondary));
+  color: #fff;
+  box-shadow: 0 12px 26px -12px color-mix(in srgb, var(--you-primary) 90%, transparent);
+}
+
+/* ---------- Поиск: большая белая пилюля ---------- */
+.you-search {
+  background: var(--you-surface-highest);
+  background-color: var(--you-surface-highest);
+  border-color: transparent;
+  border-radius: var(--you-r-lg);
+  color: var(--you-on-surface);
+  caret-color: var(--you-primary);
+  box-shadow: 0 10px 26px -18px color-mix(in srgb, var(--you-primary) 80%, transparent);
+}
+.you-search::placeholder {
+  color: var(--you-on-surface-variant);
+  opacity: 1;
+}
+.you-search:focus {
+  background: var(--you-surface-container);
+  background-color: var(--you-surface-container);
+  border-color: transparent;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--you-primary) 22%, transparent),
+    0 12px 30px -18px color-mix(in srgb, var(--you-primary) 80%, transparent);
+}
+.you-search:-webkit-autofill,
+.you-search:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--you-on-surface);
+  box-shadow: 0 0 0 1000px var(--you-surface-highest) inset;
+}
+
+/* ---------- Строки списка ---------- */
+.you-row-selected {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--you-primary) 20%, white),
+    color-mix(in srgb, var(--you-primary-container) 85%, white)
+  );
+  color: var(--you-on-primary-container);
+  border-radius: var(--you-r);
+  box-shadow: 0 10px 24px -18px color-mix(in srgb, var(--you-primary) 85%, transparent);
+}
+.you-row-hover:hover {
+  background: color-mix(in srgb, var(--you-surface-container) 62%, transparent);
+  border-radius: var(--you-r);
+}
+
+/* ---------- Сообщения ---------- */
+.you-msg-own {
+  background: linear-gradient(135deg, var(--you-primary), var(--you-primary-strong));
+  color: var(--you-on-primary);
+  border-radius: min(var(--you-r-lg), 28px) min(var(--you-r-lg), 28px) 8px min(var(--you-r-lg), 28px);
+  box-shadow: 0 10px 24px -16px color-mix(in srgb, var(--you-primary) 95%, transparent);
+}
+.you-msg-other {
+  background: var(--you-surface-high);
+  color: var(--you-on-surface);
+  border-radius: min(var(--you-r-lg), 28px) min(var(--you-r-lg), 28px) min(var(--you-r-lg), 28px) 8px;
+  box-shadow: none;
+}
+.you-date-chip {
+  background: var(--you-secondary-container);
+  color: var(--you-on-secondary-container);
+  border-radius: var(--you-r);
+}
+
+/* ---------- Композер: «пилюля» поверх тональной поверхности ---------- */
+.you-composer {
+  background: var(--you-surface-highest);
+  border-color: transparent;
+  border-radius: var(--you-r-lg);
+  box-shadow: none;
+}
+.you-composer:focus-within {
+  background: var(--you-surface-container);
+  border-color: transparent;
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--you-primary) 18%, transparent),
+    0 14px 34px -22px color-mix(in srgb, var(--you-primary) 75%, transparent);
+}
+.you-fab {
+  background: linear-gradient(135deg, var(--you-primary), var(--you-primary-strong));
+  color: var(--you-on-primary);
+  border-radius: var(--you-r);
+  box-shadow: 0 12px 26px -12px color-mix(in srgb, var(--you-primary) 95%, transparent);
+}
+.you-fab:hover {
+  filter: brightness(1.08);
+}
+.you-fab-tonal {
+  background: var(--you-secondary);
+  color: var(--you-on-secondary);
+  border-radius: var(--you-r);
+  box-shadow: 0 12px 24px -14px color-mix(in srgb, var(--you-secondary) 95%, transparent);
+}
+.you-fab-tonal:hover {
+  filter: brightness(1.05);
+}
+
+/* Крупные «пилюли»-кнопки */
+.you-pill {
+  border-radius: var(--you-r-lg);
+  background: var(--you-secondary-container);
+  color: var(--you-on-secondary-container);
+  font-weight: 800;
+}
+.you-pill-primary {
+  border-radius: var(--you-r-lg);
+  background: linear-gradient(135deg, var(--you-primary), var(--you-primary-strong));
+  color: var(--you-on-primary);
+  font-weight: 800;
+  box-shadow: 0 12px 26px -14px color-mix(in srgb, var(--you-primary) 95%, transparent);
+}
+
+/* ---------- Expressive-формы из бут-анимации ----------
+   applyYouShape() кладёт в --you-shape-clip силуэт (polygon),
+   поэтому кнопки получают те же формы, что и заставка:
+   squircle → arch → diamond → circle → cookie → clover → burst.
+   У стандартных форм значение none — остаются обычные радиусы. */
+.theme-you .you-fab,
+.theme-you .you-fab-tonal,
+.theme-you .you-pill,
+.theme-you .you-pill-primary,
+.theme-you .you-logo {
+  -webkit-clip-path: var(--you-shape-clip, none);
+  clip-path: var(--you-shape-clip, none);
+}
+
+/* ---------- Экран /themes/you ---------- */
+.you-gate {
+  background:
+    radial-gradient(
+      ellipse 60% 55% at 85% 0%,
+      color-mix(in srgb, var(--you-secondary) 38%, transparent),
+      transparent 62%
+    ),
+    radial-gradient(
+      ellipse 55% 50% at 0% 100%,
+      color-mix(in srgb, var(--you-primary) 40%, transparent),
+      transparent 65%
+    ),
+    var(--you-surface);
+}
+.you-gate-card {
+  background: color-mix(in srgb, var(--you-surface-low) 90%, transparent);
+  border: 1px solid color-mix(in srgb, var(--you-outline-variant) 60%, transparent);
+  backdrop-filter: blur(30px) saturate(1.15);
+}
+.you-gate-dot {
+  animation: you-pop 3.2s ease-in-out infinite;
+}
+
+/* ---------- Разделители ---------- */
+.you-sidebar .you-divider {
+  border-color: color-mix(in srgb, var(--you-outline-variant) 72%, transparent);
+}
+
+/* ---------- Шрифт Material You: Libre Franklin ---------- */
+.theme-you body,
+.theme-you input,
+.theme-you textarea,
+.theme-you select,
+.theme-you button {
+  font-family: "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
+}
+.theme-you .font-mono,
+.theme-you code {
+  font-family: var(--font-mono);
+}
+.theme-you {
+  font-feature-settings: "ss01" on;
+}
+
+/* ---------- Живые анимации Material You ---------- */
+/* Сообщения появляются пружинкой */
+.theme-you .animate-msg-in {
+  animation: you-msg-in 0.42s cubic-bezier(0.22, 1.3, 0.36, 1) both;
+}
+@keyframes you-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Строки списка — плавный подъём */
+.theme-you .winchat-page-transition {
+  animation: you-page-in 0.45s cubic-bezier(0.22, 1.16, 0.4, 1) both;
+}
+@keyframes you-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Тайпинг-точки пульсируют дружелюбнее */
+.theme-you .typing-dot {
+  animation-duration: 0.9s;
+  animation-timing-function: cubic-bezier(0.3, 1.4, 0.4, 1);
+}
+
+
+
+/* ============================================================
+   ������������� WinChat You: �����/��������� �������
+   � ����������� ��� you-������� �������� bg-white/text-black/*.
+   ������������� �� � ��������� �����������, ����� �� ����
+   ������ ����� �� ����� ���� � ������� ������� �� ����� ����.
+   ============================================================ */
+
+.theme-you {
+  color: var(--you-on-surface);
+}
+
+.theme-you .bg-white {
+  background-color: var(--you-surface-low) !important;
+}
+.theme-you .bg-paper,
+.theme-you .bg-\[var\(--color-paper\)\] {
+  background-color: var(--you-surface) !important;
+}
+.theme-you .bg-white\/70 {
+  background-color: color-mix(in srgb, var(--you-surface-low) 70%, transparent) !important;
+}
+.theme-you .bg-white\/60 {
+  background-color: color-mix(in srgb, var(--you-surface-low) 60%, transparent) !important;
+}
+.theme-you .bg-white\/95 {
+  background-color: color-mix(in srgb, var(--you-surface-low) 95%, transparent) !important;
+}
+
+.theme-you .text-ink {
+  color: var(--you-on-surface) !important;
+}
+.theme-you .text-ink-soft,
+.theme-you .text-black\/70,
+.theme-you .text-black\/60 {
+  color: var(--you-on-surface-variant) !important;
+}
+.theme-you .text-black\/50,
+.theme-you .text-black\/45,
+.theme-you .text-black\/40,
+.theme-you .text-black\/35,
+.theme-you .text-black\/30,
+.theme-you .text-black\/25 {
+  color: color-mix(in srgb, var(--you-on-surface-variant) 88%, transparent) !important;
+}
+
+.theme-you .border-black\/8,
+.theme-you .border-black\/10,
+.theme-you .border-black\/5,
+.theme-you .border-black\/15 {
+  border-color: var(--you-outline-variant) !important;
+}
+.theme-you .ring-black\/5,
+.theme-you .ring-black\/8,
+.theme-you .ring-black\/10 {
+  --tw-ring-color: var(--you-outline-variant) !important;
+}
+
+.theme-you .placeholder\:text-black\/35::placeholder,
+.theme-you .placeholder\:text-black\/30::placeholder {
+  color: var(--you-on-surface-variant) !important;
+  opacity: 1;
+}
+
+.theme-you input:not(.you-search),
+.theme-you textarea:not(.you-composer textarea),
+.theme-you select {
+  color: var(--you-on-surface);
+}
+.theme-you input:not(.you-search):not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.theme-you textarea,
+.theme-you select {
+  background-color: var(--you-surface-highest);
+  border-color: var(--you-outline-variant);
+}
+.theme-you input::placeholder,
+.theme-you textarea::placeholder {
+  color: var(--you-on-surface-variant);
+  opacity: 1;
+}
+
+.theme-you .shadow-sm.ring-1,
+.theme-you .shadow-sm {
+  --tw-shadow-color: color-mix(in srgb, var(--you-on-surface) 12%, transparent);
+}
+
+.theme-you .hover\:text-ink:hover {
+  color: var(--you-on-surface) !important;
+}
+.theme-you .hover\:bg-black\/5:hover {
+  background-color: var(--you-surface-container) !important;
+}
+.theme-you .hover\:bg-paper\/70:hover,
+.theme-you .hover\:bg-paper:hover {
+  background-color: var(--you-surface-container) !important;
+}
+
+.theme-you .bg-paper {
+  background-color: var(--you-surface-container) !important;
+}
+
+/* ============================================================
+   OOBE — адаптация под выбранную тему:
+   • WinChat You  → стиль You (см. блок «OOBE YOU» ниже);
+   • Liquid Glass → текущий Liquid-дизайн (без перекрытий).
+   ============================================================ */
+.theme-you .oobe-title {
+  color: var(--you-on-surface) !important;
+}
+.theme-you .oobe-subtitle {
+  color: var(--you-on-surface-variant) !important;
+}
+.theme-you .oobe-accent {
+  background-color: var(--you-primary) !important;
+  color: var(--you-on-primary) !important;
+}
+.theme-you .oobe-accent-2 {
+  background: linear-gradient(135deg, var(--you-primary), var(--you-primary-strong) 60%, var(--you-secondary)) !important;
+  color: var(--you-on-primary) !important;
+}
+.theme-you .oobe-accent-grad {
+  background: linear-gradient(135deg, var(--you-primary), var(--you-primary-strong) 60%, var(--you-secondary)) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+}
+.theme-you .oobe-accent-text,
+.theme-you .oobe-accent-grad-text {
+  color: var(--you-primary) !important;
+}
+
+/* ============================================================
+   OOBE YOU — настоящий Material You (а не перекраска Liquid):
+   живой фон (YouBackdrop), тональные поверхности без стекла,
+   крупные радиусы, filled/tonal кнопки, пузыри You.
+   ============================================================ */
+
+/* Фон-оболочка: как .you-shell в мессенджере */
+.oobe-you-shell {
+  background:
+    radial-gradient(
+      ellipse 60% 50% at 100% -10%,
+      color-mix(in srgb, var(--you-primary) 12%, transparent),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 55% 45% at 0% 110%,
+      color-mix(in srgb, var(--you-tertiary) 12%, transparent),
+      transparent 65%
+    ),
+    var(--you-surface) !important;
+  color: var(--you-on-surface);
+}
+
+/* Тональная карточка (surface-container, крупный радиус, без теней) */
+.oobe-you-card {
+  background-color: var(--you-surface-container) !important;
+  border-color: transparent !important;
+  border-radius: var(--you-r-lg);
+  box-shadow: none !important;
+}
+
+.oobe-you-title {
+  color: var(--you-on-surface) !important;
+}
+.oobe-you-subtitle {
+  color: var(--you-on-surface-variant) !important;
+}
+
+/* Логотип-контейнер: градиент палитры You */
+.oobe-you-logo {
+  background: linear-gradient(135deg, var(--you-primary), var(--you-primary-strong) 60%, var(--you-secondary)) !important;
+  border-color: transparent !important;
+  box-shadow: 0 12px 26px -12px color-mix(in srgb, var(--you-primary) 75%, transparent) !important;
+}
+
+/* Кнопки */
+.oobe-you-btn {
+  background-color: var(--you-primary) !important;
+  color: var(--you-on-primary) !important;
+  border-color: transparent !important;
+  border-radius: 9999px;
+  box-shadow: 0 10px 22px -12px color-mix(in srgb, var(--you-primary) 80%, transparent) !important;
+}
+.oobe-you-btn:hover {
+  filter: brightness(1.06);
+}
+.oobe-you-btn-tonal {
+  background-color: var(--you-primary-container) !important;
+  color: var(--you-on-primary-container) !important;
+  border-color: transparent !important;
+  border-radius: 9999px;
+}
+.oobe-you-btn-outline {
+  background-color: transparent !important;
+  color: var(--you-primary) !important;
+  border: 1.5px solid var(--you-outline) !important;
+  border-radius: 9999px;
+}
+
+/* Поля ввода: тональные «капсулы» без рамок */
+.oobe-you-input {
+  background-color: var(--you-surface-high) !important;
+  border-color: transparent !important;
+  border-radius: 9999px;
+  color: var(--you-on-surface) !important;
+  box-shadow: none !important;
+}
+.oobe-you-input:focus-within {
+  background-color: var(--you-surface-highest) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--you-primary) 16%, transparent) !important;
+}
+
+/* Пузыри сообщений You */
+.oobe-you-msg-me {
+  background-color: var(--you-primary) !important;
+  background-image: none !important;
+  color: var(--you-on-primary) !important;
+  border-radius: 24px 24px 8px 24px !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+.oobe-you-msg-other {
+  background-color: var(--you-surface-highest) !important;
+  background-image: none !important;
+  color: var(--you-on-surface) !important;
+  border-radius: 24px 24px 24px 8px !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Тональный чип */
+.oobe-you-chip {
+  background-color: var(--you-secondary-container) !important;
+  color: var(--you-on-secondary-container) !important;
+  border-color: transparent !important;
+}
+
+/* Точечный индикатор шагов */
+.oobe-you-dot {
+  background-color: var(--you-primary) !important;
+}
+.oobe-you-dot-inactive {
+  background-color: color-mix(in srgb, var(--you-on-surface) 18%, transparent) !important;
+}
+
+/* Спиннер в цвет палитры */
+.oobe-you-spinner {
+  border-color: color-mix(in srgb, var(--you-primary) 22%, transparent) !important;
+  border-top-color: var(--you-primary) !important;
+}
+
+/* Кружок «текущая проверка» */
+.oobe-you-check-current {
+  border-color: color-mix(in srgb, var(--you-primary) 40%, transparent) !important;
+  background-color: color-mix(in srgb, var(--you-primary) 10%, transparent) !important;
+}
+
+
+/* ============================================================
+   WINCHAT YOU — у каждой палитры свой живой фон
+   ============================================================ */
+
+.you-backdrop {
+  transition: background-color 0.4s ease;
+}
+
+/* Немного двигаем большие блобы под каждую палитру. */
+.you-backdrop[data-seed="ocean"] .you-blob-a {
+  right: auto;
+  left: -20vmax;
+  top: -26vmax;
+  background: var(--you-tertiary);
+}
+.you-backdrop[data-seed="forest"] .you-blob-b {
+  left: auto;
+  right: -24vmax;
+  top: -20vmax;
+  bottom: auto;
+  background: var(--you-primary-container);
+}
+.you-backdrop[data-seed="sunset"] .you-blob-c {
+  right: -18vmax;
+  bottom: 2vmax;
+  width: 46vmax;
+  height: 42vmax;
+  background: var(--you-secondary);
+  opacity: 0.35;
+}
+.you-backdrop[data-seed="cherry"] .you-blob-a {
+  background: var(--you-secondary-container);
+  opacity: 0.5;
+}
+.you-backdrop[data-seed="indigo"] .you-blob-c {
+  left: 8vmax;
+  right: auto;
+  bottom: -12vmax;
+  background: var(--you-tertiary);
+}
+.you-backdrop[data-seed="dark"] .you-blob {
+  opacity: 0.28;
+  filter: blur(58px);
+}
+.you-backdrop[data-seed="red"] .you-blob-b {
+  background: var(--you-primary-container);
+  opacity: 0.3;
+}
+.you-backdrop[data-seed="orange"] .you-blob-a {
+  background: var(--you-secondary-container);
+}
+.you-backdrop[data-seed="beige"] .you-blob {
+  opacity: 0.38;
+  filter: blur(48px);
+}
+.you-backdrop[data-seed="laguna"] .you-blob-c {
+  right: auto;
+  left: 6vmax;
+  bottom: -14vmax;
+  background: var(--you-tertiary);
+  opacity: 0.34;
+}
+.you-backdrop[data-seed="amber"] .you-blob-b {
+  background: var(--you-secondary-container);
+  opacity: 0.45;
+}
+.you-backdrop[data-seed="sakura"] .you-blob-a {
+  background: var(--you-secondary-container);
+  opacity: 0.5;
+}
+.you-backdrop[data-seed="cosmos"] .you-blob {
+  opacity: 0.3;
+  filter: blur(64px);
+}
+.you-backdrop[data-seed="graphite"] .you-blob {
+  opacity: 0.28;
+  filter: blur(58px);
+  background: var(--you-primary-container);
+}
+
+/* ---------- Океан: волны и пузырьки ---------- */
+.you-waves {
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  bottom: -5vmax;
+  height: 46vmax;
+  opacity: 0.6;
+}
+.you-waves svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.you-wave {
+  transform-origin: 50% 100%;
+}
+.you-wave-a {
+  fill: color-mix(in srgb, var(--you-primary) 26%, transparent);
+  animation: you-wave-sway 14s ease-in-out infinite alternate;
+}
+.you-wave-b {
+  fill: color-mix(in srgb, var(--you-tertiary) 32%, transparent);
+  animation: you-wave-sway 19s ease-in-out infinite alternate-reverse;
+}
+.you-wave-c {
+  fill: color-mix(in srgb, var(--you-primary-strong) 22%, transparent);
+  animation: you-wave-sway 24s ease-in-out infinite alternate;
+}
+@keyframes you-wave-sway {
+  from {
+    transform: translateX(-3%) scaleY(0.94);
+  }
+  to {
+    transform: translateX(3%) scaleY(1.06);
+  }
+}
+
+.you-bubbles span {
+  position: absolute;
+  bottom: -8vmax;
+  display: block;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--you-on-primary) 50%, transparent);
+  background: color-mix(in srgb, var(--you-tertiary) 45%, transparent);
+  box-shadow: inset 0 0 12px color-mix(in srgb, var(--you-on-primary) 28%, transparent);
+  animation-name: you-bubble-rise;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes you-bubble-rise {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.55);
+    opacity: 0;
+  }
+  18% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(3vmax, -78vmax, 0) scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* ---------- Лес: падающие листья ---------- */
+.you-leaves span {
+  position: absolute;
+  display: block;
+  border-radius: 72% 0 72% 0;
+  background: color-mix(in srgb, var(--you-tertiary) 68%, transparent);
+  box-shadow: inset -2px -2px 8px color-mix(in srgb, var(--you-primary-strong) 28%, transparent);
+  opacity: 0.6;
+  animation-name: you-leaf-fall;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes you-leaf-fall {
+  0% {
+    transform: translate3d(0, -12vmax, 0) rotate(0deg);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.65;
+  }
+  70% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate3d(10vmax, 92vmax, 0) rotate(320deg);
+    opacity: 0;
+  }
+}
+
+/* ---------- Закат: солнце и лучи ---------- */
+.you-sun-rays {
+  position: absolute;
+  right: -14vmax;
+  bottom: -16vmax;
+  width: 62vmax;
+  height: 62vmax;
+  border-radius: 9999px;
+  background: repeating-conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--you-tertiary) 20%, transparent) 0deg 5deg,
+    transparent 5deg 14deg
+  );
+  -webkit-mask-image: radial-gradient(circle, transparent 36%, #000 46%, transparent 72%);
+  mask-image: radial-gradient(circle, transparent 36%, #000 46%, transparent 72%);
+  animation: you-spin-slow 110s linear infinite;
+  opacity: 0.7;
+}
+.you-sun {
+  position: absolute;
+  right: 4vmax;
+  bottom: 2vmax;
+  width: 32vmax;
+  height: 32vmax;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 50% 40%,
+    var(--you-secondary) 0%,
+    color-mix(in srgb, var(--you-primary) 70%, transparent) 52%,
+    transparent 72%
+  );
+  filter: blur(2px);
+  opacity: 0.6;
+  animation: you-sun-breathe 11s ease-in-out infinite alternate;
+}
+.you-horizon {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: 6vmax;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--you-primary) 40%, transparent),
+    transparent
+  );
+  box-shadow:
+    0 4vmax 0 -0.5px color-mix(in srgb, var(--you-secondary) 22%, transparent),
+    0 8vmax 0 -0.5px color-mix(in srgb, var(--you-tertiary) 18%, transparent);
+}
+@keyframes you-sun-breathe {
+  from {
+    transform: scale(0.96);
+    opacity: 0.5;
+  }
+  to {
+    transform: scale(1.08);
+    opacity: 0.72;
+  }
+}
+@keyframes you-spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Вишня: лепестки ---------- */
+.you-petals span {
+  position: absolute;
+  top: -10vmax;
+  display: block;
+  border-radius: 64% 0 64% 0;
+  background: color-mix(in srgb, var(--you-secondary) 58%, white);
+  opacity: 0.7;
+  animation-name: you-petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes you-petal-fall {
+  0% {
+    transform: translate3d(0, -12vmax, 0) rotate(0deg) scale(0.8);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.75;
+  }
+  100% {
+    transform: translate3d(-9vmax, 104vmax, 0) rotate(420deg) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* ---------- Индиго: орбиты ---------- */
+.you-orbits {
+  position: absolute;
+  right: -16vmax;
+  top: -16vmax;
+  width: 62vmax;
+  height: 62vmax;
+}
+.you-orbits span {
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px dashed color-mix(in srgb, var(--you-primary) 36%, transparent);
+  animation: you-spin-slow 90s linear infinite;
+}
+.you-orbits span:nth-child(1) {
+  inset: 0;
+}
+.you-orbits span:nth-child(2) {
+  inset: 7vmax;
+  border-color: color-mix(in srgb, var(--you-tertiary) 40%, transparent);
+  animation-duration: 64s;
+  animation-direction: reverse;
+}
+.you-orbits span:nth-child(3) {
+  inset: 15vmax;
+  border-color: color-mix(in srgb, var(--you-secondary) 34%, transparent);
+  animation-duration: 46s;
+}
+.you-orbits span:nth-child(4) {
+  inset: 23vmax;
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--you-primary) 22%, transparent);
+  animation-duration: 30s;
+  animation-direction: reverse;
+}
+.you-orbits i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2.6vmax;
+  height: 2.6vmax;
+  margin: -1.3vmax 0 0 -1.3vmax;
+  border-radius: 9999px;
+  background: var(--you-tertiary);
+  box-shadow: 0 0 24px color-mix(in srgb, var(--you-tertiary) 80%, transparent);
+  animation: you-orbit 18s linear infinite;
+}
+@keyframes you-orbit {
+  from {
+    transform: rotate(0deg) translateX(19vmax) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(19vmax) rotate(-360deg);
+  }
+}
+
+/* ---------- Тёмный: звёзды и луна ---------- */
+.you-stars span {
+  position: absolute;
+  display: block;
+  border-radius: 9999px;
+  background: var(--you-primary);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--you-primary) 70%, transparent);
+  animation-name: you-twinkle;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes you-twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.25);
+  }
+}
+.you-moon {
+  position: absolute;
+  top: 7vmax;
+  right: 9vmax;
+  width: 17vmax;
+  height: 17vmax;
+  border-radius: 9999px;
+  box-shadow: inset -4vmax 1.5vmax 0 0 color-mix(in srgb, var(--you-primary) 52%, transparent);
+  opacity: 0.55;
+  animation: you-float 14s ease-in-out infinite alternate;
+}
+
+/* ---------- Красный: молнии и штриховка ---------- */
+.you-stripes {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    116deg,
+    transparent 0 18px,
+    color-mix(in srgb, var(--you-primary) 8%, transparent) 18px 21px
+  );
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 35%, transparent 85%);
+  mask-image: linear-gradient(to bottom, transparent, #000 35%, transparent 85%);
+}
+.you-bolts {
+  position: absolute;
+  right: 4vmax;
+  top: 6vmax;
+  width: 30vmax;
+  height: 48vmax;
+  opacity: 0.45;
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--you-primary) 55%, transparent));
+  animation: you-bolt-flash 5.5s ease-in-out infinite;
+}
+@keyframes you-bolt-flash {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  42% {
+    opacity: 0.55;
+  }
+  46% {
+    opacity: 0.18;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ---------- Оранжевый: цитрусовые кольца ---------- */
+.you-citrus {
+  position: absolute;
+  right: -12vmax;
+  bottom: -14vmax;
+  width: 58vmax;
+  height: 58vmax;
+  opacity: 0.5;
+  animation: you-spin-slow 120s linear infinite;
+}
+.you-citrus span {
+  position: absolute;
+  border-radius: 9999px;
+}
+.you-citrus span:nth-child(1) {
+  inset: 0;
+  border: 2.2vmax solid color-mix(in srgb, var(--you-secondary) 30%, transparent);
+}
+.you-citrus span:nth-child(2) {
+  inset: 7vmax;
+  border: 1.4vmax solid color-mix(in srgb, var(--you-tertiary) 42%, transparent);
+}
+.you-citrus span:nth-child(3) {
+  inset: 14vmax;
+  border: 0.9vmax dashed color-mix(in srgb, var(--you-primary) 34%, transparent);
+}
+.you-citrus span:nth-child(4) {
+  inset: 21vmax;
+  background: repeating-conic-gradient(
+    from 0deg,
+    color-mix(in srgb, var(--you-secondary) 26%, transparent) 0deg 12deg,
+    transparent 12deg 24deg
+  );
+}
+
+/* ---------- Бежевый: бумажные дуги ---------- */
+.you-arcs {
+  position: absolute;
+  inset: -24vmax;
+  opacity: 0.55;
+}
+.you-arcs span {
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--you-primary) 26%, transparent);
+  animation: you-arc-drift 20s ease-in-out infinite alternate;
+}
+.you-arcs span:nth-child(1) {
+  left: 8vmax;
+  top: 2vmax;
+  width: 38vmax;
+  height: 38vmax;
+}
+.you-arcs span:nth-child(2) {
+  left: 12vmax;
+  top: 6vmax;
+  width: 52vmax;
+  height: 52vmax;
+  animation-delay: -4s;
+}
+.you-arcs span:nth-child(3) {
+  right: 4vmax;
+  bottom: 0;
+  width: 46vmax;
+  height: 46vmax;
+  border-color: color-mix(in srgb, var(--you-secondary) 24%, transparent);
+  animation-delay: -8s;
+}
+.you-arcs span:nth-child(4) {
+  right: -2vmax;
+  bottom: -6vmax;
+  width: 64vmax;
+  height: 64vmax;
+  border-color: color-mix(in srgb, var(--you-tertiary) 22%, transparent);
+  animation-delay: -12s;
+}
+.you-arcs span:nth-child(5) {
+  left: 34vmax;
+  top: 30vmax;
+  width: 30vmax;
+  height: 30vmax;
+  border-color: color-mix(in srgb, var(--you-primary-strong) 18%, transparent);
+  animation-delay: -16s;
+}
+@keyframes you-arc-drift {
+  from {
+    transform: translate3d(-2vmax, -1vmax, 0) scale(0.96);
+  }
+  to {
+    transform: translate3d(2vmax, 2vmax, 0) scale(1.04);
+  }
+}
+
+/* Уважаем системную настройку «меньше движения». */
+@media (prefers-reduced-motion: reduce) {
+  .you-backdrop *,
+  .you-backdrop *::before,
+  .you-backdrop *::after {
+    animation: none !important;
+  }
+}
+/* ============================================================
+   WINCHAT GLASS v2 — Liquid Glass
+   Полностью самостоятельный интерфейс: тёмно-НЕ светлая «аврора»,
+   плавающие стеклянные острова, глубокие линзы-блики, очень
+   крупные скругления и живой свет. Включается классом .theme-glass.
+   ============================================================ */
+
+.theme-glass {
+  /* Стеклянные переменные */
+  --glass-r: 46px;
+  --glass-r-sm: 28px;
+  --glass-edge: rgba(255, 255, 255, 0.9);
+  --glass-glow: rgba(34, 64, 130, 0.55);
+
+  /* You-переменные, перекрашенные под стекло */
+  --you-primary: #4c7bff;
+  --you-on-primary: #ffffff;
+  --you-primary-strong: #2c56e8;
+  --you-primary-container: rgba(255, 255, 255, 0.82);
+  --you-on-primary-container: #12295c;
+  --you-secondary: #86a9ff;
+  --you-on-secondary: #06183b;
+  --you-secondary-container: rgba(255, 255, 255, 0.75);
+  --you-on-secondary-container: #101d33;
+  --you-tertiary: #6cc9b8;
+  --you-tertiary-container: rgba(224, 251, 245, 0.78);
+  --you-on-tertiary-container: #0b2925;
+  --you-surface: #e6ecf7;
+  --you-surface-low: rgba(255, 255, 255, 0.72);
+  --you-surface-container: rgba(255, 255, 255, 0.62);
+  --you-surface-high: rgba(255, 255, 255, 0.8);
+  --you-surface-highest: rgba(255, 255, 255, 0.92);
+  --you-on-surface: #0f1c33;
+  --you-on-surface-variant: rgba(15, 28, 51, 0.6);
+  --you-outline: rgba(96, 122, 168, 0.6);
+  --you-outline-variant: rgba(114, 142, 190, 0.4);
+  --you-r: 30px;
+  --you-r-sm: 20px;
+  --you-r-lg: 40px;
+}
+
+/* ---------- Аврора-фон: приглушённая матовая дымка под стеклом ---------- */
+.theme-glass body {
+  background:
+    radial-gradient(ellipse 55% 42% at 4% -4%, rgba(111, 163, 255, 0.58) 0%, transparent 56%),
+    radial-gradient(ellipse 50% 44% at 98% 2%, rgba(185, 144, 255, 0.5) 0%, transparent 58%),
+    radial-gradient(ellipse 62% 52% at 104% 78%, rgba(79, 224, 198, 0.44) 0%, transparent 58%),
+    radial-gradient(ellipse 60% 46% at -6% 88%, rgba(255, 181, 230, 0.46) 0%, transparent 58%),
+    radial-gradient(ellipse 70% 50% at 44% 34%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 72%),
+    linear-gradient(168deg, #e3eaf6 0%, #d2dcef 38%, #d8e1f2 64%, #c8d3ea 100%);
+  background-attachment: fixed;
+  color: var(--you-on-surface);
+}
+
+/* ---------- Шрифт и общие смягчители ---------- */
+.theme-glass body,
+.theme-glass input,
+.theme-glass textarea,
+.theme-glass select,
+.theme-glass button {
+  font-family: "Nunito", "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
+}
+.theme-glass .font-mono,
+.theme-glass code {
+  font-family: var(--font-mono);
+}
+
+/* ---------- Оболочка: во всю ширину, без скруглений страницы ---------- */
+.theme-glass .you-shell {
+  position: relative;
+  isolation: isolate;
+  padding: 0;
+  gap: 0;
+  background: transparent;
+}
+
+/* В Glass не показываем «обои» You — вместо них живой стеклянный фон. */
+.theme-glass .you-backdrop {
+  display: none !important;
+}
+
+/* Тёплый живой световую дымку под островами */
+.theme-glass .you-shell::before {
+  content: "";
+  position: fixed;
+  inset: -14%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 24% 18% at 74% 8%, rgba(255, 255, 255, 0.95), transparent 70%),
+    radial-gradient(ellipse 20% 14% at 14% 82%, rgba(255, 255, 255, 0.7), transparent 70%),
+    radial-gradient(ellipse 22% 16% at 58% 52%, rgba(160, 190, 255, 0.4), transparent 70%),
+    radial-gradient(ellipse 16% 12% at 88% 64%, rgba(111, 224, 200, 0.35), transparent 70%);
+  filter: blur(30px);
+  animation: glass-drift 22s ease-in-out infinite alternate;
+}
+@keyframes glass-drift {
+  from {
+    transform: translate3d(-2%, -1.5%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(2.5%, 2%, 0) scale(1.07);
+  }
+}
+@keyframes glass-float {
+  from {
+    transform: translate3d(-3%, -2%, 0) scale(1) rotate(-2deg);
+  }
+  to {
+    transform: translate3d(4%, 3%, 0) scale(1.08) rotate(2deg);
+  }
+}
+
+/* ---------- Сайдбар: матовая стеклянная панель во всю высоту ---------- */
+.theme-glass .you-sidebar {
+  background:
+    linear-gradient(180deg, rgba(240, 246, 255, 0.92) 0%, rgba(226, 236, 252, 0.8) 34%, rgba(219, 231, 250, 0.86) 100%);
+  border: none;
+  border-right: 1px solid rgba(114, 142, 190, 0.3);
+  border-radius: 0;
+  backdrop-filter: blur(46px) saturate(180%);
+  -webkit-backdrop-filter: blur(46px) saturate(180%);
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.9),
+    10px 0 44px -30px rgba(28, 58, 118, 0.4);
+}
+
+/* Логотип: стеклянная линза */
+.theme-glass .you-logo {
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.95), rgba(122, 162, 255, 0.75) 55%, rgba(76, 123, 255, 0.9));
+  color: #fff;
+  border-radius: 20px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -8px 18px -8px rgba(35, 70, 150, 0.55),
+    0 16px 32px -16px rgba(44, 86, 232, 0.75);
+}
+
+/* ---------- Поиск: стеклянная линза-пилюля ---------- */
+.theme-glass .you-search {
+  background: rgba(255, 255, 255, 0.8) !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  border-radius: 9999px !important;
+  color: var(--you-on-surface);
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 18px 40px -30px rgba(30, 60, 120, 0.65);
+}
+.theme-glass .you-search:focus {
+  background: rgba(255, 255, 255, 0.92) !important;
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  box-shadow:
+    0 0 0 3px rgba(76, 123, 255, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+.theme-glass .you-search:-webkit-autofill,
+.theme-glass .you-search:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--you-on-surface);
+  box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.92) inset;
+}
+
+/* ---------- Строки: стеклянные плитки ---------- */
+.theme-glass .you-row-hover:hover {
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: var(--glass-r-sm);
+}
+.theme-glass .you-row-selected {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.88), rgba(122, 161, 255, 0.45));
+  color: var(--you-on-primary-container);
+  border-radius: var(--glass-r-sm);
+  backdrop-filter: blur(28px) saturate(170%);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    0 18px 42px -28px rgba(35, 70, 150, 0.65);
+}
+
+/* ---------- Чат-панель: стекло во всю высоту ---------- */
+.theme-glass .you-chat {
+  background:
+    linear-gradient(180deg, rgba(249, 252, 255, 0.88) 0%, rgba(241, 247, 254, 0.8) 40%, rgba(235, 243, 252, 0.85) 100%);
+  backdrop-filter: blur(52px) saturate(170%);
+  -webkit-backdrop-filter: blur(52px) saturate(170%);
+  border-radius: 0;
+}
+
+/* ---------- Dynamic Island — «камера-островок» шапки чата ----------
+   Тёмная плавающая капсула, как вырез камеры на телефонах. */
+.theme-glass .you-appbar {
+  position: relative;
+  margin: clamp(8px, 1.3vw, 14px) clamp(8px, 1.4vw, 16px) 0;
+  background: linear-gradient(180deg, rgba(13, 18, 30, 0.96) 0%, rgba(20, 27, 46, 0.9) 100%);
+  border: none !important;
+  border-radius: 9999px !important;
+  color: #fff;
+  backdrop-filter: blur(36px) saturate(150%);
+  -webkit-backdrop-filter: blur(36px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 24px 52px -28px rgba(8, 18, 40, 0.85);
+}
+/* Бегущий тепловой блик по капсуле */
+.theme-glass .you-appbar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(118deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.03) 36%, transparent 52%);
+}
+/* Светлые контрасты внутри тёмной капсулы */
+.theme-glass .you-appbar [class~="text-black/40"] {
+  color: rgba(255, 255, 255, 0.66) !important;
+}
+.theme-glass .you-appbar [class~="text-[var(--you-on-surface-variant)]"] {
+  color: rgba(255, 255, 255, 0.74) !important;
+}
+.theme-glass .you-appbar [class~="hover:bg-[var(--you-secondary-container)]"]:hover {
+  background-color: rgba(255, 255, 255, 0.14) !important;
+}
+.theme-glass .you-appbar [class~="hover:text-[var(--you-on-secondary-container)]"]:hover,
+.theme-glass .you-appbar [class~="hover:text-[var(--you-primary)]"]:hover {
+  color: #fff !important;
+}
+
+/* Панель ввода: стеклянная дуга снизу (во всю ширину, без капсулы) */
+.theme-glass .you-bottombar {
+  background: linear-gradient(180deg, rgba(244, 249, 255, 0.85), rgba(232, 240, 252, 0.92));
+  border: none;
+  border-top: 1px solid rgba(114, 142, 190, 0.3) !important;
+  border-radius: 0 !important;
+  backdrop-filter: blur(34px) saturate(170%);
+  -webkit-backdrop-filter: blur(34px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* ---------- Дата: мини-табличка мелким капсом ---------- */
+.theme-glass .you-date-chip {
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--you-on-surface-variant);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 9999px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 10px !important;
+  font-weight: 800;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* ---------- Сообщения: капли из жидкого стекла ---------- */
+/* Свои: сапфировое стекло с белым ободом и бликом */
+.theme-glass .you-msg-own {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(158deg, rgba(96, 133, 255, 0.95) 0%, rgba(52, 88, 224, 0.92) 58%, rgba(35, 62, 170, 0.94) 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 34px 34px 10px 34px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 22px 46px -26px rgba(30, 60, 150, 0.85);
+}
+.theme-glass .you-msg-own::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(122deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0.06) 30%, transparent 46%);
+}
+/* Чужие: морозное белое стекло */
+.theme-glass .you-msg-other {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.74) 100%);
+  color: var(--you-on-surface);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 34px 34px 34px 10px;
+  backdrop-filter: blur(30px) saturate(165%);
+  -webkit-backdrop-filter: blur(30px) saturate(165%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 20px 44px -30px rgba(28, 56, 110, 0.6);
+}
+.theme-glass .you-msg-other::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(122deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 34%);
+}
+
+/* ---------- Композер: цельная стеклянная капсула ---------- */
+.theme-glass .you-composer {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.7));
+  border: 1px solid rgba(255, 255, 255, 0.98);
+  border-radius: 9999px;
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 24px 52px -32px rgba(28, 60, 120, 0.65);
+}
+.theme-glass .you-composer:focus-within {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.82));
+  box-shadow:
+    0 0 0 3px rgba(76, 123, 255, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+/* Текстовое поле внутри капсулы — прозрачное */
+.theme-glass .you-composer textarea {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+/* ---------- Кнопки: прозрачное стекло с бликом ---------- */
+.theme-glass .you-fab {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.78) 55%, rgba(228, 238, 255, 0.72) 100%);
+  color: var(--you-primary-strong);
+  border: 1px solid rgba(255, 255, 255, 1);
+  border-radius: 9999px;
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -10px 20px -12px rgba(44, 86, 232, 0.28),
+    0 14px 30px -18px rgba(28, 60, 120, 0.5);
+}
+.theme-glass .you-fab:hover {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 1) 0%, rgba(238, 246, 255, 0.86) 60%, rgba(216, 232, 255, 0.8) 100%);
+}
+.theme-glass .you-fab-tonal {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.88) 0%, rgba(255, 255, 255, 0.66) 60%, rgba(228, 238, 255, 0.6) 100%);
+  color: var(--you-on-surface);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 9999px;
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 14px 30px -18px rgba(28, 60, 120, 0.45);
+}
+.theme-glass .you-fab-tonal:hover {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.96) 0%, rgba(238, 246, 255, 0.8) 60%, rgba(216, 232, 255, 0.74) 100%);
+}
+.theme-glass .you-pill {
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--you-on-surface);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.theme-glass .you-pill-primary {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.78) 55%, rgba(228, 238, 255, 0.72) 100%);
+  color: var(--you-primary-strong);
+  border: 1px solid rgba(255, 255, 255, 1);
+  backdrop-filter: blur(22px) saturate(160%);
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 14px 30px -18px rgba(28, 60, 120, 0.5);
+}
+
+/* ---------- Разделители и прочее ---------- */
+.theme-glass .you-divider {
+  border-color: rgba(114, 142, 190, 0.35);
+}
+.theme-glass .you-sidebar .you-divider {
+  border-color: rgba(114, 142, 190, 0.35);
+}
+
+/* ---------- Экран-заглушка /themes/glass ---------- */
+.theme-glass .you-gate {
+  background:
+    radial-gradient(ellipse 55% 45% at 88% 2%, rgba(122, 162, 255, 0.45), transparent 62%),
+    radial-gradient(ellipse 50% 45% at 2% 96%, rgba(255, 181, 230, 0.4), transparent 62%),
+    radial-gradient(ellipse 55% 50% at 46% 46%, rgba(255, 255, 255, 0.6), transparent 72%),
+    linear-gradient(168deg, #e9f1fe 0%, #d5e2fa 45%, #cfe0f8 100%);
+}
+.theme-glass .you-gate-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.72));
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: var(--glass-r);
+  backdrop-filter: blur(42px) saturate(175%);
+  -webkit-backdrop-filter: blur(42px) saturate(175%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 44px 100px -46px rgba(28, 60, 130, 0.7);
+}
+
+/* ---------- Живые анимации ---------- */
+.theme-glass .animate-msg-in {
+  animation: glass-msg-in 0.5s cubic-bezier(0.22, 1.3, 0.36, 1) both;
+}
+@keyframes glass-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.theme-glass .winchat-page-transition {
+  animation: glass-page-in 0.5s cubic-bezier(0.22, 1.16, 0.4, 1) both;
+}
+@keyframes glass-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes glass-orb {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(4%, -6%, 0) scale(1.15);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(-4%, 5%, 0) scale(1.05);
+    opacity: 0.6;
+  }
+}
+
+/* ---------- Базовые Tailwind-утилиты под стекло ----------
+   Используем [class~="..."] — так не нужны экранированные селекторы. */
+.theme-glass {
+  color: var(--you-on-surface);
+}
+.theme-glass [class~="bg-white"] {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(26px) saturate(165%);
+  -webkit-backdrop-filter: blur(26px) saturate(165%);
+}
+.theme-glass [class~="bg-paper"] {
+  /* Экраны на bg-paper (настройки на весь экран) — плотное голубовато-серое
+     матовое стекло: заметно отличается и от фона, и от белых карточек. */
+  background-color: rgba(231, 239, 250, 0.96) !important;
+}
+.theme-glass [class~="bg-white/70"] {
+  background-color: rgba(255, 255, 255, 0.82) !important;
+}
+.theme-glass [class~="bg-white/60"] {
+  background-color: rgba(255, 255, 255, 0.78) !important;
+}
+.theme-glass [class~="bg-white/95"] {
+  background-color: rgba(255, 255, 255, 0.93) !important;
+}
+.theme-glass [class~="text-ink"] {
+  color: var(--you-on-surface) !important;
+}
+.theme-glass [class~="text-ink-soft"],
+.theme-glass [class~="text-black/70"],
+.theme-glass [class~="text-black/60"] {
+  color: var(--you-on-surface-variant) !important;
+}
+.theme-glass [class~="text-black/50"],
+.theme-glass [class~="text-black/45"],
+.theme-glass [class~="text-black/40"],
+.theme-glass [class~="text-black/35"],
+.theme-glass [class~="text-black/30"],
+.theme-glass [class~="text-black/25"] {
+  color: color-mix(in srgb, var(--you-on-surface-variant) 88%, transparent) !important;
+}
+.theme-glass [class~="border-black/8"],
+.theme-glass [class~="border-black/10"],
+.theme-glass [class~="border-black/5"],
+.theme-glass [class~="border-black/15"] {
+  border-color: rgba(114, 142, 190, 0.35) !important;
+}
+.theme-glass [class~="ring-black/5"],
+.theme-glass [class~="ring-black/8"],
+.theme-glass [class~="ring-black/10"] {
+  --tw-ring-color: rgba(114, 142, 190, 0.38) !important;
+}
+.theme-glass [class~="placeholder:text-black/35"]::placeholder,
+.theme-glass [class~="placeholder:text-black/30"]::placeholder {
+  color: var(--you-on-surface-variant) !important;
+  opacity: 1;
+}
+.theme-glass input:not(.you-search),
+.theme-glass select {
+  color: var(--you-on-surface);
+}
+.theme-glass input:not(.you-search):not(.you-composer textarea):not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+.theme-glass textarea:not(.you-composer textarea),
+.theme-glass select {
+  background-color: rgba(255, 255, 255, 0.78);
+  border-color: rgba(114, 142, 190, 0.35);
+  border-radius: var(--glass-r-sm);
+}
+.theme-glass input::placeholder,
+.theme-glass textarea::placeholder {
+  color: var(--you-on-surface-variant);
+  opacity: 1;
+}
+.theme-glass [class~="hover:bg-paper/70"]:hover,
+.theme-glass [class~="hover:bg-paper"]:hover,
+.theme-glass [class~="hover:bg-black/5"]:hover {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* ---------- Кнопки-действия: сапфировое стекло вместо тёмных заливок ---------- */
+.theme-glass [class~="bg-ink"] {
+  background: linear-gradient(160deg, rgba(96, 134, 255, 0.92) 0%, rgba(52, 88, 224, 0.86) 100%) !important;
+  background-color: rgba(64, 104, 240, 0.88) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -8px 16px -10px rgba(10, 25, 80, 0.5),
+    0 16px 34px -20px rgba(28, 60, 140, 0.7);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  color: #fff !important;
+}
+.theme-glass [class~="hover:bg-black"]:hover {
+  background: linear-gradient(160deg, rgba(84, 122, 250, 0.96) 0%, rgba(38, 72, 210, 0.92) 100%) !important;
+  background-color: rgba(44, 86, 232, 0.94) !important;
+}
+.theme-glass [class~="bg-ink"] [class~="text-black/45"],
+.theme-glass [class~="bg-ink"] [class~="text-black/40"] {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+.theme-glass .shadow-sm.ring-1,
+.theme-glass .shadow-sm {
+  --tw-shadow-color: rgba(30, 60, 120, 0.18);
+}
+
+/* Уважаем системную настройку «меньше движения». */
+@media (prefers-reduced-motion: reduce) {
+  .theme-glass .you-shell::before {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   OOBE — приветственные экраны (обновление 6.0.0 / установка)
+   ============================================================ */
+
+/* Шрифт OOBE — стеклянная Nunito (как в WinChat Glass) */
+.oobe-font,
+.oobe-font input,
+.oobe-font button,
+.oobe-font textarea,
+.oobe-font select {
+  font-family: "Nunito", "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
+}
+
+@keyframes oobe-rise {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes oobe-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes oobe-breathe {
+  0%,
+  100% {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(1.06);
+    transform: scale(1.03);
+  }
+}
+@keyframes oobe-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes oobe-slow-drift {
+  from {
+    transform: translate3d(-2%, -1.5%, 0) scale(1);
+  }
+  to {
+    transform: translate3d(2.5%, 2%, 0) scale(1.07);
+  }
+}
+@keyframes oobe-msg-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes oobe-float {
+  from {
+    opacity: 0;
+    transform: translateY(34px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes oobe-zoom {
+  from {
+    opacity: 0;
+    transform: scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes oobe-progress {
+  0% {
+    margin-left: -35%;
+  }
+  100% {
+    margin-left: 105%;
+  }
+}
+
+/* ---------- Анимации отдельных экранов-проверок ---------- */
+
+/* Расходящиеся кольца радара (поиск/подключение). */
+@keyframes oobe-radar {
+  0% {
+    transform: scale(0.35);
+    opacity: 0.75;
+  }
+  80% {
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+}
+
+/* Сектор развёртки радара. */
+@keyframes oobe-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Три прыгающие точки (загрузка/обмен). */
+@keyframes oobe-dot-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0) scale(0.85);
+    opacity: 0.45;
+  }
+  40% {
+    transform: translateY(-9px) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Детерминированное заполнение полосы. */
+@keyframes oobe-bar-fill {
+  from {
+    width: 2%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Сканирующая линия поверх карточки/щита. */
+@keyframes oobe-scan {
+  0% {
+    transform: translateY(-120%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(120%);
+    opacity: 0;
+  }
+}
+
+/* Пружинящее покачивание (замок, шестерня). */
+@keyframes oobe-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-5px) rotate(-4deg);
+  }
+  75% {
+    transform: translateY(3px) rotate(4deg);
+  }
+}
+
+/* Появление галочки «пройдено». */
+@keyframes oobe-check-pop {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Рисуемая дуга прогресса (stroke-dashoffset). */
+@keyframes oobe-arc {
+  from {
+    stroke-dashoffset: 180;
+  }
+  to {
+    stroke-dashoffset: 45;
+  }
+}
+
+/* Пульс-волна вокруг иконки. */
+@keyframes oobe-pulse-wave {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+/* Летящие искры синхронизации. */
+@keyframes oobe-orbit {
+  from {
+    transform: rotate(0deg) translateX(var(--oobe-orbit-r, 44px)) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(var(--oobe-orbit-r, 44px)) rotate(-360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oobe-aurora *,
+  .oobe-aurora *::before,
+  .oobe-aurora *::after {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   Режим разработчика: однотонный (монохромный) интерфейс
+   ============================================================ */
+html.dev-mono {
+  filter: grayscale(1);
+  background: #f4f4f4;
+}

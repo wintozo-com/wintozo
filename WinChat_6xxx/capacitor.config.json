@@ -1,0 +1,15 @@
+{
+  "appId": "org.wintozo.messenger",
+  "appName": "WinChat",
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

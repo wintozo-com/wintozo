@@ -1,0 +1,15 @@
+{
+  "appId": "com.winchat.you",
+  "appName": "WinChat You",
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": true,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": true
+  },
+  "plugins": {
+    "CapacitorHttp": {
+      "enabled": true
+    }
+  }
+}

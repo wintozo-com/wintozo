@@ -1,0 +1,837 @@
+import { useEffect, useRef, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { isGlassGranted, isWinProActive, getChatByInvite, supabase, type Profile } from "./lib/supabase";
+import { checkBanned } from "./lib/adminApi";
+import {
+  applyTheme,
+  getCurrentTheme,
+  getThemeById,
+  GLASS_THEME_ID,
+  isWinProTheme,
+  saveThemeId,
+  THEMES,
+  YOU_THEME_ID,
+} from "./lib/themes";
+import { getAnimationId } from "./lib/animations";
+import { initSecureAccountStore, rememberAccount } from "./lib/secureAccountStore";
+import { APP_VERSION, applyLegacyGate, declineLegacyUi, isLegacyUi, resetLegacyChoice } from "./lib/checkVersion";
+import { reportDeviceStatus } from "./lib/ota";
+import {
+  getOobeUpdateExpectedKey,
+  isPhoneDevice,
+  markOobeInstallDone,
+  markOobeUpdateDone,
+  OOBE_INSTALL_KEY,
+  readOobeUpdateKey,
+} from "./lib/oobe";
+import { navigate } from "./lib/router";
+import { devLog } from "./lib/devLogs";
+import { APP_BRAND, isStoreApp, isYouOnlyApp } from "./lib/appVariant";
+import Auth from "./components/Auth";
+import BootAnimation from "./components/BootAnimation";
+import BootAnimationYou from "./components/BootAnimation_you";
+import YouBootPrompt from "./components/YouBootPrompt";
+import StoreApp from "./components/StoreApp";
+import {
+  getBootStyle,
+  isYouBootAsked,
+  markYouBootAsked,
+  saveBootStyle,
+} from "./lib/bootAnimation";
+import Messenger from "./components/Messenger";
+import NewYearBanner from "./components/NewYearBanner";
+import LegacyScreen from "./components/LegacyScreen";
+import YouLocked from "./components/YouLocked";
+import GlassLocked from "./components/GlassLocked";
+import OobeUpdate from "./components/oobe/OobeUpdate";
+import OobeInstall from "./components/oobe/OobeInstall";
+import type { OobeVariant } from "./components/oobe/OobeThemeChooser";
+/* OOBE прошлых версий (например 5.0) — назначается через терминал (/set oobe). */
+import OobeUpdate5 from "./components/oobe/OobeUpdate5";
+
+/* ============================================================
+   Лёгкий роутер (как в старом Wintozo)
+   Новые маршруты:  /login  /registration  /chats  /settings
+                    /settings/status/winpro
+   WinChat You:     /themes/you  /themes/you/chat  /themes/you/settings
+                    /themes/you/winpro
+   Старый интерфейс (ивент «Память о Wintozo»):
+                    /events/themes/wintozo/*
+   ============================================================ */
+const LEGACY_PREFIX = "/events/themes/wintozo";
+/** Прямая ссылка-превью OOBE 6.0 в браузере: /winchat_6_oobe */
+const OOBE_PREVIEW_PATH = "/winchat_6_oobe";
+const YOU_PREFIX = "/themes/you";
+const YOU_PREV_THEME_KEY = "winchat_you_prev_theme";
+const GLASS_PREFIX = "/themes/glass";
+const GLASS_PREV_THEME_KEY = "winchat_glass_prev_theme";
+/** Версия, при первом запуске которой уже показали долгий boot-сплэш. */
+const BOOT_LONG_VERSION_KEY = "winchat_boot_long_version";
+/** Токен долгой заставки: новая версия приложения или новая ступень OOBE. */
+function longBootToken(): string {
+  return `${APP_VERSION}:oobe${getOobeUpdateExpectedKey()}`;
+}
+
+function isYouPath(path: string): boolean {
+  return path === YOU_PREFIX || path.startsWith(`${YOU_PREFIX}/`);
+}
+
+function isGlassPath(path: string): boolean {
+  return path === GLASS_PREFIX || path.startsWith(`${GLASS_PREFIX}/`);
+}
+
+function useRoute(): string {
+  const [path, setPath] = useState(window.location.pathname);
+  useEffect(() => {
+    const onPop = () => setPath(window.location.pathname);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+  return path;
+}
+
+export { navigate } from "./lib/router";
+
+export default function App() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [booting, setBooting] = useState(true);
+  const [banned, setBanned] = useState(false);
+  const [banReason, setBanReason] = useState("");
+  /* Стартовая анимация: показываем, пока она сама не доиграет до конца. */
+  const [splashDone, setSplashDone] = useState(false);
+  /* Первый запуск после установки/обновления — сплэш крутится дольше (~10 с). */
+  const [longBoot] = useState(() => {
+    try {
+      return localStorage.getItem(BOOT_LONG_VERSION_KEY) !== longBootToken();
+    } catch {
+      return false;
+    }
+  });
+  /* Выбранный стиль стартовой заставки (читается один раз на запуск). */
+  const [bootStyle] = useState(() => (isYouOnlyApp ? "you" : getBootStyle()));
+  /* Первый запуск OOBE: играем заставку You ~10 секунд даже без темы You. */
+  const useYouBoot = bootStyle === "you" || longBoot || isYouOnlyApp;
+  /* Плашка «переключить заставку на You-стиль?» после активации темы. */
+  const [youBootAsk, setYouBootAsk] = useState(false);
+  /* Ивент «Память о Wintozo»: показывать ли legacy-экран выбора/старый UI */
+  const [legacyAsk, setLegacyAsk] = useState(false);
+  /* OOBE: приветствия после обновления и при первом скачивании */
+  const [oobeUpdateShown, setOobeUpdateShown] = useState(true);
+  const [oobeInstallShown, setOobeInstallShown] = useState(true);
+  /* OOBE в WinChat 6.0 всегда в стиле Material You — выбор в начале убран. */
+  const [oobeTheme] = useState<OobeVariant>("you");
+  /* Лёгкий роутер: путь синхронизируется с экранами приложения */
+  const path = useRoute();
+  /* WinChat You — отдельный режим-маршрут /themes/you/* */
+  const youMode = isYouPath(path);
+  const youChatId = youMode
+    ? path.match(/^\/themes\/you\/chat\/([^/?#]+)/)?.[1] ?? null
+    : null;
+  const wasYou = useRef(false);
+
+  /* WinChat Glass — отдельный режим-маршрут /themes/glass/*.
+     Доступен только тем, у кого есть доступ к Glass (флаг профиля). */
+  const glassMode = isGlassPath(path);
+  const glassChatId = glassMode
+    ? path.match(/^\/themes\/glass\/chat\/([^/?#]+)/)?.[1] ?? null
+    : null;
+  const wasGlass = useRef(false);
+  /** Активный «особый» режим интерфейса: You или Glass. */
+  const themedMode = youMode || glassMode;
+  const themeRoutePrefix = glassMode ? GLASS_PREFIX : YOU_PREFIX;
+
+  /* ---------- Ссылка-приглашение: /channel/invite/<code> или /group/invite/<code> ---------- */
+  const inviteMatch = path.match(/^\/(?:channel|group)\/invite\/([^/?#]+)/);
+  const inviteChatId = inviteMatch ? decodeURIComponent(inviteMatch[1]) : null;
+  const [inviteOpenChatId, setInviteOpenChatId] = useState<string | null>(null);
+
+  /* Логи режима разработчика: текущий маршрут приложения. */
+  useEffect(() => {
+    devLog(`route: ${path}`);
+  }, [path]);
+
+  useEffect(() => {
+    if (!inviteChatId || !session || !profile) return;
+    let alive = true;
+    (async () => {
+      try {
+        const res = await getChatByInvite(inviteChatId);
+        if (!alive) return;
+        if (!res.ok || !res.chat) return;
+        const chat = res.chat;
+        // Добавляем в чат участника (группу/подписку), если ещё нет.
+        try {
+          await supabase.from("chat_members").insert({
+            chat_id: chat.id,
+            user_id: session.user.id,
+            role: chat.isGroup ? "member" : "subscriber",
+          });
+        } catch {
+          /* уже участник — игнорируем */
+        }
+        if (alive) setInviteOpenChatId(chat.id);
+      } catch {
+        /* ссылка невалидна — просто игнорируем */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [inviteChatId, session, profile]);
+
+  /* ---------- OOBE: приветствия (телефоны − автоматически, ПК − по адресу) ---------- */
+  /* Прямая ссылка-превью OOBE: /winchat_6_oobe (в том числе со слэшем). */
+  const isOobePreview =
+    path === OOBE_PREVIEW_PATH ||
+    path.startsWith(`${OOBE_PREVIEW_PATH}/`);
+  const oobeForceUpdate = path.startsWith("/oobe_update");
+  const oobeForceInstall = path.startsWith("/install_oobe") || isOobePreview;
+  /* OOBE какой версии назначена пользователю через терминал (/set oobe):
+     «5.0» или «6.0» — покажется при следующем входе даже без обновления. */
+  const forcedOobeVersion = (profile?.oobe_version ?? "").trim();
+  const showInstallOobe =
+    !isStoreApp &&
+    (oobeForceInstall || (isPhoneDevice() && !oobeInstallShown && !banned));
+  const showUpdateOobe =
+    !isStoreApp &&
+    (oobeForceUpdate ||
+      (!!forcedOobeVersion && !banned) ||
+      (isPhoneDevice() && !oobeUpdateShown && !!profile && !banned));
+
+  const finishUpdateOobe = () => {
+    /* Прямая ссылка /oobe_update — только превью: не «съедаем» настоящий OOBE. */
+    if (!oobeForceUpdate) markOobeUpdateDone();
+    setOobeUpdateShown(true);
+    navigate(profile ? "/chats" : "/login");
+    /* OOBE была назначена через терминал (/set oobe) — снимаем её, чтобы
+       при следующих входах снова работала обычная логика приветствий. */
+    if (!oobeForceUpdate && profile?.oobe_version) {
+      setProfile({ ...profile, oobe_version: null });
+      void supabase
+        .from("profiles")
+        .update({ oobe_version: null })
+        .eq("id", profile.id)
+        .then(undefined, () => undefined);
+    }
+  };
+  const finishInstallOobe = () => {
+    /* /winchat_6_oobe и /install_oobe — превью, состояние не меняем. */
+    if (!oobeForceInstall) markOobeInstallDone();
+    setOobeInstallShown(true);
+    navigate(profile ? "/chats" : "/login");
+  };
+
+  useEffect(() => {
+    try {
+      // OOBE обновления показываем, пока пользователь не дошёл ключом
+      // до текущей версии: 0 — не обновлялся, 1 — прошёл 5.0, 2 — closed beta
+      // 6.0, 3 — релиз 6.0 и т.д.
+      setOobeUpdateShown(readOobeUpdateKey() >= getOobeUpdateExpectedKey());
+      setOobeInstallShown(localStorage.getItem(OOBE_INSTALL_KEY) === "1");
+    } catch {
+      /* no-op */
+    }
+  }, []);
+
+  /* Сохраняем выбранный стиль OOBE (You). */
+  useEffect(() => {
+    try {
+      if (oobeTheme) localStorage.setItem("winchat_oobe_theme", oobeTheme);
+      else localStorage.removeItem("winchat_oobe_theme");
+    } catch {
+      /* no-op */
+    }
+  }, [oobeTheme]);
+
+  /* Долгий You-сплэш — один раз на версию приложения и ступень OOBE.
+     Прямые OOBE-ссылки не «съедают» показ: им заставка не нужна. */
+  useEffect(() => {
+    if (!longBoot || oobeForceInstall) return;
+    try {
+      localStorage.setItem(BOOT_LONG_VERSION_KEY, longBootToken());
+    } catch {
+      /* no-op */
+    }
+  }, [longBoot, oobeForceInstall]);
+
+  /* Активировали тему You — предлагаем You-заставку (один раз). */
+  useEffect(() => {
+    if (!splashDone || booting) return;
+
+    const check = () => {
+      const id = (getCurrentTheme() as { id?: string }).id;
+      if (id !== YOU_THEME_ID) return;
+      if (getBootStyle() === "you") return;
+      if (isYouBootAsked()) return;
+      setYouBootAsk(true);
+    };
+
+    check();
+    window.addEventListener("winchat-theme-change", check);
+    return () => window.removeEventListener("winchat-theme-change", check);
+  }, [splashDone, booting]);
+
+
+  useEffect(() => {
+    let alive = true;
+
+    // Сначала проверяем зашифрованную папку /winchat/account_settings/:
+    // оттуда восстанавливаются тема, анимация, профиль и сессия аккаунта.
+    (async () => {
+      await initSecureAccountStore();
+      if (!alive) return;
+
+      // Тема применяется после восстановления настроек из зашифрованного файла.
+      applyTheme(getCurrentTheme());
+
+      // OTA: отправить статус устройства (is_wintozo_web_true / _no).
+      // Сам поиск OTA делает CheckVersion после входа (см. lib/ota.ts).
+      void reportDeviceStatus();
+
+      const { data } = await supabase.auth.getSession();
+      if (!alive) return;
+      setSession(data.session);
+      setBooting(false);
+
+      /* Access-token живёт ~1 час: после перезагрузки ПК/браузера или просто
+       * повторного входа на сайт он мог устареть — принудительно обновляем
+       * сессию, чтобы пользователь не вылетал из аккаунта. */
+      if (data.session) {
+        try {
+          const { data: refreshed } = await supabase.auth.refreshSession();
+          if (!alive) return;
+          if (refreshed.session) setSession(refreshed.session);
+        } catch {
+          /* refreshSession сам дошлёт SIGNED_OUT через onAuthStateChange —
+           * здесь просто не оставляем «висящий» промис без обработки. */
+        }
+      }
+    })();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
+    return () => {
+      alive = false;
+      subscription.unsubscribe();
+    };
+  }, []);
+
+  /* Запоминаем профиль в зашифрованном хранилище при входе/обновлении. */
+  useEffect(() => {
+    if (profile) rememberAccount(profile);
+  }, [profile]);
+
+  /* Проверка серверной версии при запуске (ивент «Память о Wintozo») */
+  useEffect(() => {
+    if (!session || banned) return;
+    let alive = true;
+    void applyLegacyGate().then((turnedOn) => {
+      if (alive && (turnedOn || isLegacyUi())) setLegacyAsk(true);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [session, banned]);
+
+  /* OTA: после входа привязываем устройство к аккаунту (для цели @username) */
+  useEffect(() => {
+    if (!session) return;
+    void reportDeviceStatus(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.user.id]);
+
+  useEffect(() => {
+    if (!session) {
+      setProfile(null);
+      setBanned(false);
+      return;
+    }
+    let alive = true;
+    (async () => {
+      const { data } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .maybeSingle();
+      let p = data as Profile | null;
+      if (!p) {
+        // Запасной путь, если триггер handle_new_user ещё не выполнен
+        const meta = session.user.user_metadata as { username?: string; nickname?: string };
+        // upsert: профиль мог создать триггер между двумя нашими запросами
+        await supabase.from("profiles").upsert({
+          id: session.user.id,
+          username: (meta.username || `user_${session.user.id.slice(0, 6)}`).toLowerCase(),
+          nickname: meta.nickname || "Пользователь",
+        });
+        const { data: again } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", session.user.id)
+          .maybeSingle();
+        p = again as Profile | null;
+      }
+      if (alive) setProfile(p);
+    })();
+
+    // Проверка бана
+    (async () => {
+      const status = await checkBanned(session.user.id);
+      if (status === "banned") {
+        const { data: p } = await supabase
+          .from("profiles")
+          .select("ban_reason")
+          .eq("id", session.user.id)
+          .maybeSingle();
+        setBanReason((p as { ban_reason?: string } | null)?.ban_reason || "Вы забанены");
+        setBanned(true);
+      }
+    })();
+  }, [session]);
+
+  /* ---------- тема + WinPro-анимация ---------- */
+  useEffect(() => {
+    if (!profile) return;
+    const winPro = isWinProActive(profile);
+    const saved = getCurrentTheme();
+
+    // Тема WinPro недоступна без подписки — откатываемся на базовую
+    if (isWinProTheme(saved.id) && !winPro) {
+      saveThemeId(THEMES[0].id);
+      applyTheme(THEMES[0]);
+    } else {
+      applyTheme(getThemeById(saved.id) ?? THEMES[0]);
+    }
+
+    // Фоновая анимация
+    const root = document.documentElement;
+    root.classList.remove(
+      "winpro-bg-gold-dust",
+      "winpro-bg-aurora",
+      "winpro-bg-crown-rain",
+      "winpro-bg-gradient-shift",
+      "winpro-bg-ripple",
+      "winpro-bg-nebula"
+    );
+    const anim = getAnimationId();
+    if (winPro && anim !== "off") root.classList.add(`winpro-bg-${anim}`);
+  }, [profile]);
+
+  useEffect(() => {
+    const onChange = () => {
+      const root = document.documentElement;
+      root.classList.remove(
+        "winpro-bg-gold-dust",
+        "winpro-bg-aurora",
+        "winpro-bg-crown-rain",
+        "winpro-bg-gradient-shift",
+        "winpro-bg-ripple",
+        "winpro-bg-nebula"
+      );
+      if (!profile || !isWinProActive(profile)) return;
+      const anim = getAnimationId();
+      if (anim !== "off") root.classList.add(`winpro-bg-${anim}`);
+    };
+    window.addEventListener("winchat-animation-change", onChange);
+    return () => window.removeEventListener("winchat-animation-change", onChange);
+  }, [profile]);
+
+  /* Вариант WinChat You: всегда работаем в режиме You, без других тем. */
+  useEffect(() => {
+    if (!isYouOnlyApp) return;
+    if (!isYouPath(path)) {
+      window.history.replaceState({}, "", `${YOU_PREFIX}/chat`);
+      window.dispatchEvent(new PopStateEvent("popstate"));
+    }
+  }, [path]);
+
+  /* ---------- WinChat You: короткий адрес → чат ---------- */
+  useEffect(() => {
+    if (path !== YOU_PREFIX) return;
+    window.history.replaceState({}, "", `${YOU_PREFIX}/chat`);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }, [path]);
+
+  /* ---------- WinChat You: включение/выключение режима ---------- */
+  useEffect(() => {
+    if (!profile) return;
+    const winPro = isWinProActive(profile) || isYouOnlyApp;
+    const active = youMode && winPro;
+    const savedId = (getCurrentTheme() as { id?: string }).id ?? THEMES[0].id;
+
+    if (active) {
+      if (!wasYou.current) {
+        // Запоминаем тему, к которой вернёмся после выхода из You.
+        try {
+          const prev = localStorage.getItem("winchat_theme_id");
+          if (prev && prev !== YOU_THEME_ID) {
+            localStorage.setItem(YOU_PREV_THEME_KEY, prev);
+          }
+        } catch {
+          /* no-op */
+        }
+      }
+      wasYou.current = true;
+        saveThemeId(YOU_THEME_ID);
+      applyTheme(getThemeById(YOU_THEME_ID) ?? THEMES[0]);
+      document.title = APP_BRAND;
+      return;
+    }
+
+    const leavingYou = wasYou.current;
+    wasYou.current = false;
+
+    // После перезагрузки адрес может снова стать /chats (или /), но тема
+    // WinChat You уже выбрана — не сбрасываем её, а возвращаем в You.
+    if (
+      savedId === YOU_THEME_ID &&
+      winPro &&
+      !leavingYou &&
+      (path === "/chats" || path === "/" || path === "")
+    ) {
+      window.history.replaceState({}, "", `${YOU_PREFIX}/chat`);
+      window.dispatchEvent(new PopStateEvent("popstate"));
+      return;
+    }
+
+    // Пользователь уже выбрал другую тему — не перетираем его выбор.
+    if (savedId !== YOU_THEME_ID) {
+      if (isYouOnlyApp) {
+        saveThemeId(YOU_THEME_ID);
+        applyTheme(getThemeById(YOU_THEME_ID) ?? THEMES[0]);
+        document.title = APP_BRAND;
+        if (!isYouPath(path)) navigate(`${YOU_PREFIX}/chat`);
+        return;
+      }
+      document.title = APP_BRAND;
+      return;
+    }
+
+    // Вышли из /themes/you/* — возвращаем тему, которая была до You.
+    let prev: string = THEMES[0].id;
+    try {
+      prev = localStorage.getItem(YOU_PREV_THEME_KEY) || THEMES[0].id;
+    } catch {
+      /* no-op */
+    }
+    if (isWinProTheme(prev) && !winPro) prev = THEMES[0].id;
+    saveThemeId(prev);
+    applyTheme(getThemeById(prev) ?? THEMES[0]);
+    document.title = APP_BRAND;
+  }, [profile, youMode, path]);
+
+  /* ---------- WinChat Glass: короткий адрес → чат ---------- */
+  useEffect(() => {
+    if (path !== GLASS_PREFIX) return;
+    window.history.replaceState({}, "", `${GLASS_PREFIX}/chat`);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }, [path]);
+
+  /* ---------- WinChat Glass: включение/выключение режима (только по флагу админа) ---------- */
+  useEffect(() => {
+    if (!profile) return;
+    const allowed = isGlassGranted(profile);
+    const active = glassMode && allowed;
+    const savedId = (getCurrentTheme() as { id?: string }).id ?? THEMES[0].id;
+
+    if (active) {
+      if (!wasGlass.current) {
+        // Запоминаем тему, к которой вернёмся после выхода из Glass.
+        try {
+          const prev = localStorage.getItem("winchat_theme_id");
+          if (prev && prev !== GLASS_THEME_ID) {
+            localStorage.setItem(GLASS_PREV_THEME_KEY, prev);
+          }
+        } catch {
+          /* no-op */
+        }
+      }
+      wasGlass.current = true;
+      saveThemeId(GLASS_THEME_ID);
+      applyTheme(getThemeById(GLASS_THEME_ID) ?? THEMES[0]);
+      document.title = "WinChat Glass";
+      return;
+    }
+
+    const leavingGlass = wasGlass.current;
+    wasGlass.current = false;
+
+    // После перезагрузки адрес может снова стать /chats (или /), но тема
+    // WinChat Glass уже выбрана — не сбрасываем её, а возвращаем в Glass.
+    if (
+      savedId === GLASS_THEME_ID &&
+      allowed &&
+      !leavingGlass &&
+      !youMode &&
+      (path === "/chats" || path === "/" || path === "")
+    ) {
+      window.history.replaceState({}, "", `${GLASS_PREFIX}/chat`);
+      window.dispatchEvent(new PopStateEvent("popstate"));
+      return;
+    }
+
+    // Пользователь выбрал другую тему или ушёл в You — не перетираем.
+    if (savedId !== GLASS_THEME_ID || youMode) {
+      if (!themedMode) document.title = "WinChat";
+      return;
+    }
+
+    // Вышли из /themes/glass/* — возвращаем тему, которая была до Glass.
+    let prev: string = THEMES[0].id;
+    try {
+      prev = localStorage.getItem(GLASS_PREV_THEME_KEY) || THEMES[0].id;
+    } catch {
+      /* no-op */
+    }
+    if (isWinProTheme(prev) && !isWinProActive(profile)) prev = THEMES[0].id;
+    saveThemeId(prev);
+    applyTheme(getThemeById(prev) ?? THEMES[0]);
+    if (!themedMode) document.title = "WinChat";
+  }, [profile, glassMode, path, youMode, themedMode]);
+
+  if (!splashDone || booting || (session && !profile)) {
+    /* Прямая ссылка на OOBE (/winchat_6_oobe, /install_oobe) — без заставки,
+       чтобы экран можно было смотреть и отлаживать сразу. */
+    if (!banned && oobeForceInstall) {
+      return (
+        <OobeInstall
+          hasSession={false}
+          profile={profile}
+          onFinish={finishInstallOobe}
+          variant={oobeTheme}
+        />
+      );
+    }
+    /* Заставка уже доиграла, а сессия только что появилась и профиль ещё
+       грузится: не перезапускаем boot, если сейчас идёт OOBE установки. */
+    if (splashDone && !booting && !banned && showInstallOobe) {
+      return (
+        <OobeInstall
+          hasSession={!!session}
+          profile={null}
+          onFinish={finishInstallOobe}
+          variant={oobeTheme}
+        />
+      );
+    }
+    /* Первый запуск после установки/обновления: даже без темы You играем
+       заставку You ~10 секунд — один раз на ступень OOBE. */
+    return useYouBoot ? (
+      <BootAnimationYou
+        ready={!booting && !(session && !profile)}
+        long={longBoot}
+        onDone={() => setSplashDone(true)}
+      />
+    ) : (
+      <BootAnimation
+        ready={!booting && !(session && !profile)}
+        long={longBoot}
+        variant={bootStyle}
+        onDone={() => setSplashDone(true)}
+      />
+    );
+  }
+
+  /* ---------- OOBE: приветствия WinChat 6.0 (обновление / установка) ---------- */
+  if (showInstallOobe) {
+    document.title = "Добро пожаловать в WinChat";
+    return (
+      <OobeInstall
+        hasSession={!!session}
+        profile={profile}
+        onFinish={finishInstallOobe}
+        variant={oobeTheme}
+      />
+    );
+  }
+  if (showUpdateOobe) {
+    /* OOBE версии 5.0 — оригинальное приветствие пятой версии.
+     * В 6.0 показываем его в актуальном Material You-стиле. */
+    if (forcedOobeVersion === "5.0") {
+      document.title = "WinChat 5.0";
+      return (
+        <OobeUpdate5
+          winPro={profile ? isWinProActive(profile) : session ? null : false}
+          onFinish={finishUpdateOobe}
+          variant={oobeTheme}
+        />
+      );
+    }
+    document.title = "WinChat 6.0";
+    return (
+      <OobeUpdate
+        winPro={profile ? isWinProActive(profile) : session ? null : false}
+        onFinish={finishUpdateOobe}
+        variant={oobeTheme}
+      />
+    );
+  }
+
+  /* ---------- Маршруты старого интерфейса ---------- */
+  if (path.startsWith(LEGACY_PREFIX)) {
+    if (!session || !profile) {
+      // не авторизован — сначала вход
+      window.history.replaceState({}, "", "/login");
+      return <Auth />;
+    }
+    return (
+      <LegacyScreen
+        me={profile}
+        /** Роут ведёт сразу в старый интерфейс, минуя плашку выбора. */
+        skipAsk
+        onStayNew={() => {
+          declineLegacyUi();
+          setLegacyAsk(false);
+          window.history.pushState({}, "", "/chats");
+          window.dispatchEvent(new PopStateEvent("popstate"));
+        }}
+      />
+    );
+  }
+
+  /* ---------- Не авторизован: /login и /registration ---------- */
+  if (!session || !profile) {
+    const route = path === "/registration" ? "register" : "login";
+    // нормализуем адрес, если пользователь открыл корень
+    if (path !== "/login" && path !== "/registration") {
+      window.history.replaceState({}, "", `/${route}`);
+    }
+    return <Auth initialMode={route} />;
+  }
+  /* Авторизован на странице входа — уводим в чаты */
+  if (path === "/login" || path === "/registration") {
+    window.history.replaceState({}, "", "/chats");
+  }
+  if (banned)
+    return (
+      <div className="font-app flex min-h-dvh items-center justify-center bg-paper px-6">
+        <div className="animate-scale-in w-full max-w-md rounded-[28px] bg-white p-8 text-center shadow-2xl">
+          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[22px] bg-red-500/10">
+            <span className="text-2xl">🚫</span>
+          </div>
+          <h2 className="text-xl font-extrabold tracking-tight">Доступ заблокирован</h2>
+          <p className="mt-3 text-sm font-medium text-black/50">{banReason}</p>
+          <p className="mt-5 text-[13px] font-semibold text-black/35">
+            Если вы считаете это ошибкой, свяжитесь с администрацией.
+          </p>
+        </div>
+      </div>
+    );
+
+  if (isLegacyUi() && !isStoreApp)
+    return (
+      <LegacyScreen
+        me={profile}
+        onStayNew={() => {
+          declineLegacyUi();
+          setLegacyAsk(false);
+        }}
+      />
+    );
+  if (legacyAsk && !isStoreApp)
+    return (
+      <LegacyScreen
+        me={profile}
+        onStayNew={() => {
+          declineLegacyUi();
+          setLegacyAsk(false);
+        }}
+      />
+    );
+
+  if (isStoreApp) {
+    document.title = APP_BRAND;
+    return (
+      <StoreApp
+        me={profile}
+        session={session}
+        onLogout={() => supabase.auth.signOut()}
+      />
+    );
+  }
+
+  /* ---------- /themes/you/* — Material You только для WinPro ---------- */
+  if (youMode && !isWinProActive(profile) && !isYouOnlyApp) {
+    return (
+      <YouLocked
+        me={profile}
+        onBack={() => navigate("/chats")}
+        onGetWinPro={() => navigate("/settings/status/winpro")}
+      />
+    );
+  }
+
+  /* ---------- /themes/glass/* — WinChat Glass (только по флагу админа) ---------- */
+  if (glassMode && !isGlassGranted(profile)) {
+    return (
+      <GlassLocked
+        me={profile}
+        onBack={() => navigate("/chats")}
+      />
+    );
+  }
+
+  /* ---------- /settings, /settings/status/winpro, /themes/{you,glass}/settings ---------- */
+  const settingsTab =
+    path === "/settings/status/winpro" ||
+    path === "/themes/you/winpro" ||
+    path === "/themes/glass/winpro"
+      ? "winpro" as const
+      : path === "/settings"
+        ? "profile" as const
+        : path === "/themes/you/settings" || path === "/themes/glass/settings"
+          ? "customization" as const
+          : null;
+
+  /* Отладка на ПК: /setting_phone=1 (и в темах You/Glass) — открыть
+     полноэкранные Android-настройки */
+  const phoneSettingsRoute =
+    path.startsWith("/setting_phone") ||
+    path.startsWith("/themes/you/setting_phone") ||
+    path.startsWith("/themes/glass/setting_phone");
+
+  return (
+    <>
+      {/* Новогодний отсчёт до выхода WinChat 7.0.0 (ПК и телефоны) */}
+      <NewYearBanner />
+
+      <Messenger
+        me={profile}
+        onProfileSaved={setProfile}
+        onLogout={() => supabase.auth.signOut()}
+        onShowLegacy={() => {
+          resetLegacyChoice(); // сбрасываем «user_declined» — плашка снова доступна
+          setLegacyAsk(true);
+        }}
+        initialSettingsOpen={!!settingsTab || phoneSettingsRoute}
+        initialSettingsTab={settingsTab ?? undefined}
+        forcePhoneSettings={phoneSettingsRoute}
+        youMode={themedMode}
+        initialChatId={youMode ? youChatId : glassMode ? glassChatId : null}
+        onYouChatRoute={(id) =>
+          navigate(id ? `${themeRoutePrefix}/chat/${id}` : `${themeRoutePrefix}/chat`)
+        }
+        onExitYou={() => navigate("/chats")}
+        onOpenYouSettings={() => navigate(`${themeRoutePrefix}/settings`)}
+        onYouSettingsClosed={() => {
+          if (themedMode) navigate(`${themeRoutePrefix}/chat`);
+        }}
+        inviteChatId={inviteOpenChatId}
+      />
+
+      <YouBootPrompt
+        open={youBootAsk}
+        onAccept={() => {
+          saveBootStyle("you");
+          markYouBootAsked();
+          setYouBootAsk(false);
+        }}
+        onDecline={() => {
+          markYouBootAsked();
+          setYouBootAsk(false);
+        }}
+      />
+    </>
+  );
+}
