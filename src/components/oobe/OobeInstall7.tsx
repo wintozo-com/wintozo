@@ -46,6 +46,7 @@ import {
   HappyYearTree,
 } from "../HappyYearDecor";
 import "./oobe-7.css";
+import OobeIceIntro from "./OobeIceIntro";
 
 interface Props {
   /** Есть ли сессия (во время проверки профиля профиль ещё null). */
@@ -90,6 +91,8 @@ export default function OobeInstall7({
   const [issuedWinpass, setIssuedWinpass] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [checkPhase, setCheckPhase] = useState(0);
+  /* Ледяная заставка 7.0: 6 кликов по W → логотип перелетает в OOBE. */
+  const [iceIntro, setIceIntro] = useState(true);
 
   /* Пока OOBE открыт — гасим фоновые анимации WinPro на <html>. */
   useEffect(() => {
@@ -276,6 +279,7 @@ export default function OobeInstall7({
         <div className="ny7-brand">
           <span className="ny7-logo">
             <img
+              data-oobe-intro-target
               src="/logo.jpg"
               alt="WinChat"
               width={52}
@@ -370,6 +374,7 @@ export default function OobeInstall7({
               <div className="ny7-mark">
                 <span className="ny7-mark-ring" aria-hidden="true" />
                 <img
+                  data-oobe-intro-target
                   src="/logo.jpg"
                   alt=""
                   decoding="async"
@@ -637,7 +642,7 @@ export default function OobeInstall7({
         </section>
       </main>
 
-    
+      {iceIntro && <OobeIceIntro onDone={() => setIceIntro(false)} />}
     </div>
   );
 }

@@ -24,6 +24,7 @@ import { getBootStyle, saveBootStyle, type BootStyle } from "../../../../lib/boo
 import BootStylePicker from "../../../BootStylePicker";
 import YouShapePicker from "../../../YouShapePicker";
 import NyThemePicker from "../../../NyThemePicker";
+import BgMusicToggle from "../../../BgMusicToggle";
 import { HappyYearGarland } from "../../../HappyYearDecor";
 import {
   APP_VERSION,
@@ -603,7 +604,8 @@ export default function SettingsModal({
 
           {/* ===== Кастомизация ===== */}
           <div className={showTab("customization")}>
-            <NyThemePicker className="mb-6" />
+            <NyThemePicker className="mb-4" />
+            <BgMusicToggle className="mb-6" />
             <div>
               <span className={cn("mb-3 flex items-center gap-2 text-[12px] font-bold", you ? "text-[var(--you-on-surface-variant)]" : "text-black/45")}>
                 <Palette className="h-3.5 w-3.5" />

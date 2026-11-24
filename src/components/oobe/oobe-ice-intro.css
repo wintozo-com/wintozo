@@ -1,0 +1,496 @@
+/* ============================================================
+   OOBE 7.0 — ледяная заставка (светлая и тёмная темы).
+   Реалистичная глыба: неровные края, внутренние пузыри, помутнения,
+   зерно, трещины с неровной геометрией, W заморожена внутри льда.
+   ============================================================ */
+
+html.oobe-intro-active [data-oobe-intro-target] {
+  opacity: 0 !important;
+  transition: none !important;
+}
+
+.oobe-ice-intro {
+  --ice-ink: #06080d;
+  --ice-hint: #2f5b78;
+  --ice-crack: rgba(255, 255, 255, 0.96);
+  --ice-crack-shadow: rgba(38, 82, 115, 0.5);
+  --ice-edge: rgba(255, 255, 255, 0.92);
+  --ice-body:
+    linear-gradient(135deg,
+      rgba(249, 253, 255, 0.96) 0%,
+      rgba(174, 213, 238, 0.86) 30%,
+      rgba(240, 250, 255, 0.94) 51%,
+      rgba(151, 196, 227, 0.88) 76%,
+      rgba(250, 253, 255, 0.97) 100%);
+  --ice-cloud: rgba(255, 255, 255, 0.85);
+  --ice-bubble: rgba(255, 255, 255, 0.82);
+  --ice-grain-opacity: 0.15;
+  --ice-shadow: rgba(48, 96, 132, 0.42);
+  --ice-vignette: rgba(145, 190, 222, 0.4);
+  --ice-bg:
+    radial-gradient(circle at 50% 40%, #fff 0%, #edf7ff 36%, #cfe5f5 70%, #b6d5ea 100%);
+
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  overflow: hidden;
+  color: var(--ice-ink);
+  font-family: "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.oobe-ice-intro[data-phase="fly"] { pointer-events: none; }
+.oobe-ice-defs { position: absolute; width: 0; height: 0; pointer-events: none; }
+
+/* ---------- Холодный фон ---------- */
+.oobe-ice-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--ice-bg);
+  transition: opacity 1050ms ease;
+}
+.oobe-ice-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 48%, transparent 26%, var(--ice-vignette) 125%),
+    linear-gradient(180deg, rgba(255,255,255,.35), transparent 45%);
+}
+.oobe-ice-intro[data-phase="fly"] .oobe-ice-bg,
+.oobe-ice-intro[data-phase="fly"] .oobe-ice-snow { opacity: 0; transition: opacity 900ms ease; }
+
+/* Мелкий снег — почти незаметный, как пыль. */
+.oobe-ice-snow { position: absolute; inset: 0; pointer-events: none; transition: opacity 900ms ease; }
+.oobe-ice-snow span {
+  position: absolute;
+  top: -8vh;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 7px rgba(255,255,255,.8);
+  opacity: var(--alpha);
+  animation: ice-snow-fall var(--fall) linear var(--delay) infinite;
+}
+@keyframes ice-snow-fall {
+  to { transform: translate3d(var(--drift), 120vh, 0); }
+}
+
+/* ---------- Глыба ---------- */
+.oobe-ice-hit {
+  --hits: 0;
+  --p: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(76vw, 510px);
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  animation: ice-float 7s ease-in-out infinite;
+}
+.oobe-ice-hit:focus-visible {
+  outline: 2px solid rgba(198,40,40,.55);
+  outline-offset: 14px;
+}
+.oobe-ice-intro[data-phase="burst"] .oobe-ice-hit,
+.oobe-ice-intro[data-phase="fly"] .oobe-ice-hit { pointer-events: none; }
+@keyframes ice-float {
+  0%,100% { transform: translate(-50%,-50%) translateY(0) rotate(0deg); }
+  50% { transform: translate(-50%,-50%) translateY(-6px) rotate(.4deg); }
+}
+
+/* Тень подо льдом. */
+.oobe-ice-shadow {
+  position: absolute;
+  left: 6%; right: 6%;
+  bottom: -5%;
+  height: 18%;
+  border-radius: 50%;
+  background: var(--ice-shadow);
+  filter: blur(26px);
+  opacity: .7;
+}
+
+.oobe-ice-slab {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--ice-body);
+  /* Неровные, «отколотые» края глыбы. */
+  clip-path: polygon(
+    5% 3%, 24% 0, 62% 2%, 93% 0, 100% 9%, 97% 35%,
+    100% 67%, 96% 93%, 84% 100%, 52% 97%, 18% 100%,
+    2% 94%, 0 68%, 3% 38%, 0 12%);
+  box-shadow:
+    inset 0 0 0 2px var(--ice-edge),
+    inset 0 0 34px rgba(255,255,255,.6),
+    0 30px 60px -28px var(--ice-shadow);
+  opacity: calc(1 - var(--hits) * 0.035);
+  transition: opacity 420ms ease, transform 620ms cubic-bezier(.2,.7,.2,1), filter 520ms ease;
+}
+.oobe-ice-intro[data-phase="burst"] .oobe-ice-slab,
+.oobe-ice-intro[data-phase="fly"] .oobe-ice-slab {
+  opacity: 0;
+  transform: scale(1.07);
+  filter: blur(8px);
+}
+
+/* Глубина: холодные тени и световые карманы внутри льда. */
+.oobe-ice-depth {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 24% 18%, rgba(255,255,255,.9), transparent 42%),
+    radial-gradient(ellipse at 76% 76%, rgba(90,150,195,.55), transparent 48%),
+    radial-gradient(ellipse at 62% 28%, rgba(255,255,255,.55), transparent 34%),
+    linear-gradient(150deg, transparent 38%, rgba(60,115,160,.24) 52%, transparent 68%);
+  mix-blend-mode: screen;
+  opacity: .78;
+}
+
+/* Мутные облака замёрзшего воздуха. */
+.oobe-ice-cloud {
+  position: absolute;
+  inset: -12%;
+  background:
+    radial-gradient(ellipse at 18% 30%, var(--ice-cloud) 0 3%, transparent 17%),
+    radial-gradient(ellipse at 68% 22%, var(--ice-cloud) 0 4%, transparent 19%),
+    radial-gradient(ellipse at 82% 64%, var(--ice-cloud) 0 3%, transparent 16%),
+    radial-gradient(ellipse at 34% 78%, var(--ice-cloud) 0 5%, transparent 20%),
+    radial-gradient(ellipse at 52% 50%, var(--ice-cloud) 0 2%, transparent 12%);
+  filter: blur(17px);
+  opacity: .5;
+}
+
+/* Воздушные пузырьки. */
+.oobe-ice-bubbles {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 17% 24%, var(--ice-bubble) 0 2px, transparent 3px),
+    radial-gradient(circle at 22% 29%, var(--ice-bubble) 0 1px, transparent 2px),
+    radial-gradient(circle at 79% 18%, var(--ice-bubble) 0 3px, transparent 4px),
+    radial-gradient(circle at 84% 34%, var(--ice-bubble) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 68% 71%, var(--ice-bubble) 0 2.5px, transparent 3.5px),
+    radial-gradient(circle at 73% 77%, var(--ice-bubble) 0 1px, transparent 2px),
+    radial-gradient(circle at 28% 74%, var(--ice-bubble) 0 2px, transparent 3px),
+    radial-gradient(circle at 41% 60%, var(--ice-bubble) 0 1px, transparent 2px),
+    radial-gradient(circle at 55% 38%, var(--ice-bubble) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 12% 58%, var(--ice-bubble) 0 1px, transparent 2px);
+  filter: blur(.4px);
+  opacity: .85;
+}
+
+/* Ледяное зерно через SVG-турбулентность. */
+.oobe-ice-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  mix-blend-mode: overlay;
+  opacity: var(--ice-grain-opacity);
+  pointer-events: none;
+}
+
+/* Края, фаски и иней по углам. */
+.oobe-ice-edges {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow:
+    inset 3px 0 12px -6px rgba(255,255,255,.95),
+    inset -4px 0 14px -6px rgba(120,180,220,.7),
+    inset 0 4px 12px -6px rgba(255,255,255,.9),
+    inset 0 -6px 16px -6px rgba(90,150,195,.65);
+}
+.oobe-ice-edges::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(255,255,255,.45);
+  clip-path: polygon(4% 4%, 96% 0, 100% 92%, 84% 100%, 4% 96%, 0 40%);
+  opacity: .65;
+}
+.oobe-ice-edges::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 6% 8%, rgba(255,255,255,.95) 0 1%, transparent 13%),
+    radial-gradient(circle at 94% 5%, rgba(255,255,255,.9) 0 1%, transparent 12%),
+    radial-gradient(circle at 95% 92%, rgba(255,255,255,.85) 0 1%, transparent 11%),
+    radial-gradient(circle at 5% 93%, rgba(255,255,255,.9) 0 1%, transparent 12%);
+  opacity: .8;
+}
+
+/* Снежинка, процарапанная внутри льда. */
+.oobe-ice-etched {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: rgba(255,255,255,.62);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  filter: blur(.5px);
+  opacity: .45;
+  pointer-events: none;
+}
+.oobe-ice-etched g { transform-origin: 100px 100px; animation: ice-etched-spin 90s linear infinite; }
+@keyframes ice-etched-spin { to { transform: rotate(360deg); } }
+
+/* Чёрная W внутри глыбы + ледяная корка поверх неё. */
+.oobe-ice-w-under,
+.oobe-ice-w-frost {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  display: grid;
+  place-items: center;
+  font-family: "Product Sans Black", "Google Sans Black", "Arial Black", Impact, sans-serif;
+  font-size: clamp(180px, 41vw, 392px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.08em;
+  user-select: none;
+  pointer-events: none;
+}
+.oobe-ice-w-under {
+  color: var(--ice-ink);
+  opacity: .88;
+  filter: blur(.5px);
+  animation: ice-hit 260ms ease-out;
+}
+.oobe-ice-w-frost {
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(255,255,255,.55);
+  text-shadow: 0 0 14px rgba(255,255,255,.6);
+  opacity: calc(.7 - var(--hits) * .05);
+  mix-blend-mode: screen;
+  transition: opacity 420ms ease;
+}
+@keyframes ice-hit {
+  0% { transform: scale(1) translateX(0); }
+  32% { transform: scale(1.035) translateX(-4px) rotate(-.6deg); }
+  68% { transform: scale(.99) translateX(3px) rotate(.4deg); }
+  100% { transform: scale(1) translateX(0); }
+}
+.oobe-ice-intro[data-phase="burst"] .oobe-ice-w-under,
+.oobe-ice-intro[data-phase="fly"] .oobe-ice-w-under,
+.oobe-ice-intro[data-phase="burst"] .oobe-ice-w-frost,
+.oobe-ice-intro[data-phase="fly"] .oobe-ice-w-frost {
+  opacity: 0;
+  transform: scale(1.3);
+  filter: blur(7px);
+  transition: opacity 240ms ease, transform 480ms ease, filter 240ms ease;
+}
+
+/* Трещины: SVG-фильтр делает их неровными, как в настоящем льду. */
+.oobe-ice-cracks {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  fill: none;
+  stroke: var(--ice-crack);
+  stroke-width: 2.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: url(#oobe-ice-jag) drop-shadow(0 1px 0 var(--ice-crack-shadow)) drop-shadow(0 0 4px var(--ice-crack));
+  pointer-events: none;
+  overflow: visible;
+}
+.oobe-ice-cracks path {
+  transition: stroke-dashoffset 480ms cubic-bezier(.2,.8,.22,1);
+}
+.oobe-ice-cracks g.is-open path {
+  stroke-width: 2.6;
+  filter: drop-shadow(0 0 6px var(--ice-crack));
+}
+
+/* Осколки разлетаются на последнем клике. */
+.oobe-ice-shards { position: absolute; inset: 0; pointer-events: none; }
+.oobe-ice-shard {
+  opacity: 0;
+  color: var(--ice-ink);
+  font-family: "Product Sans Black", "Google Sans Black", "Arial Black", Impact, sans-serif;
+  font-size: clamp(180px, 41vw, 392px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.08em;
+  display: grid;
+  place-items: center;
+  -webkit-text-stroke: 1px rgba(255,255,255,.55);
+}
+.oobe-ice-intro[data-phase="burst"] .oobe-ice-shard,
+.oobe-ice-intro[data-phase="fly"] .oobe-ice-shard {
+  animation: ice-shard-fly 900ms cubic-bezier(.2,.75,.3,1) var(--delay) both;
+}
+@keyframes ice-shard-fly {
+  0% { opacity: 1; transform: translate(0,0) rotate(0) scale(1); filter: blur(0); }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--sx) * 220px), calc(var(--sy) * 220px)) rotate(var(--rot)) scale(.78);
+    filter: blur(5px);
+  }
+}
+
+/* Подсказка и тонкая полоска прогресса. */
+.oobe-ice-hint {
+  position: absolute;
+  left: 50%; bottom: -54px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: max-content;
+  transition: opacity 280ms ease, transform 280ms ease;
+}
+.oobe-ice-hint-text {
+  color: var(--ice-hint);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: .01em;
+}
+.oobe-ice-progress {
+  margin-top: 9px;
+  width: 172px;
+  height: 3px;
+  border-radius: 99px;
+  background: rgba(90,145,180,.25);
+  overflow: hidden;
+}
+.oobe-ice-progress-fill {
+  display: block;
+  height: 100%;
+  width: calc(var(--p) * 100%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, #ef5350, #b71c1c);
+  box-shadow: 0 0 8px rgba(198,40,40,.5);
+  transition: width 320ms cubic-bezier(.2,.8,.2,1);
+}
+.oobe-ice-hint.is-gone { opacity: 0; transform: translateX(-50%) translateY(12px); }
+
+/* ---------- Вылет логотипа и красная надпись ---------- */
+.oobe-ice-reveal { position: absolute; inset: 0; pointer-events: none; }
+.oobe-ice-logo-flight {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 148px; height: 148px;
+  z-index: 3;
+  transform: translate(-50%,-50%) translate(var(--fly-x),var(--fly-y)) scale(var(--fly-scale));
+  transition: transform 1150ms cubic-bezier(.22,.61,.36,1);
+  will-change: transform;
+}
+.oobe-ice-logo-pop {
+  display: block;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 22px 55px -18px rgba(198,40,40,.55), 0 0 0 7px rgba(255,255,255,.7);
+  animation: ice-logo-pop 720ms cubic-bezier(.16,1,.3,1) both;
+}
+.oobe-ice-logo-pop img {
+  display: block;
+  width: 100%; height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
+}
+@keyframes ice-logo-pop {
+  0% { opacity: 0; transform: scale(.2) rotate(-18deg); filter: blur(7px); }
+  60% { opacity: 1; transform: scale(1.1) rotate(3deg); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1) rotate(0); filter: blur(0); }
+}
+.oobe-ice-version {
+  position: absolute;
+  left: 50%; top: calc(50% + 108px);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: "Product Sans Black", "Google Sans Black", "Arial Black", Impact, sans-serif;
+  font-size: clamp(38px, 8vw, 76px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  background: linear-gradient(180deg, #ffab91 0%, #e53935 42%, #8e1b1b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 8px 22px rgba(198,40,40,.38));
+  animation: ice-version-in 800ms 200ms cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes ice-version-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(34px) scale(.92); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+.oobe-ice-intro[data-phase="fly"] .oobe-ice-version { animation: ice-version-out 650ms ease both; }
+@keyframes ice-version-out {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to { opacity: 0; transform: translateX(-50%) translateY(22px); }
+}
+
+/* ---------- Тёмная тема ---------- */
+html.ny-dark .oobe-ice-intro,
+html[data-ny-theme="dark"] .oobe-ice-intro {
+  --ice-ink: #04070d;
+  --ice-hint: #d8e9fb;
+  --ice-crack: rgba(228, 246, 255, .98);
+  --ice-crack-shadow: rgba(0, 8, 22, .8);
+  --ice-edge: rgba(185, 226, 255, .42);
+  --ice-body:
+    linear-gradient(135deg,
+      rgba(44, 76, 110, .94) 0%,
+      rgba(10, 24, 43, .95) 30%,
+      rgba(56, 98, 136, .88) 51%,
+      rgba(7, 17, 33, .96) 76%,
+      rgba(38, 70, 103, .92) 100%);
+  --ice-cloud: rgba(142, 206, 255, .3);
+  --ice-bubble: rgba(190, 230, 255, .45);
+  --ice-grain-opacity: .11;
+  --ice-shadow: rgba(0, 0, 0, .8);
+  --ice-vignette: rgba(2, 6, 14, .78);
+  --ice-bg:
+    radial-gradient(circle at 50% 40%, #142b45 0%, #0a1729 42%, #040a14 76%, #02050b 100%);
+}
+html.ny-dark .oobe-ice-w-under,
+html.ny-dark .oobe-ice-shard,
+html[data-ny-theme="dark"] .oobe-ice-w-under,
+html[data-ny-theme="dark"] .oobe-ice-shard {
+  -webkit-text-stroke: 1.4px rgba(205, 235, 255, .6);
+}
+html.ny-dark .oobe-ice-progress,
+html[data-ny-theme="dark"] .oobe-ice-progress { background: rgba(160,205,245,.18); }
+html.ny-dark .oobe-ice-version,
+html[data-ny-theme="dark"] .oobe-ice-version {
+  /* Не `background`, а `background-image`: shorthand сбросил бы
+     background-clip: text и надпись стала бы красным прямоугольником. */
+  background-image: linear-gradient(180deg, #ffb3a7 0%, #ff4438 42%, #b41414 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  filter: drop-shadow(0 8px 26px rgba(255,60,50,.5));
+}
+html.ny-dark .oobe-ice-logo-pop,
+html[data-ny-theme="dark"] .oobe-ice-logo-pop {
+  box-shadow: 0 22px 60px -16px rgba(255,60,50,.5), 0 0 0 7px rgba(180,220,255,.28), 0 0 44px rgba(120,190,255,.3);
+}
+
+/* ---------- Адаптив и доступность ---------- */
+@media (max-width: 560px) {
+  .oobe-ice-hit { width: min(88vw, 420px); }
+  .oobe-ice-hint { bottom: -62px; }
+  .oobe-ice-hint-text { font-size: 14px; }
+  .oobe-ice-logo-flight { width: 118px; height: 118px; }
+  .oobe-ice-version { top: calc(50% + 90px); font-size: clamp(34px, 9vw, 56px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .oobe-ice-hit,
+  .oobe-ice-snow span,
+  .oobe-ice-etched g,
+  .oobe-ice-w-under { animation: none; }
+  .oobe-ice-logo-flight { transition-duration: 200ms; }
+}

@@ -24,6 +24,7 @@ import { normalizeWinpass, validateBio, validateNickname, validatePassword } fro
 import Avatar from "./Avatar";
 import CrownBadge from "./Crown";
 import Verified from "./Verified";
+import BgMusicToggle from "./BgMusicToggle";
 import { cn } from "../utils/cn";
 import {
   ALL_THEMES,
@@ -816,6 +817,7 @@ export default function AndroidSettings({
           {/* ---------------- КАСТОМИЗАЦИЯ ---------------- */}
           {view === "customization" && (
             <div className="animate-fade-in">
+              <BgMusicToggle className="mb-5" />
               <span className="mb-3 flex items-center gap-2 text-[12px] font-bold text-black/45">
                 <Palette className="h-3.5 w-3.5" />
                 Палитра чатов

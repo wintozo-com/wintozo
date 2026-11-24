@@ -1593,6 +1593,82 @@ html.ny-dark body { background: #070b14; }
 .ny-theme-preview--dark .ny-theme-preview-ball--green { box-shadow: inset -2px -3px 5px rgba(0,0,0,.3), 0 0 12px rgba(90, 255, 150, .8); }
 .ny-theme-preview--dark .ny-theme-preview-ball--gold { box-shadow: inset -2px -3px 5px rgba(0,0,0,.3), 0 0 14px rgba(255, 210, 90, .9); }
 
+/* ---------- Переключатель фоновой музыки ---------- */
+
+.ny-bgmusic-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .72);
+  border: 1px solid rgba(0, 0, 0, .06);
+}
+.ny-bgmusic-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2e7d32, #1b5e20);
+  color: #fff;
+  flex-shrink: 0;
+}
+.ny-bgmusic-copy { flex: 1; min-width: 0; }
+.ny-bgmusic-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: #1d2a24;
+}
+.ny-bgmusic-sub {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #1d2a24a0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ny-bgmusic-grid {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.ny-bgmusic-opt {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, .04);
+  font-size: 11px;
+  font-weight: 700;
+  color: #1d2a24;
+  cursor: pointer;
+  transition: background .14s, border-color .14s;
+  position: relative;
+}
+.ny-bgmusic-opt:hover { background: rgba(0, 0, 0, .07); }
+.ny-bgmusic-opt.is-active {
+  border-color: #2e7d32;
+  background: rgba(46, 125, 50, .1);
+  color: #1b5e20;
+}
+.ny-bgmusic-check {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #2e7d32;
+  color: #fff;
+}
+
 /* ---------- Тёмная тема: пустой экран и настройки ---------- */
 
 .ny-dark .hy-empty {
@@ -1662,6 +1738,12 @@ html.ny-dark body { background: #070b14; }
 .ny-dark .modern-modal input::placeholder,
 .ny-dark .modern-modal textarea::placeholder { color: rgba(234, 242, 255, .35) !important; }
 .ny-dark .modern-modal .ny-theme-picker-label { color: rgba(234, 242, 255, .55); }
+.ny-dark .modern-modal .ny-bgmusic-card { background: rgba(255, 255, 255, .06); border-color: rgba(255, 215, 120, .18); }
+.ny-dark .modern-modal .ny-bgmusic-title { color: #eaf2ff; }
+.ny-dark .modern-modal .ny-bgmusic-sub { color: rgba(234, 242, 255, .55); }
+.ny-dark .modern-modal .ny-bgmusic-opt { background: rgba(255, 255, 255, .07); color: #eaf2ff; }
+.ny-dark .modern-modal .ny-bgmusic-opt:hover { background: rgba(255, 255, 255, .12); }
+.ny-dark .modern-modal .ny-bgmusic-opt.is-active { background: rgba(46, 125, 50, .22); border-color: #7ee2a8; color: #7ee2a8; }
 
 /* Шапка настроек, вкладки и поиск — не белым по белому */
 .ny-dark .modern-modal .from-white\/90 { --tw-gradient-from: rgba(18, 27, 44, .92) !important; }

@@ -339,7 +339,7 @@ export function HappyYearCountdown({
 
 const MELODY_URLS = {
   oobe: new URL("../media_system_files/melodies/oobe_melody_new_year.mp3", import.meta.url).href,
-  bg: new URL("../media_system_files/melodies/new-year.wav", import.meta.url).href,
+  bg: new URL("../media_system_files/melodies/new-year.ogg", import.meta.url).href,
 } as const;
 
 const MELODY_KEY = "winchat_oobe_melody";
