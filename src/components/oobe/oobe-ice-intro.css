@@ -9,6 +9,14 @@ html.oobe-intro-active [data-oobe-intro-target] {
   transition: none !important;
 }
 
+/* Пока идёт заставка, переключатель мелодии в OOBE всё равно недосягаем
+   (он внутри другого stacking context). Не путаем пользователя «живой», но
+   некликабельной кнопкой — скрываем её до конца заставки. */
+html.oobe-intro-active .ny7-melody {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .oobe-ice-intro {
   --ice-ink: #06080d;
   --ice-hint: #2f5b78;

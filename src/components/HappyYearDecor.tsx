@@ -422,11 +422,13 @@ export function HappyYearMelody({
 
     const start = () => {
       if (!wantRef.current || !audio.paused) return;
-      void audio
-        .play()
-        .then(() => setPlaying(true))
-        .catch(() => undefined);
+      void audio.play().catch(() => undefined);
     };
+    const onPlay = () => setPlaying(true);
+    const onPause = () => setPlaying(false);
+
+    audio.addEventListener("play", onPlay);
+    audio.addEventListener("pause", onPause);
 
     start();
     window.addEventListener("pointerdown", start);
@@ -437,6 +439,8 @@ export function HappyYearMelody({
       window.removeEventListener("pointerdown", start);
       window.removeEventListener("keydown", start);
       window.removeEventListener("touchstart", start);
+      audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("pause", onPause);
       audio.pause();
       audio.src = "";
       audioRef.current = null;
@@ -454,6 +458,9 @@ export function HappyYearMelody({
   };
 
   const onPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    // Клик по самой кнопке не должен запускать трек через глобальный
+    // pointerdown — иначе toggle() сразу выключает только что включенное.
+    e.stopPropagation();
     if (e.button !== 0) return;
     const rect = e.currentTarget.getBoundingClientRect();
     dragRef.current = { dx: e.clientX - rect.left, dy: e.clientY - rect.top, moved: false };
@@ -487,16 +494,17 @@ export function HappyYearMelody({
     if (movedRef.current) return;
     const audio = audioRef.current;
     if (!audio) return;
-    if (playing) {
+    // Ориентируемся на сам плеер, а не на React-стейт: global pointerdown
+    // может уже запустить трек, и состояние окажется устаревшим.
+    if (!audio.paused) {
       audio.pause();
       wantRef.current = false;
       try { localStorage.setItem(storageKey, "off"); } catch { /* no-op */ }
-      setPlaying(false);
       return;
     }
     wantRef.current = true;
     try { localStorage.setItem(storageKey, "on"); } catch { /* no-op */ }
-    void audio.play().then(() => setPlaying(true)).catch(() => undefined);
+    void audio.play().catch(() => undefined);
   };
 
   return (
@@ -506,8 +514,9 @@ export function HappyYearMelody({
       className={`hy-melody ${playing ? "is-playing" : ""} ${compact ? "hy-melody--compact" : ""} ${pos ? "is-dragged" : ""} ${className}`}
       style={pos && !compact ? { left: pos.x, top: pos.y, right: "auto", bottom: "auto" } : undefined}
       onClick={toggle}
-      onPointerDown={compact ? undefined : onPointerDown}
+      onPointerDown={compact ? (e) => e.stopPropagation() : onPointerDown}
       onPointerMove={compact ? undefined : onPointerMove}
+      onTouchStart={(e) => e.stopPropagation()}
       onPointerUp={compact ? undefined : onPointerUp}
       onPointerCancel={compact ? undefined : onPointerUp}
       aria-pressed={playing}

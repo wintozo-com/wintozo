@@ -25,10 +25,17 @@ function ensurePlayer(): HTMLAudioElement {
 
 export function getBgMusicOn(): boolean {
   try {
-    return localStorage.getItem(BG_MUSIC_KEY) !== "off";
+    // Раньше было `!== "off"`: при отсутствии ключа тумблер показывал
+    // «звучит», хотя браузер блокировал автоплей и звука не было.
+    return localStorage.getItem(BG_MUSIC_KEY) === "on";
   } catch {
-    return true;
+    return false;
   }
+}
+
+/** Нужен, чтобы синхронизировать индикатор с реальным состоянием плеера. */
+export function getBgMusicAudio(): HTMLAudioElement {
+  return ensurePlayer();
 }
 
 export function setBgMusicOn(on: boolean): void {
@@ -38,24 +45,39 @@ export function setBgMusicOn(on: boolean): void {
     /* no-op */
   }
   const audio = ensurePlayer();
+  const notify = () => window.dispatchEvent(new Event(BG_MUSIC_EVENT));
   if (on) {
     // Браузер может блокировать play() вне действия пользователя —
     // тогда старт подхватят слушатели pointerdown/keydown.
-    void audio.play().catch(() => undefined);
+    void audio.play().then(notify).catch(() => {
+      audio.pause();
+      notify();
+    });
   } else {
     audio.pause();
+    notify();
   }
-  window.dispatchEvent(new Event(BG_MUSIC_EVENT));
 }
 
-/** Синхронизирует переключатели во всех открытых окнах. */
+/**
+ * Переключатель показывает реальное состояние звука, а не только запись
+ * в localStorage: если автоплей заблокирован, тумблер не врёт «звучит».
+ */
 export function useBgMusic(): [boolean, (on: boolean) => void] {
-  const [on, setOn] = useState(getBgMusicOn);
+  const [on, setOn] = useState(() => getBgMusicOn() && !getBgMusicAudio().paused);
 
   useEffect(() => {
-    const sync = () => setOn(getBgMusicOn());
+    const audio = getBgMusicAudio();
+    const sync = () => setOn(getBgMusicOn() && !audio.paused);
+    audio.addEventListener("play", sync);
+    audio.addEventListener("pause", sync);
     window.addEventListener(BG_MUSIC_EVENT, sync);
-    return () => window.removeEventListener(BG_MUSIC_EVENT, sync);
+    sync();
+    return () => {
+      audio.removeEventListener("play", sync);
+      audio.removeEventListener("pause", sync);
+      window.removeEventListener(BG_MUSIC_EVENT, sync);
+    };
   }, []);
 
   return [on, setBgMusicOn];
