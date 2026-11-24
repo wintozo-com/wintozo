@@ -192,7 +192,7 @@ export default function SettingsModal({
     // версией предложится снова только после следующей перезаливки.
     markOtaSeen(aboutOta);
     try {
-      const res = await installOta(aboutOta.url);
+      const res = await installOta(aboutOta.url, aboutOta.version);
       if (res.fallback) {
         setOtaBusy(false);
         setOtaState(null);
@@ -547,7 +547,7 @@ export default function SettingsModal({
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && saveProfile()}
-                  className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-[15px] font-semibold outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
+                  className="ny-nickname-input w-full rounded-2xl border border-black/10 px-4 py-3.5 text-[15px] font-semibold outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
                   placeholder="Ваш никнейм"
                 />
               </div>
@@ -562,7 +562,7 @@ export default function SettingsModal({
                   onChange={(e) => setBio(e.target.value.slice(0, 160))}
                   rows={3}
                   placeholder="Пара слов о вас — это описание увидят собеседники"
-                  className="w-full resize-none rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm font-medium outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
+                  className="w-full resize-none rounded-2xl border border-black/10 px-4 py-3.5 text-sm font-medium outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
                 />
               </div>
 

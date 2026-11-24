@@ -13,7 +13,7 @@
  */
 import { Capacitor, registerPlugin, type PluginListenerHandle } from "@capacitor/core";
 import { supabase } from "./supabase";
-import { APP_VERSION, fetchLatestVersion, isVersionNewer } from "./checkVersion";
+import { APP_VERSION, fetchLatestVersion, isVersionNewer, markUpdatedTo, shouldOfferOta } from "./checkVersion";
 
 /* ============================================================
    Нативный плагин (android/app/.../WinChatOtaPlugin.java)
@@ -37,7 +37,14 @@ interface WinChatOtaPlugin {
   ): Promise<PluginListenerHandle>;
 }
 
-const WinChatOta = registerPlugin<WinChatOtaPlugin>("WinChatOta");
+const WinChatOta = (() => {
+  try {
+    return registerPlugin<WinChatOtaPlugin>("WinChatOta");
+  } catch {
+    // Уже зарегистрирован (повторный импорт модуля в HMR)
+    return {} as WinChatOtaPlugin;
+  }
+})();
 
 export type OtaState = "downloading" | "permission" | "installing" | "error";
 
@@ -230,6 +237,8 @@ export async function searchOta(deviceId: string): Promise<OtaInfo | null> {
       const info = await getDeviceInfo();
       const installed = info.appVersion || APP_VERSION;
       if (!isVersionNewer(ota.version, installed)) {
+        // Телефон уже обновлялся до этой версии (короткий id) — не предлагаем снова.
+        if (!shouldOfferOta(ota.version)) return null;
         if (!ota.updatedAt || ota.updatedAt === getOtaSeenStamp()) return null;
       }
     }
@@ -284,7 +293,8 @@ export function initDeviceOta(): Promise<OtaInitResult> {
 
 /** Скачать APK и открыть системный установщик. */
 export async function installOta(
-  url: string
+  url: string,
+  version?: string | null
 ): Promise<{ started: boolean; fallback: boolean }> {
   if (!canInstallOta()) {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -293,6 +303,7 @@ export async function installOta(
 
   try {
     await WinChatOta.install({ url });
+    markUpdatedTo(version || APP_VERSION);
     return { started: true, fallback: false };
   } catch {
     // Если нативный установщик недоступен, отдаём ссылку системе.

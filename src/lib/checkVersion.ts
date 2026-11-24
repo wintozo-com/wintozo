@@ -184,6 +184,87 @@ export function declineLegacyUi(): void {
 
 const CHangelog_KEY = "winchat_changelog_seen";
 
+/* ============================================================
+   Короткие id версий (OTA)
+   Каждая крупная веха получает свой номер вместо длинной
+   строки версии. Номер считается из самой версии, поэтому
+   новые релизы получают следующий id автоматически:
+     3.1.2 → 0, 4.0.0 → 1, 4.0.1 → 2, 5.0.0 → 3,
+     6.0.0-closed-beta → 4, 6.0.0-stable → 5,
+     7.0.0-closed-beta → 6 (и т.д.).
+   Обновился до версии с id N — телефон запоминает это и
+   больше не предлагает обновиться на неё же.
+   ============================================================ */
+
+/** Известные вехи — по ним нумеруются id. Новые версии продолжают ряд. */
+const VERSION_MILESTONES = [
+  "3.1.2",
+  "4.0.0",
+  "4.0.1",
+  "5.0.0",
+  "6.0.0-closed-beta",
+  "6.0.0-stable",
+  "7.0.0-closed-beta",
+];
+
+/**
+ * Числовой id версии. Версии из списка вех получают номера 0..6;
+ * неизвестная версия вписывается между вехами по семантическому
+ * порядку (например, 6.0.1 получит id между 5 и 6).
+ */
+export function getVersionId(version: string): number {
+  const v = version.trim();
+  const exact = VERSION_MILESTONES.indexOf(v);
+  if (exact >= 0) return exact;
+  // Вписываем незнакомую версию в ряд по порядку сравнения.
+  let id = 0;
+  for (const m of VERSION_MILESTONES) {
+    if (isVersionNewer(m, v)) id += 1;
+  }
+  return id;
+}
+
+/** id текущей клиентской версии. */
+export function getAppVersionId(): number {
+  return getVersionId(APP_VERSION);
+}
+
+const UPDATED_TO_KEY = "winchat_updated_to_id";
+
+/** До какого id версии устройство уже обновлялось (max по установкам). */
+export function getUpdatedToId(): number {
+  try {
+    const raw = localStorage.getItem(UPDATED_TO_KEY);
+    const n = raw === null ? NaN : parseInt(raw, 10);
+    return Number.isFinite(n) ? n : -1;
+  } catch {
+    return -1;
+  }
+}
+
+/** Запомнить, что устройство обновилось до версии с этим id. */
+export function markUpdatedTo(version: string): void {
+  try {
+    const id = getVersionId(version);
+    if (id > getUpdatedToId()) localStorage.setItem(UPDATED_TO_KEY, String(id));
+  } catch {
+    /* no-op */
+  }
+}
+
+/** Предлагать ли OTA на эту версию? Нет, если телефон уже
+ *  обновлялся до неё или до более новой версии. */
+export function shouldOfferOta(version: string): boolean {
+  try {
+    const id = getVersionId(version);
+    const app = getAppVersionId();
+    if (id <= app || id <= getUpdatedToId()) return false;
+    return true;
+  } catch {
+    return true;
+  }
+}
+
 export interface ChangelogEntry {
   version: string;
   title: string;
