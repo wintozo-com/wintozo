@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { supabase, type Profile } from "../../../../lib/supabase";
+import { parseSetOtaArgs } from "../../../../lib/ota";
 import { cn } from "../../../../utils/cn";
 
 interface Props {
@@ -208,7 +209,12 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
   ]);
   const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
-  const [otaPicker, setOtaPicker] = useState<{ url: string; version: string | null; target: string } | null>(null);
+  const [otaPicker, setOtaPicker] = useState<{
+    url: string;
+    version: string | null;
+    target: string;
+    description: string | null;
+  } | null>(null);
   const [otaPickerDevices, setOtaPickerDevices] = useState<OtaDeviceRow[]>([]);
   const [otaPickerBusy, setOtaPickerBusy] = useState(false);
   const [guiOpen, setGuiOpen] = useState(false);
@@ -231,8 +237,13 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
     setHistory((prev) => [...prev, ...(Array.isArray(entries) ? entries : [entries])]);
   };
 
-  async function openOtaPicker(target: string, url: string, version: string | null) {
-    setOtaPicker({ url, version, target });
+  async function openOtaPicker(
+    target: string,
+    url: string,
+    version: string | null,
+    description: string | null = null
+  ) {
+    setOtaPicker({ url, version, target, description });
     setOtaPickerBusy(false);
     const { data, error } = await supabase.rpc("get_winchat_ota_devices", {
       _admin_id: me.id,
@@ -250,17 +261,23 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
     }
     setOtaPickerDevices(list);
     if (list.length === 1) {
-      void selectOtaDevice(list[0].device_id, url, version);
+      void selectOtaDevice(list[0].device_id, url, version, description);
     }
   }
 
-  async function selectOtaDevice(deviceId: string, url: string, version: string | null) {
+  async function selectOtaDevice(
+    deviceId: string,
+    url: string,
+    version: string | null,
+    description: string | null = null
+  ) {
     setOtaPickerBusy(true);
     const { data } = await supabase.rpc("set_winchat_ota", {
       _admin_id: me.id,
       _url: url,
       _version: version,
       _target: deviceId,
+      _desc: description,
     });
     setOtaPickerBusy(false);
     const res = data as { ok: boolean; message?: string; error?: string };
@@ -294,7 +311,7 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
           { type: "info", text: "/set legacy @user · /del legacy @user  (базовый/новый интерфейс)" },
           { type: "info", text: "/give badge @user <1|2|3> · /get badges @user" },
           { type: "info", text: "/get winpass @user · /get devices · /get version · /set version <X.Y.Z>" },
-          { type: "info", text: '/set ota [@user] "<url>" [версия] · /set ota off · /get ota' },
+          { type: "info", text: '/set ota [@user] "<url>" [версия] --note "что нового" · /set ota off · /get ota' },
           { type: "info", text: '/set oobe @user "<5.0|6.0>" · /set oobe @user off' },
           { type: "info", text: "/channel list|verify|unverify|official|unofficial|delete ..." },
         ]);
@@ -506,11 +523,17 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
       }
       if (cmd === "/set" && parts[1] === "ota") {
         const after = trimmed.replace(/^\/set\s+ota\s*/i, "").trim();
-        if (!after) {
-          append({ type: "error", text: 'Использование: /set ota [@username] "<ссылка>" [версия] [@target|*] ["описание"]' });
+        const parsed = parseSetOtaArgs(after);
+
+        if (!after || (!parsed.off && !parsed.url)) {
+          append({
+            type: "error",
+            text: 'Использование: /set ota [@username] "<ссылка>" [версия] [@target|*] --note "описание обновления"',
+          });
           return;
         }
-        if (/^(off|clear|remove|delete|disable)$/i.test(after)) {
+
+        if (parsed.off) {
           const { data, error } = await supabase.rpc("set_winchat_ota", {
             _admin_id: me.id,
             _url: "",
@@ -523,59 +546,17 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
           return;
         }
 
-        let rest = after;
-        let prefixTarget: string | null = null;
-        const pre = rest.match(/^@([^\s"']+)\s+([\s\S]*)$/);
-        if (pre) {
-          prefixTarget = `@${pre[1]}`;
-          rest = pre[2].trim();
-        }
-
-        let description: string | null = null;
-        let parseRest = rest.replace(/"([^"]*)"/g, (_m, g: string) => {
-          description = g;
-          return "";
-        });
-        parseRest = parseRest.replace(/'([^']*)'/g, (_m, g: string) => {
-          description = g;
-          return "";
-        });
-
-        const urlM = /https?:\/\/[^\s"']+/i.exec(parseRest);
-        const url = urlM ? urlM[0] : "";
-        const remainder = urlM ? parseRest.slice(urlM.index + urlM[0].length).trim() : "";
-        if (!url) {
+        if (!parsed.url) {
           append({ type: "error", text: "Ссылка должна начинаться с http:// или https://" });
           return;
         }
 
-        let version: string | null = null;
-        let target: string | null = null;
-        const tokens = remainder.split(/\s+/).filter(Boolean);
-        for (const token of tokens) {
-          const clean = token.replace(/^["']|["']$/g, "");
-          if (!version && /^\d+\.\d+(\.\d+)?(-[0-9a-z][0-9a-z.\-]*(\+[0-9a-z.\-]+)?)?$/i.test(clean)) {
-            version = clean;
-          } else if (!target) {
-            target = clean;
-          }
-        }
-
-        const finalTarget = prefixTarget ?? target ?? null;
-        const finalDescription =
-          description ??
-          (tokens
-            .filter((t) => t !== version && t !== target)
-            .map((t) => t.replace(/^["']|["']$/g, ""))
-            .join(" ")
-            .trim() || null);
-
         const { data, error } = await supabase.rpc("set_winchat_ota", {
           _admin_id: me.id,
-          _url: url,
-          _version: version,
-          _target: finalTarget,
-          _desc: finalDescription,
+          _url: parsed.url,
+          _version: parsed.version,
+          _target: parsed.target,
+          _desc: parsed.description,
         });
         if (error) return append({ type: "error", text: `Ошибка: ${error.message}` });
         const res = data as any;
@@ -584,13 +565,21 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
           return;
         }
         append({ type: "success", text: `✓ ${res.message ?? "OTA установлена"}` });
-        append({ type: "info", text: `URL: ${res.url ?? url}` });
-        append({ type: "info", text: `Версия: ${res.version ?? version ?? "не указана"} · Цель: ${res.target ?? finalTarget ?? "*"}` });
-        if (res.description ?? finalDescription) {
-          append({ type: "info", text: `Описание: ${res.description ?? finalDescription}` });
+        append({ type: "info", text: `URL: ${res.url ?? parsed.url}` });
+        append({
+          type: "info",
+          text: `Версия: ${res.version ?? parsed.version ?? "не указана"} · Цель: ${res.target ?? parsed.target ?? "*"}`,
+        });
+        if (res.description ?? parsed.description) {
+          append({ type: "info", text: `Описание: ${res.description ?? parsed.description}` });
         }
-        if (url && finalTarget && finalTarget !== "*") {
-          void openOtaPicker(finalTarget, res.url ?? url, res.version ?? version ?? null);
+        if (parsed.target && parsed.target !== "*") {
+          void openOtaPicker(
+            parsed.target,
+            res.url ?? parsed.url,
+            res.version ?? parsed.version ?? null,
+            res.description ?? parsed.description ?? null
+          );
         }
         return;
       }
@@ -640,7 +629,19 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
           </div>
           <div className="max-h-[60vh] overflow-y-auto p-4 space-y-2">
             {otaPickerDevices.length === 0 ? <p className="text-white/60">Устройства не найдены</p> : otaPickerDevices.map((d, i) => (
-              <button key={d.device_id} disabled={otaPickerBusy} onClick={() => void selectOtaDevice(d.device_id, otaPicker.url, otaPicker.version)} className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left transition hover:bg-white/10">
+              <button
+                key={d.device_id}
+                disabled={otaPickerBusy}
+                onClick={() =>
+                  void selectOtaDevice(
+                    d.device_id,
+                    otaPicker.url,
+                    otaPicker.version,
+                    otaPicker.description
+                  )
+                }
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left transition hover:bg-white/10"
+              >
                 <div className="font-semibold">{i + 1}. {d.username ? `@${d.username}` : "—"}</div>
                 <div className="text-xs text-white/60">{[d.manufacturer, d.model].filter(Boolean).join(" ") || d.platform} · v{d.app_version ?? "?"}</div>
               </button>

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Terminal, X } from "lucide-react";
 import { supabase, type Profile } from "../lib/supabase";
 import { BADGE_LABELS } from "../lib/badges";
+import { parseSetOtaArgs } from "../lib/ota";
+import AdminTerminalGui from "./AdminTerminalGui";
 
 interface Props {
   me: Profile;
@@ -35,7 +37,12 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
   const [input, setInput] = useState("");
   const endRef = useRef<HTMLDivElement>(null);
   /* Окно выбора устройства для OTA-обновления (/set ota @user "ссылка" версия). */
-  const [otaPicker, setOtaPicker] = useState<{ url: string; version: string | null; target: string } | null>(null);
+  const [otaPicker, setOtaPicker] = useState<{
+    url: string;
+    version: string | null;
+    target: string;
+    description: string | null;
+  } | null>(null);
   const [otaPickerDevices, setOtaPickerDevices] = useState<OtaDeviceRow[]>([]);
   const [otaPickerBusy, setOtaPickerBusy] = useState(false);
   const [guiMode, setGuiMode] = useState(false);
@@ -51,8 +58,13 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
     }
   }, [open]);
 
-  async function openOtaPicker(target: string, url: string, version: string | null) {
-    setOtaPicker({ url, version, target });
+  async function openOtaPicker(
+    target: string,
+    url: string,
+    version: string | null,
+    description: string | null = null
+  ) {
+    setOtaPicker({ url, version, target, description });
     setOtaPickerBusy(false);
     const { data, error } = await supabase.rpc("get_winchat_ota_devices", {
       _admin_id: me.id,
@@ -70,17 +82,23 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
     }
     setOtaPickerDevices(list);
     if (list.length === 1) {
-      void selectOtaDevice(list[0].device_id, url, version);
+      void selectOtaDevice(list[0].device_id, url, version, description);
     }
   }
 
-  async function selectOtaDevice(deviceId: string, url: string, version: string | null) {
+  async function selectOtaDevice(
+    deviceId: string,
+    url: string,
+    version: string | null,
+    description: string | null = null
+  ) {
     setOtaPickerBusy(true);
     const { data } = await supabase.rpc("set_winchat_ota", {
       _admin_id: me.id,
       _url: url,
       _version: version,
       _target: deviceId,
+      _desc: description,
     });
     setOtaPickerBusy(false);
     const res = data as { ok: boolean; message?: string; error?: string };
@@ -196,7 +214,7 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
             { type: "info", text: "/channel delete <id|название> — Удалить канал" },
             { type: "info", text: "/set version <X.Y.Z>        — Установить версию (можно 4.0.0-beta)" },
             { type: "info", text: "/get version                — Текущая версия приложения" },
-            { type: "info", text: '/set ota [@username] "<ссылка>" [версия] [@target|*] — OTA для Android' },
+            { type: "info", text: '/set ota [@username] "<ссылка>" [версия] [@target|*] --note "что нового" — OTA для Android' },
             { type: "info", text: "/set ota off                — Отключить OTA" },
             { type: "info", text: "/get ota                    — Текущая OTA-настройка" },
             { type: "info", text: "/set legacy @username       — Включить базовый (legacy) интерфейс WinChat" },
@@ -396,16 +414,21 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
           if (what === "ota") {
             // Всё после "/set ota" — исходная строка (URL чувствителен к регистру).
             const after = trimmed.replace(/^\/set\s+ota\s*/i, "").trim();
-            if (!after) {
+            const parsed = parseSetOtaArgs(after);
+
+            if (!after || (!parsed.off && !parsed.url)) {
               setHistory((prev) => [
                 ...prev,
-                { type: "error", text: 'Использование: /set ota [@username] "<ссылка>" [версия] [@target|*]' },
+                {
+                  type: "error",
+                  text: 'Использование: /set ota [@username] "<ссылка>" [версия] [@target|*] --note "описание обновления"',
+                },
               ]);
               break;
             }
 
             // Отключение OTA
-            if (/^(off|clear|remove|delete|disable)$/i.test(after)) {
+            if (parsed.off) {
               const { data, error } = await supabase.rpc("set_winchat_ota", {
                 _admin_id: me.id,
                 _url: "",
@@ -426,62 +449,21 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
               break;
             }
 
-            // /set ota [@username] "[ссылка]" [версия] [@target|*] ["описание обновления"]
-            // Пример: /set ota @user "https://.../app.apk" 5.0.0 "В этом обновлении было добавлено ..."
-            let rest = after;
-            let prefixTarget: string | null = null;
-            const pre = rest.match(/^@([^\s"']+)\s+([\s\S]*)$/);
-            if (pre) {
-              prefixTarget = `@${pre[1]}`;
-              rest = pre[2].trim();
-            }
-
-            // Описание обновления — в кавычках или через неиспользуемые токены.
-            let description: string | null = null;
-            let parseRest = rest.replace(/"([^"]*)"/g, (_m, g: string) => {
-              description = g;
-              return "";
-            });
-            parseRest = parseRest.replace(/'([^']*)'/g, (_m, g: string) => {
-              description = g;
-              return "";
-            });
-
-            const urlM = /https?:\/\/[^\s"']+/i.exec(parseRest);
-            const url = urlM ? urlM[0] : "";
-            const remainder = urlM ? parseRest.slice(urlM.index + urlM[0].length).trim() : "";
-
-            if (!url) {
+            if (!parsed.url) {
               setHistory((prev) => [
                 ...prev,
-                { type: "error", text: 'Ссылка должна начинаться с http:// или https://' },
+                { type: "error", text: "Ссылка должна начинаться с http:// или https://" },
               ]);
               break;
             }
 
-            // Необязательные аргументы: версия и цель
-            let version: string | null = null;
-            let target: string | null = null;
-            const tokens = remainder.split(/\s+/).filter(Boolean);
-            for (const token of tokens) {
-              const clean = token.replace(/^["']|["']$/g, "");
-              if (!version && /^\d+\.\d+(\.\d+)?(-[0-9a-z][0-9a-z.\-]*(\+[0-9a-z.\-]+)?)?$/i.test(clean)) {
-                version = clean;
-              } else if (!target) {
-                target = clean;
-              }
-            }
-
-            const finalTarget = prefixTarget ?? target ?? null;
-            const finalDescription =
-              description ??
-              tokens
-                .filter((t) => t !== version && t !== target)
-                .map((t) => t.replace(/^["']|["']$/g, ""))
-                .join(" ")
-                .trim();
-
-            const res = await applyOta(url, version, finalTarget, finalDescription);
+            const url = parsed.url;
+            const res = await applyOta(
+              url,
+              parsed.version,
+              parsed.target,
+              parsed.description
+            );
 
             setHistory((prev) => [
               ...prev,
@@ -494,8 +476,13 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
             ]);
 
             // Если задана конкретная цель (например, @username) — открываем выбор устройства.
-            if (res.ok && url && finalTarget && finalTarget !== "*") {
-              void openOtaPicker(finalTarget, res.url ?? url, res.version ?? null);
+            if (res.ok && parsed.target && parsed.target !== "*") {
+              void openOtaPicker(
+                parsed.target,
+                res.url ?? url,
+                res.version ?? null,
+                res.description ?? null
+              );
             }
             break;
           }
@@ -549,7 +536,7 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
           if (what !== "version") {
             setHistory((prev) => [
               ...prev,
-              { type: "error", text: 'Использование: /set version <X.Y.Z[-beta]> | /set ota [@username] "<ссылка>" [версия] | /set oobe @username "<X.Y>"' },
+              { type: "error", text: 'Использование: /set version <X.Y.Z[-beta]> | /set ota [@username] "<ссылка>" [версия] --note "что нового" | /set oobe @username "<X.Y>"' },
             ]);
             return;
           }
@@ -1171,7 +1158,14 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
               otaPickerDevices.map((d, i) => (
                 <button
                   key={d.device_id}
-                  onClick={() => void selectOtaDevice(d.device_id, otaPicker.url, otaPicker.version)}
+                  onClick={() =>
+                    void selectOtaDevice(
+                      d.device_id,
+                      otaPicker.url,
+                      otaPicker.version,
+                      otaPicker.description
+                    )
+                  }
                   disabled={otaPickerBusy}
                   className="mb-2 block w-full rounded-xl bg-white/5 px-3 py-2 text-left transition hover:bg-white/10 disabled:opacity-50"
                 >
@@ -1214,13 +1208,27 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
               @{me.username}
             </span>
           </div>
-          <button
-            onClick={onClose}
-            className="rounded-full p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setGuiMode((g) => !g)}
+              className={`rounded-lg px-2.5 py-1.5 font-mono text-[11px] font-bold transition ${
+                guiMode ? "bg-green-500/20 text-green-400" : "bg-white/10 text-white/60 hover:bg-white/20"
+              }`}
+              title={guiMode ? "Скрыть графические команды (/gui)" : "Показать графические команды (/gui)"}
+            >
+              GUI
+            </button>
+            <button
+              onClick={onClose}
+              className="rounded-full p-1.5 text-white/50 transition hover:bg-white/10 hover:text-white"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
+
+        {guiMode && <AdminTerminalGui onRun={runCommand} />}
 
         {/* Лента */}
         <div className="flex-1 overflow-y-auto p-4 font-mono text-[13px] leading-relaxed">

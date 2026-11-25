@@ -1,0 +1,905 @@
+/* ============================================================
+   WinChat — зимняя тема экрана входа и регистрации.
+   Полярная ночь, северное сияние, мелкий снег и матовая «льдинка»
+   вместо обычной белой формы.
+   ============================================================ */
+
+.auth-winter {
+  --w-interactive: transparent;
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+  color: #eaf5ff;
+  background:
+    radial-gradient(ellipse 70% 60% at 8% 8%, rgba(72, 164, 228, .28), transparent 62%),
+    radial-gradient(ellipse 60% 55% at 92% 96%, rgba(46, 112, 180, .3), transparent 65%),
+    linear-gradient(155deg, #061526 0%, #0b243c 38%, #103553 68%, #071a2e 100%) !important;
+}
+
+/* Северное сияние и холодное свечение. */
+.auth-winter::before,
+.auth-winter::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(90px);
+  z-index: 0;
+}
+.auth-winter::before {
+  width: 46vw;
+  height: 34vw;
+  left: -10vw;
+  top: -14vw;
+  background: radial-gradient(circle, rgba(94, 220, 204, .34), transparent 68%);
+  animation: auth-aurora 18s ease-in-out infinite alternate;
+}
+.auth-winter::after {
+  width: 42vw;
+  height: 32vw;
+  right: -8vw;
+  bottom: -12vw;
+  background: radial-gradient(circle, rgba(123, 176, 255, .32), transparent 70%);
+  animation: auth-aurora 22s ease-in-out -8s infinite alternate-reverse;
+}
+@keyframes auth-aurora {
+  from { transform: translate3d(-3%, -2%, 0) scale(.92); opacity: .7; }
+  to   { transform: translate3d(5%, 4%, 0) scale(1.12); opacity: 1; }
+}
+
+/* Снег — поверх фона, но под контентом. */
+.auth-winter-snow {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.auth-winter-snow span {
+  position: absolute;
+  top: -8vh;
+  left: var(--left);
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 10px rgba(255, 255, 255, .85);
+  opacity: var(--alpha);
+  animation: auth-snow-fall var(--fall) linear var(--delay) infinite;
+}
+@keyframes auth-snow-fall {
+  to { transform: translate3d(var(--drift), 118vh, 0); }
+}
+
+/* ---------- Зимняя сцена входа ---------- */
+.auth-aurora-ribbon {
+  position: absolute;
+  left: -10%;
+  top: -140px;
+  width: 120%;
+  height: 290px;
+  z-index: 0;
+  pointer-events: none;
+  background: conic-gradient(
+    from 205deg at 50% 100%,
+    transparent,
+    rgba(105, 232, 209, .2),
+    rgba(145, 190, 255, .26),
+    transparent 62%
+  );
+  filter: blur(38px);
+  animation: auth-ribbon 12s ease-in-out infinite alternate;
+}
+@keyframes auth-ribbon {
+  from { transform: translateX(-3%) scaleX(.94); opacity: .7; }
+  to { transform: translateX(4%) scaleX(1.08); opacity: 1; }
+}
+
+.auth-stage { padding-top: 24px; padding-bottom: 24px; }
+.auth-hero { max-width: 560px; }
+.auth-hero-emblem {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 16px;
+  border-radius: 26px;
+  background: linear-gradient(150deg, #fff 0%, #e4f5ff 48%, #b9dff7 100%);
+  box-shadow:
+    0 20px 50px -12px rgba(120, 205, 255, .85),
+    inset 0 1px 0 #fff,
+    inset 0 -8px 18px rgba(90, 160, 215, .2);
+  transform: rotate(-6deg);
+  animation: auth-emblem-float 6s ease-in-out infinite;
+}
+.auth-hero-emblem b {
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -.06em;
+  background: linear-gradient(140deg, #0b2c49, #2e8cc4 60%, #0b2c49);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@keyframes auth-emblem-float { 50% { transform: translateY(-8px) rotate(4deg); } }
+.auth-hero-ring {
+  position: absolute;
+  inset: -13px;
+  border: 1px solid rgba(180, 230, 255, .34);
+  border-radius: 34px;
+  animation: auth-ring-spin 20s linear infinite;
+}
+.auth-hero-ring-b {
+  inset: -23px;
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, .16);
+  animation-direction: reverse;
+  animation-duration: 30s;
+}
+@keyframes auth-ring-spin { to { transform: rotate(360deg); } }
+.auth-hero-spark {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 12px 3px rgba(180, 230, 255, .85);
+  animation: auth-spark 2.8s ease-in-out infinite;
+}
+.auth-hero-spark-a { top: -18px; left: 12px; }
+.auth-hero-spark-b { right: -20px; top: 30%; animation-delay: -1s; }
+.auth-hero-spark-c { bottom: -14px; right: 10px; animation-delay: -1.8s; }
+@keyframes auth-spark { 0%, 100% { opacity: .35; transform: scale(.7); } 50% { opacity: 1; transform: scale(1.4); } }
+
+.auth-hero-title {
+  position: relative;
+  margin-top: 2px;
+  font-size: clamp(31px, 5vw, 46px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -.04em;
+  color: #fff;
+  text-shadow: 0 8px 34px rgba(0, 0, 0, .38);
+}
+.auth-hero-title::before,
+.auth-hero-title::after {
+  position: absolute;
+  font-size: 18px;
+  font-weight: 400;
+  animation: auth-spark 3s ease-in-out infinite;
+}
+.auth-hero-title::before { content: "✧"; left: -28px; top: 2px; color: rgba(190, 235, 255, .65); }
+.auth-hero-title::after { content: "✦"; right: -26px; bottom: 4px; color: rgba(255, 220, 168, .6); animation-delay: -1.4s; }
+@media (max-width: 520px) {
+  .auth-hero-title::before,
+  .auth-hero-title::after { display: none; }
+}
+.auth-hero-title span {
+  background: linear-gradient(90deg, #a7e9ff 0%, #fff 46%, #ffdca8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.auth-hero-sub { margin-top: 8px; font-size: 14px; font-weight: 500; color: rgba(216, 238, 255, .66); }
+
+@media (max-height: 760px) {
+  .auth-hero-emblem { width: 64px; height: 64px; margin-bottom: 9px; border-radius: 20px; }
+  .auth-hero-emblem b { font-size: 30px; }
+  .auth-hero-title { font-size: 30px; margin-top: 6px; }
+  .auth-hero-sub { margin-top: 4px; }
+  .auth-card-holder { margin-top: 18px; }
+}
+
+/* ---------- Форма-льдинка ---------- */
+.auth-winter main { z-index: 2; }
+.auth-winter-card {
+  padding: 34px 30px 32px;
+  border: 1px solid rgba(255, 255, 255, .19);
+  border-radius: 34px;
+  background: linear-gradient(155deg, rgba(255, 255, 255, .11), rgba(255, 255, 255, .045)) !important;
+  box-shadow:
+    0 34px 90px -34px rgba(0, 8, 22, .9),
+    inset 0 1px 0 rgba(255, 255, 255, .3),
+    inset 0 -1px 0 rgba(150, 205, 255, .12);
+  backdrop-filter: blur(28px) saturate(135%);
+  -webkit-backdrop-filter: blur(28px) saturate(135%);
+  overflow: hidden;
+}
+.auth-winter-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 12% 4%, rgba(255, 255, 255, .28), transparent 26%),
+    radial-gradient(circle at 90% 96%, rgba(125, 195, 255, .14), transparent 32%);
+}
+.auth-winter-card > * { position: relative; }
+
+.auth-winter-card h2 {
+  color: #fff !important;
+  text-shadow: 0 4px 22px rgba(0, 0, 0, .3);
+}
+.auth-winter-card > p { color: rgba(220, 239, 255, .63) !important; }
+
+.auth-winter-card .mb-8 > span { color: #fff !important; }
+.auth-winter-card .mb-8 > div {
+  background: linear-gradient(140deg, #fff, #d5edff) !important;
+  color: #0a2a45 !important;
+}
+
+/* Переключатель режимов. */
+.auth-winter-card .mt-7 {
+  background: rgba(255, 255, 255, .07) !important;
+  border: 1px solid rgba(255, 255, 255, .08);
+}
+.auth-winter-card .mt-7 button { color: rgba(224, 241, 255, .6) !important; }
+.auth-winter-card .mt-7 button:hover { color: #fff !important; }
+.auth-winter-card .mt-7 button.bg-ink {
+  background: linear-gradient(135deg, #e8f8ff, #a8dafb) !important;
+  color: #06223c !important;
+  box-shadow: 0 8px 24px -8px rgba(140, 210, 255, .7);
+}
+
+/* Поля ввода. */
+.auth-winter-card label > span {
+  color: rgba(182, 217, 244, .72) !important;
+}
+.auth-winter-card input {
+  border-color: rgba(190, 225, 255, .2) !important;
+  background: rgba(255, 255, 255, .08) !important;
+  color: #f2f9ff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
+}
+.auth-winter-card input::placeholder { color: rgba(215, 236, 255, .4) !important; }
+.auth-winter-card input:focus {
+  border-color: rgba(155, 220, 255, .7) !important;
+  box-shadow: 0 0 0 4px rgba(120, 190, 245, .16), inset 0 1px 0 rgba(255, 255, 255, .1) !important;
+}
+.auth-winter-card .absolute svg { color: rgba(196, 226, 250, .6) !important; }
+.auth-winter-card label > div > button svg { color: rgba(196, 226, 250, .7) !important; }
+.auth-winter-card label > p { color: rgba(213, 235, 255, .55) !important; }
+
+/* Кнопка «Войти / Создать аккаунт». */
+.auth-winter-card button[type="submit"] {
+  border-radius: 999px !important;
+  background: linear-gradient(135deg, #d8f2ff 0%, #8fd0f7 42%, #4c9bdc 100%) !important;
+  color: #05213b !important;
+  box-shadow: 0 16px 40px -14px rgba(92, 177, 235, .9), inset 0 1px 0 rgba(255, 255, 255, .8);
+}
+.auth-winter-card button[type="submit"]:hover {
+  background: linear-gradient(135deg, #eafaff 0%, #a9dcfb 42%, #5aa9e8 100%) !important;
+}
+.auth-winter-card button[type="submit"]:disabled { opacity: .6; }
+
+/* Плашки ошибок и уведомлений. */
+.auth-winter-card .bg-red-500\/8 {
+  border-color: rgba(255, 138, 128, .28) !important;
+  background: rgba(180, 45, 45, .18) !important;
+  color: #ffc4bd !important;
+}
+.auth-winter-card .bg-accent-soft {
+  border-color: rgba(150, 220, 255, .28) !important;
+  background: rgba(80, 160, 215, .16) !important;
+  color: #bfe9ff !important;
+}
+.auth-winter-card .border-amber-500\/30 {
+  border-color: rgba(255, 205, 120, .3) !important;
+  background: rgba(180, 125, 40, .16) !important;
+  color: #ffe0ac !important;
+}
+
+/* Экран с выданным WinPass. */
+.auth-winter-gift {
+  position: relative;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: transparent !important;
+}
+.auth-winter-gift > div {
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, .18);
+  background: linear-gradient(155deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, .05)) !important;
+  backdrop-filter: blur(26px);
+  -webkit-backdrop-filter: blur(26px);
+  box-shadow: 0 34px 90px -34px rgba(0, 8, 22, .9);
+}
+.auth-winter-gift h2 { color: #fff !important; }
+.auth-winter-gift p { color: rgba(224, 241, 255, .66) !important; }
+.auth-winter-gift p b { color: #bfe9ff !important; }
+.auth-winter-gift .border-dashed { border-color: rgba(165, 222, 255, .35) !important; }
+.auth-winter-gift .font-mono.text-lg { color: #eaf8ff !important; }
+.auth-winter-gift button.bg-ink { background: linear-gradient(135deg, #dcf4ff, #6cb8ea) !important; color: #06223c !important; }
+.auth-winter-gift button.border-black\/10 {
+  border-color: rgba(255, 255, 255, .2) !important;
+  color: rgba(232, 246, 255, .8) !important;
+}
+.auth-winter-gift button.border-black\/10:hover { background: rgba(255, 255, 255, .08) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-winter::before,
+  .auth-winter::after,
+  .auth-winter-snow span,
+  .auth-aurora-ribbon,
+  .auth-hero-emblem,
+  .auth-hero-ring,
+  .auth-hero-spark { animation: none; }
+}
+
+/* ============================================================
+   Постовходные экраны: WinPass-подарок и проверка со снеговиком.
+   ============================================================ */
+.auth-flow-screen {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 24px 18px;
+  overflow: hidden;
+}
+.auth-flow-screen > *:not(.auth-winter-snow) { position: relative; z-index: 2; }
+.auth-flow-aurora {
+  position: absolute !important;
+  z-index: 0 !important;
+  left: 50%;
+  top: -22%;
+  width: min(760px, 120vw);
+  height: 520px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(110, 205, 245, .26), transparent 68%);
+  filter: blur(48px);
+  animation: auth-aurora 16s ease-in-out infinite alternate;
+}
+
+.auth-flow-card {
+  width: min(100%, 480px);
+  padding: 34px 30px 28px;
+  border: 1px solid rgba(255, 255, 255, .2);
+  border-radius: 32px;
+  background: linear-gradient(158deg, rgba(255, 255, 255, .13), rgba(255, 255, 255, .045)) !important;
+  box-shadow:
+    0 40px 110px -38px rgba(0, 8, 24, .95),
+    inset 0 1px 0 rgba(255, 255, 255, .32),
+    inset 0 -1px 0 rgba(150, 205, 255, .14);
+  backdrop-filter: blur(30px) saturate(140%);
+  -webkit-backdrop-filter: blur(30px) saturate(140%);
+  text-align: center;
+  animation: auth-card-in .7s cubic-bezier(.2, .8, .2, 1) both;
+}
+@keyframes auth-card-in {
+  from { opacity: 0; transform: translateY(22px) scale(.97); }
+  to   { opacity: 1; transform: none; }
+}
+.auth-flow-badge {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 22px;
+  color: #0b2c49;
+  background: linear-gradient(140deg, #fff, #c7e9ff);
+  box-shadow: 0 14px 38px -12px rgba(130, 210, 255, .9), inset 0 1px 0 #fff;
+  animation: auth-badge-float 5s ease-in-out infinite;
+}
+@keyframes auth-badge-float { 50% { transform: translateY(-5px) rotate(8deg); } }
+.auth-flow-eyebrow {
+  margin: 0 0 7px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(159, 216, 255, .78) !important;
+}
+.auth-flow-title {
+  margin: 0;
+  font-size: 29px;
+  font-weight: 800;
+  letter-spacing: -.035em;
+  color: #fff !important;
+  text-shadow: 0 6px 26px rgba(0, 0, 0, .35);
+}
+.auth-flow-lead {
+  margin: 10px auto 0;
+  max-width: 370px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.65;
+  color: rgba(220, 239, 255, .66) !important;
+}
+.auth-flow-lead b { color: #bfe9ff !important; }
+.auth-flow-footnote {
+  margin: 18px 0 0 !important;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(190, 224, 250, .5) !important;
+}
+
+/* --- WinPass --- */
+.auth-gift-code {
+  position: relative;
+  margin-top: 24px;
+  padding: 22px 18px;
+  border: 1px dashed rgba(165, 222, 255, .48);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(105, 180, 235, .18), rgba(255, 255, 255, .05));
+  overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18);
+}
+.auth-gift-code::before {
+  content: "";
+  position: absolute;
+  inset: -70% -25%;
+  background: linear-gradient(105deg, transparent 43%, rgba(255, 255, 255, .3) 50%, transparent 57%);
+  transform: translateX(-65%);
+  animation: auth-shine 4.8s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes auth-shine { 0%, 55% { transform: translateX(-65%); } 100% { transform: translateX(65%); } }
+.auth-gift-code > span {
+  position: relative;
+  z-index: 1;
+  display: block;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(171, 222, 255, .8);
+}
+.auth-gift-code > strong {
+  position: relative;
+  z-index: 1;
+  display: block;
+  margin-top: 9px;
+  word-break: break-all;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: .02em;
+  color: #f2fbff;
+  text-shadow: 0 0 22px rgba(140, 215, 255, .45);
+}
+.auth-gift-actions {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 520px) { .auth-gift-actions { grid-template-columns: 1fr; } }
+.auth-btn-primary,
+.auth-btn-secondary {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 15px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.auth-btn-primary {
+  border: 0;
+  color: #05213b;
+  background: linear-gradient(135deg, #e8faff 0%, #a4dbfb 45%, #62b2ea 100%);
+  box-shadow: 0 16px 38px -14px rgba(100, 190, 245, .9), inset 0 1px 0 #fff;
+}
+.auth-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 44px -14px rgba(100, 190, 245, 1); }
+.auth-btn-primary:disabled { opacity: .55; cursor: default; transform: none; }
+.auth-btn-secondary {
+  border: 1px solid rgba(255, 255, 255, .22);
+  color: rgba(235, 248, 255, .9);
+  background: rgba(255, 255, 255, .07);
+}
+.auth-btn-secondary:hover { transform: translateY(-2px); background: rgba(255, 255, 255, .13); }
+
+/* --- Проверка со снеговиком --- */
+.auth-check-card { padding-top: 24px; }
+.auth-check-snowman {
+  position: relative;
+  width: 132px;
+  height: 172px;
+  margin: 0 auto 10px;
+  filter: drop-shadow(0 18px 24px rgba(0, 15, 35, .5));
+  animation: snowman-bob 3.6s ease-in-out infinite;
+}
+@keyframes snowman-bob { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-7px) rotate(1deg); } }
+.snowman-aura {
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  width: 164px;
+  height: 36px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(130, 210, 255, .42), transparent 70%);
+  animation: aura-pulse 2.6s ease-in-out infinite;
+}
+@keyframes aura-pulse { 50% { opacity: .55; transform: translateX(-50%) scale(1.12); } }
+.snowman-base,
+.snowman-body,
+.snowman-head {
+  position: absolute;
+  left: 50%;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: radial-gradient(circle at 32% 24%, #fff 0%, #f2faff 34%, #d4eaf9 70%, #a8cfe8 100%);
+  box-shadow: inset -11px -13px 22px rgba(60, 125, 180, .26), inset 6px 6px 14px #fff;
+}
+/* Нижний ком — широкий, средний — меньше, голова — отдельная сфера. */
+.snowman-base {
+  bottom: 0;
+  z-index: 1;
+  width: 104px;
+  height: 92px;
+}
+.snowman-body {
+  bottom: 62px;
+  z-index: 2;
+  width: 80px;
+  height: 74px;
+}
+.snowman-head {
+  bottom: 120px;
+  z-index: 3;
+  width: 62px;
+  height: 60px;
+}
+.snowman-hat {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  z-index: 5;
+  width: 50px;
+  height: 30px;
+  transform: translateX(-50%);
+  border-radius: 8px 8px 4px 4px;
+  background: linear-gradient(150deg, #173a5c, #071d33);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, .12);
+}
+.snowman-hat-brim {
+  position: absolute;
+  left: -8px;
+  bottom: -4px;
+  width: 66px;
+  height: 10px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #0c2742, #2a557b, #0c2742);
+  box-shadow: 0 3px 8px rgba(0, 10, 25, .35);
+}
+.snowman-scarf {
+  position: absolute;
+  bottom: 108px;
+  left: 50%;
+  z-index: 4;
+  width: 68px;
+  height: 14px;
+  transform: translateX(-50%) rotate(-5deg);
+  border-radius: 99px;
+  background: linear-gradient(90deg, #e0576d, #ff8fa0 45%, #d9415c);
+  box-shadow: 0 3px 8px rgba(120, 20, 45, .35);
+}
+.snowman-scarf-tail {
+  position: absolute;
+  right: -6px;
+  top: 6px;
+  width: 15px;
+  height: 28px;
+  border-radius: 4px 8px 8px 4px;
+  background: linear-gradient(160deg, #ff8fa0, #d9415c);
+  transform-origin: top center;
+  animation: scarf-wave 2.1s ease-in-out infinite;
+}
+@keyframes scarf-wave { 0%, 100% { transform: rotate(8deg); } 50% { transform: rotate(-18deg); } }
+.snowman-eye {
+  position: absolute;
+  top: 24px;
+  width: 6px;
+  height: 8px;
+  border-radius: 50%;
+  background: #08233c;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, .7);
+}
+.snowman-eye-left { left: 17px; }
+.snowman-eye-right { right: 17px; }
+.snowman-nose {
+  position: absolute;
+  top: 29px;
+  left: 50%;
+  width: 22px;
+  height: 6px;
+  margin-left: -9px;
+  border-radius: 99px 3px 3px 99px;
+  background: linear-gradient(90deg, #ff9d4d, #ec6b2d);
+  transform: rotate(3deg);
+  box-shadow: 0 2px 4px rgba(120, 50, 10, .3);
+}
+.snowman-smile {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  width: 22px;
+  height: 10px;
+  margin-left: -11px;
+  border-bottom: 2px solid rgba(8, 35, 60, .6);
+  border-radius: 0 0 50% 50%;
+}
+.snowman-button {
+  position: absolute;
+  left: 50%;
+  top: 88px;
+  width: 8px;
+  height: 8px;
+  margin-left: -4px;
+  border-radius: 50%;
+  background: #173a5c;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .22);
+}
+.snowman-button-low { top: 108px; }
+.snowman-arm {
+  position: absolute;
+  top: 72px;
+  width: 48px;
+  height: 6px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #8a5a3c, #b98357);
+  z-index: 1;
+}
+.snowman-arm-left { left: -12px; transform: rotate(24deg); transform-origin: right center; }
+.snowman-arm-right {
+  right: -12px;
+  transform: rotate(-24deg);
+  transform-origin: left center;
+  animation: arm-wave 1.15s ease-in-out infinite;
+}
+@keyframes arm-wave { 0%, 100% { transform: rotate(-24deg); } 50% { transform: rotate(-58deg); } }
+.auth-check-snowman.is-happy .snowman-arm-right { animation: arm-wave 0.55s ease-in-out 3; }
+.auth-check-snowman.is-blocked .snowman-head { filter: saturate(.55) brightness(.9); }
+.auth-check-snowman.is-blocked .snowman-smile { border-bottom-color: rgba(180, 50, 60, .7); border-radius: 50% 50% 0 0; top: 44px; }
+
+.auth-check-bubble {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0 auto 20px;
+  padding: 9px 15px;
+  border: 1px solid rgba(165, 222, 255, .28);
+  border-radius: 99px;
+  background: rgba(255, 255, 255, .09);
+  color: #dff2ff;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px -12px rgba(0, 15, 40, .8);
+  animation: bubble-pop .45s ease both;
+}
+@keyframes bubble-pop { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+.auth-check-progress {
+  height: 6px;
+  margin: 22px 0 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .1);
+  overflow: hidden;
+}
+.auth-check-progress > i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #5daee8, #a9e4ff 60%, #fff);
+  box-shadow: 0 0 18px rgba(140, 215, 255, .9);
+  transition: width .55s cubic-bezier(.2, .8, .2, 1);
+}
+.auth-check-list { display: grid; gap: 9px; text-align: left; }
+.auth-check-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 13px;
+  border: 1px solid rgba(255, 255, 255, .09);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .04);
+  transition: border-color .3s ease, background .3s ease, transform .3s ease, box-shadow .3s ease;
+}
+.auth-check-row.is-active {
+  border-color: rgba(155, 220, 255, .55);
+  background: rgba(110, 185, 240, .15);
+  box-shadow: 0 0 0 1px rgba(155, 220, 255, .12), 0 12px 30px -18px rgba(90, 180, 240, .9);
+  transform: translateX(4px);
+}
+.auth-check-row.is-done { border-color: rgba(120, 225, 190, .22); background: rgba(70, 180, 150, .09); }
+.auth-check-row.is-error { border-color: rgba(255, 140, 140, .35); background: rgba(190, 60, 70, .16); }
+.auth-check-icon {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: rgba(190, 226, 250, .7);
+  background: rgba(255, 255, 255, .07);
+}
+.auth-check-row.is-active .auth-check-icon {
+  color: #fff;
+  background: linear-gradient(140deg, rgba(120, 195, 245, .45), rgba(80, 150, 210, .3));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3);
+}
+.auth-check-row.is-done .auth-check-icon { color: #9ff0d2; background: rgba(90, 220, 175, .16); }
+.auth-check-row.is-error .auth-check-icon { color: #ffb3b3; background: rgba(220, 80, 90, .2); }
+.auth-check-text { min-width: 0; display: grid; gap: 2px; }
+.auth-check-text b { font-size: 13px; font-weight: 700; color: #f3faff; }
+.auth-check-text small { font-size: 11px; font-weight: 500; color: rgba(196, 226, 250, .58); }
+.auth-check-row.is-error .auth-check-text small { color: #ffc0c0; }
+.auth-check-tick { margin-left: auto; color: #8ce8c6; }
+.auth-spin { animation: auth-spin .9s linear infinite; }
+@keyframes auth-spin { to { transform: rotate(360deg); } }
+.auth-check-continue { width: 100%; margin-top: 18px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-flow-aurora,
+  .auth-flow-card,
+  .auth-flow-badge,
+  .auth-gift-code::before,
+  .auth-check-snowman,
+  .snowman-aura,
+  .snowman-scarf-tail,
+  .snowman-arm-right,
+  .auth-check-bubble,
+  .auth-spin { animation: none !important; }
+}
+
+/* Общий новогодний фон на экранах входа: ёлки, подарки, гирлянда, звёзды. */
+.auth-winter-backdrop { z-index: 0 !important; opacity: .72; }
+.auth-winter-backdrop .hy-backdrop-garland { opacity: .6; }
+.auth-winter-backdrop .hy-backdrop-hanging { opacity: .28; }
+.auth-winter-theme {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 6;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .22);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .1);
+  color: #dff2ff;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 12px 30px -16px rgba(0, 12, 30, .9);
+  transition: transform .2s ease, background .2s ease, border-color .2s ease;
+}
+.auth-winter-theme:hover { transform: translateY(-2px) rotate(8deg); background: rgba(255, 255, 255, .18); }
+
+/* ---------- Светлая зимняя тема ---------- */
+.auth-winter.is-light {
+  color: #123a5c;
+  background:
+    radial-gradient(ellipse 70% 60% at 8% 8%, rgba(120, 205, 245, .3), transparent 62%),
+    radial-gradient(ellipse 60% 55% at 92% 96%, rgba(160, 210, 255, .36), transparent 65%),
+    linear-gradient(155deg, #eaf7ff 0%, #f8fcff 42%, #dcefff 100%) !important;
+}
+.auth-winter.is-light::before { background: radial-gradient(circle, rgba(110, 205, 190, .26), transparent 68%); }
+.auth-winter.is-light::after { background: radial-gradient(circle, rgba(150, 195, 255, .3), transparent 70%); }
+.auth-winter.is-light .auth-hero-emblem {
+  background: linear-gradient(150deg, #fff, #e4f5ff) !important;
+  box-shadow: 0 20px 46px -14px rgba(60, 140, 195, .55), inset 0 1px 0 #fff;
+}
+.auth-winter.is-light .auth-hero-ring { border-color: rgba(40, 120, 175, .22); }
+.auth-winter.is-light .auth-hero-ring-b { border-color: rgba(40, 120, 175, .14); }
+.auth-winter.is-light .auth-hero-title { color: #0d3452 !important; text-shadow: none; }
+.auth-winter.is-light .auth-hero-title span {
+  background: linear-gradient(90deg, #1f8fc9, #0d3452 58%, #c58b34);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.auth-winter.is-light .auth-hero-sub { color: rgba(18, 58, 92, .6) !important; }
+.auth-winter.is-light .auth-winter-card {
+  border-color: rgba(20, 80, 120, .14);
+  background: rgba(255, 255, 255, .82) !important;
+  color: #123a5c;
+  box-shadow: 0 34px 90px -38px rgba(30, 90, 140, .45), inset 0 1px 0 #fff;
+}
+.auth-winter.is-light .auth-winter-card h2 { color: #0d3452 !important; text-shadow: none; }
+.auth-winter.is-light .auth-winter-card > p { color: rgba(18, 58, 92, .62) !important; }
+.auth-winter.is-light .auth-winter-card .mb-8 > span { color: #0d3452 !important; }
+.auth-winter.is-light .auth-winter-card .mb-8 > div {
+  background: linear-gradient(140deg, #0d3452, #1f6f9e) !important;
+  color: #fff !important;
+}
+.auth-winter.is-light .auth-winter-card .mt-7 {
+  border-color: rgba(20, 80, 120, .08);
+  background: rgba(20, 80, 120, .07) !important;
+}
+.auth-winter.is-light .auth-winter-card .mt-7 button { color: rgba(18, 58, 92, .6) !important; }
+.auth-winter.is-light .auth-winter-card .mt-7 button.bg-ink {
+  background: linear-gradient(135deg, #0d3452, #1f6f9e) !important;
+  color: #fff !important;
+}
+.auth-winter.is-light .auth-winter-card label > span { color: rgba(18, 58, 92, .65) !important; }
+.auth-winter.is-light .auth-winter-card input {
+  border-color: rgba(20, 80, 120, .18) !important;
+  background: rgba(255, 255, 255, .88) !important;
+  color: #0d3452 !important;
+}
+.auth-winter.is-light .auth-winter-card input::placeholder { color: rgba(18, 58, 92, .4) !important; }
+.auth-winter.is-light .auth-winter-card input:focus {
+  border-color: #3e9bd1 !important;
+  box-shadow: 0 0 0 4px rgba(62, 155, 209, .16) !important;
+}
+.auth-winter.is-light .auth-winter-card .absolute svg,
+.auth-winter.is-light .auth-winter-card label > div > button svg { color: rgba(18, 58, 92, .5) !important; }
+.auth-winter.is-light .auth-winter-card label > p { color: rgba(18, 58, 92, .55) !important; }
+.auth-winter.is-light .auth-winter-card button[type="submit"] {
+  background: linear-gradient(135deg, #1f6f9e, #0d3452) !important;
+  color: #fff !important;
+}
+.auth-winter.is-light .auth-winter-card .bg-red-500\/8 {
+  border-color: rgba(200, 60, 60, .22) !important;
+  background: rgba(230, 100, 100, .1) !important;
+  color: #a33 !important;
+}
+.auth-winter.is-light .auth-winter-card .bg-accent-soft {
+  border-color: rgba(20, 120, 180, .2) !important;
+  background: rgba(90, 170, 220, .12) !important;
+  color: #1f6f9e !important;
+}
+.auth-winter.is-light .auth-winter-card .border-amber-500\/30 {
+  border-color: rgba(190, 130, 30, .28) !important;
+  background: rgba(240, 190, 90, .16) !important;
+  color: #8a5f12 !important;
+}
+.auth-winter.is-light .auth-winter-theme {
+  color: #0d3452;
+  border-color: rgba(20, 80, 120, .18);
+  background: rgba(255, 255, 255, .72);
+}
+.auth-winter.is-light .auth-flow-card {
+  border-color: rgba(20, 80, 120, .14);
+  background: rgba(255, 255, 255, .86) !important;
+  box-shadow: 0 34px 90px -38px rgba(30, 90, 140, .45), inset 0 1px 0 #fff;
+}
+.auth-winter.is-light .auth-flow-title,
+.auth-winter.is-light .auth-gift-code > strong,
+.auth-winter.is-light .auth-check-text b { color: #0d3452 !important; text-shadow: none; }
+.auth-winter.is-light .auth-flow-eyebrow,
+.auth-winter.is-light .auth-flow-lead,
+.auth-winter.is-light .auth-flow-footnote,
+.auth-winter.is-light .auth-check-text small { color: rgba(18, 58, 92, .64) !important; }
+.auth-winter.is-light .auth-gift-code {
+  border-color: rgba(20, 100, 150, .3);
+  background: rgba(220, 240, 255, .72) !important;
+}
+.auth-winter.is-light .auth-btn-secondary {
+  border-color: rgba(20, 80, 120, .2);
+  background: rgba(255, 255, 255, .75);
+  color: #0d3452;
+}
+.auth-winter.is-light .auth-check-row {
+  border-color: rgba(20, 80, 120, .12);
+  background: rgba(20, 80, 120, .05);
+}
+.auth-winter.is-light .auth-check-row.is-active {
+  border-color: rgba(40, 130, 190, .4);
+  background: rgba(70, 150, 205, .14);
+}
+.auth-winter.is-light .auth-check-icon { color: #266f9c; background: rgba(20, 80, 120, .08); }
+.auth-winter.is-light .auth-check-bubble {
+  border-color: rgba(20, 80, 120, .16);
+  background: rgba(255, 255, 255, .84);
+  color: #0d3452;
+}
+.auth-winter.is-light .auth-check-progress { background: rgba(20, 80, 120, .12); }
+.auth-winter.is-light .auth-check-snowman { filter: drop-shadow(0 14px 18px rgba(30, 90, 140, .28)); }

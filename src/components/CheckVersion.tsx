@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { Snowflake, Sparkles, X } from "lucide-react";
 import {
   APP_VERSION,
+  DOWNLOAD_URL,
+  dismissOta7,
+  isOta7Dismissed,
+  isUpdate7DemoActive,
+  isVersion7,
   isVersionNewer,
   shouldShowUpdateBanner,
   dismissUpdateBanner,
@@ -9,12 +14,31 @@ import {
   shouldShowWhatsNew,
   markWhatsNewSeen,
 } from "../lib/checkVersion";
-import { canInstallOta, initDeviceOta } from "../lib/ota";
+import {
+  OTA7_SHOW_EVENT,
+  canInstallOta,
+  getDemoOta7,
+  initDeviceOta,
+  type OtaInfo,
+} from "../lib/ota";
+import OtaUpdate7Overlay from "./OtaUpdate7Overlay";
 import "./happy-year.css";
+
+interface Ota7Prompt {
+  version: string;
+  ota: OtaInfo | null;
+  url: string;
+}
+
+function ota7Key(version: string, ota: OtaInfo | null): string {
+  return `${version}|${ota?.updatedAt ?? ""}`;
+}
 
 /**
  * Проверка версии при запуске:
  *  - отправляет статус устройства на сервер и узнаёт версию сервера;
+ *  - для OTA-записей 7.x показывает полноэкранный новогодний экран
+ *    обновления с описанием из `--note` и прогрессом установки;
  *  - веб-пользователям показывает баннер «Доступна версия X»;
  *  - на нативном Android баннера нет: обновление (OTA) ставится
  *    вручную — Настройки → «О приложении» → «Проверить обновления».
@@ -24,8 +48,9 @@ export default function CheckVersion() {
   const [loading, setLoading] = useState(true);
   const [showWhatsNew, setShowWhatsNew] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [ota7, setOta7] = useState<Ota7Prompt | null>(null);
 
-  /* Статус устройства + check_version при запуске */
+  /* Статус устройства + check_version + поиск OTA при запуске */
   useEffect(() => {
     let cancelled = false;
 
@@ -34,6 +59,33 @@ export default function CheckVersion() {
         if (cancelled) return;
         setLatestVersion(res.latestVersion);
         setLoading(false);
+
+        /* Демо /update_7_active: показываем экран даже если приложение
+           ещё не вошло в аккаунт и OTA-запрос реально не выполнялся. */
+        if (isUpdate7DemoActive()) {
+          const demo = getDemoOta7();
+          setOta7({
+            version: demo.version ?? "7.0.0",
+            ota: demo,
+            url: demo.url,
+          });
+          return;
+        }
+
+        /* Новогодний экран для любой реальной версии, начинающейся с 7. */
+        const version7 =
+          res.ota?.version ?? (isVersion7(res.latestVersion) ? res.latestVersion : null);
+        if (version7) {
+          const key = ota7Key(version7, res.ota);
+          if (!isOta7Dismissed(key)) {
+            setOta7({
+              version: version7,
+              ota: res.ota,
+              url: res.ota?.url ?? DOWNLOAD_URL,
+            });
+            return;
+          }
+        }
 
         /* Баннер обновления по версии (только для веба — без нативного OTA) */
         if (res.latestVersion && shouldShowUpdateBanner(res.latestVersion)) {
@@ -54,12 +106,35 @@ export default function CheckVersion() {
     };
   }, []);
 
-  const newer = latestVersion && isVersionNewer(latestVersion, APP_VERSION);
-  const showVersionBanner = Boolean(newer) && !canInstallOta();
+  /* Кнопка «Проверить обновления» в настройках и демо-роут тоже открывают экран. */
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const ota = (event as CustomEvent<OtaInfo>).detail;
+      const version = ota?.version;
+      if (!version || !isVersion7(version)) return;
+      if (!isUpdate7DemoActive() && isOta7Dismissed(ota7Key(version, ota))) return;
+      setOta7({ version, ota, url: ota.url });
+    };
+    window.addEventListener(OTA7_SHOW_EVENT, handler);
+    return () => window.removeEventListener(OTA7_SHOW_EVENT, handler);
+  }, []);
+
+  const currentVersion = APP_VERSION;
+  const newer = latestVersion && isVersionNewer(latestVersion, currentVersion);
+  const showVersionBanner = Boolean(newer) && !canInstallOta() && !ota7;
 
   function dismissUpdate() {
     setDismissed(true);
     if (latestVersion) dismissUpdateBanner(latestVersion);
+  }
+
+  function closeOta7() {
+    // Демо не портит ключ просмотра реальной OTA и остаётся доступным
+    // через кнопку «Проверить обновления» до перезагрузки страницы.
+    if (!isUpdate7DemoActive() && ota7) {
+      dismissOta7(ota7Key(ota7.version, ota7.ota));
+    }
+    setOta7(null);
   }
 
   function closeWhatsNew() {
@@ -67,13 +142,13 @@ export default function CheckVersion() {
     markWhatsNewSeen();
   }
 
-  if (loading) return null;
-  if (dismissed) return null;
+  // Демо-экран должен показываться сразу, не дожидаясь initDeviceOta.
+  if (loading && !ota7) return null;
 
   return (
     <>
       {/* Баннер обновления версии (веб; на Android обновление — в настройках) */}
-      {showVersionBanner && (
+      {showVersionBanner && !dismissed && (
         <div className="fixed inset-x-0 top-0 z-[200] animate-fade-in">
           <div className="mx-auto my-2 max-w-md rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 p-3 px-4 shadow-lg">
             <div className="flex items-center gap-3">
@@ -83,7 +158,7 @@ export default function CheckVersion() {
                   {`Доступна версия ${latestVersion}`}
                 </p>
                 <p className="text-[11px] font-medium text-amber-800/75">
-                  {`Текущая: ${APP_VERSION} — обновите для новых функций`}
+                  {`Текущая: ${currentVersion} — обновите для новых функций`}
                 </p>
               </div>
               <button
@@ -97,6 +172,16 @@ export default function CheckVersion() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Новогодний экран OTA WinChat 7.x */}
+      {ota7 && (
+        <OtaUpdate7Overlay
+          ota={ota7.ota}
+          version={ota7.version}
+          url={ota7.url}
+          onClose={closeOta7}
+        />
       )}
 
       {/* Модальное окно "Что нового" */}

@@ -12,6 +12,62 @@ export const APP_VERSION = "7.0.0-closed-beta";
 export const DOWNLOAD_URL = "https://github.com/NikitaDev2015/wintozo/releases/latest";
 
 /* ============================================================
+   Демо-роут /update_7_active
+   Показывает экран «доступна 7.x» поверх настроек (ПК и телефон).
+   Не меняет APP_VERSION, серверную версию и реальные OTA-проверки.
+   ============================================================ */
+export const UPDATE7_ROUTE = "/update_7_active";
+
+const UPDATE7_DEMO_AVAILABLE = "7.0.0-closed-beta";
+const OTA7_DISMISSED_KEY = "winchat_ota7_dismissed";
+
+/**
+ * Демо-флаг живёт ТОЛЬКО в памяти и включается самим роутом.
+ * Он НЕ пишется в localStorage и НЕ подменяет check_version / search_ota —
+ * реальные проверки обновлений работают как раньше.
+ */
+let update7DemoActive =
+  typeof window !== "undefined" && window.location.pathname === UPDATE7_ROUTE;
+
+export function isUpdate7DemoActive(): boolean {
+  return update7DemoActive;
+}
+
+export function setUpdate7DemoActive(active: boolean): void {
+  update7DemoActive = active;
+}
+
+/** Версия, которую показывает демо-экран. */
+export function getDemoAvailableVersion(): string {
+  return UPDATE7_DEMO_AVAILABLE;
+}
+
+export function isOta7Dismissed(key: string): boolean {
+  try {
+    return localStorage.getItem(OTA7_DISMISSED_KEY) === key;
+  } catch {
+    return false;
+  }
+}
+
+export function dismissOta7(key: string): void {
+  try {
+    localStorage.setItem(OTA7_DISMISSED_KEY, key);
+  } catch {
+    /* no-op */
+  }
+}
+
+/** Демо-роут всегда начинается с чистого экрана. */
+export function clearOta7Dismissed(): void {
+  try {
+    localStorage.removeItem(OTA7_DISMISSED_KEY);
+  } catch {
+    /* no-op */
+  }
+}
+
+/* ============================================================
    Ивент «Память о Wintozo»
    Если серверная версия попадает в диапазон 1.0.0–2.0.1, у
    клиента включается legacy-режим: полноэкранная плашка с
@@ -59,6 +115,12 @@ export function isVersionNewer(remote: string, local: string): boolean {
   const r = splitVersion(remote);
   const l = splitVersion(local);
   return compareFullVersions(r.core, l.core, r.pre, l.pre) > 0;
+}
+
+/** Версия начинается с 7 (7.0.0-closed-beta, 7.0.0-beta, 7.0.0-release, 7.0.0, …). */
+export function isVersion7(version: string | null | undefined): boolean {
+  if (!version) return false;
+  return (splitVersion(version).core[0] ?? 0) === 7;
 }
 
 /** Сравнение версий: -1 | 0 | 1. */

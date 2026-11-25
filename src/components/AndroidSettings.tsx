@@ -66,6 +66,7 @@ import {
   onOtaStatus,
   reportDeviceStatus,
   searchOta,
+  showOta7IfAvailable,
   type DeviceInfo,
   type OtaInfo,
   type OtaState,
@@ -245,6 +246,7 @@ export default function AndroidSettings({
       ]);
       setServerVersion(server);
       setAboutOta(otaRes);
+      showOta7IfAvailable(otaRes);
       const latest =
         otaRes?.version && server && isVersionNewer(otaRes.version, server)
           ? otaRes.version
@@ -426,7 +428,7 @@ export default function AndroidSettings({
   }
 
   return (
-    <div className="fixed inset-0 z-[80] flex flex-col bg-paper animate-fade-in">
+    <div className="ny-settings-surface fixed inset-0 z-[80] flex flex-col bg-paper animate-fade-in">
       {/* ================= ШАПКА ================= */}
       <div className="shrink-0 border-b border-black/5 px-4 pb-3 pt-4">
         <div className="mx-auto flex w-full max-w-md items-center justify-between">

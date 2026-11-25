@@ -2724,3 +2724,645 @@ html.dev-mono {
   filter: grayscale(1);
   background: #f4f4f4;
 }
+
+/* ============================================================
+   WINCHAT 7.0 — НОВОГОДНЯЯ ТЕМА «ЛЕДЯНОЕ СТЕКЛО»
+   Классическая тема (лежит в THEMES), но с liquid-логикой 5.0.0:
+   переменные на <html>, живой аврора-фон, стеклянные острова,
+   тёмный «dynamic island» в шапке, капли сообщений и пилюлеобразные
+   кнопки с градиентом, внутренним бликом и бегущим глянцем.
+   ============================================================ */
+html.theme-newyear {
+  --ny-r: 46px;
+  --ny-r-sm: 28px;
+  --ny-edge: rgba(255, 255, 255, 0.92);
+  --ny-glow: rgba(31, 127, 184, 0.55);
+
+  /* You-переменные, перекрашенные под ледяное стекло */
+  --you-primary: #1f7fb8;
+  --you-on-primary: #ffffff;
+  --you-primary-strong: #0d3c63;
+  --you-primary-container: rgba(255, 255, 255, 0.66);
+  --you-on-primary-container: #0d3452;
+  --you-secondary: #8fd0f7;
+  --you-on-secondary: #061d33;
+  --you-secondary-container: rgba(255, 255, 255, 0.58);
+  --you-on-secondary-container: #102a44;
+  --you-tertiary: #d69b45;
+  --you-tertiary-container: rgba(255, 226, 178, 0.6);
+  --you-on-tertiary-container: #2c1d08;
+  --you-surface: #eaf6ff;
+  --you-surface-low: rgba(255, 255, 255, 0.5);
+  --you-surface-container: rgba(255, 255, 255, 0.4);
+  --you-surface-high: rgba(255, 255, 255, 0.6);
+  --you-surface-highest: rgba(255, 255, 255, 0.8);
+  --you-on-surface: #0d3452;
+  --you-on-surface-variant: rgba(13, 52, 82, 0.6);
+  --you-outline: rgba(31, 127, 184, 0.45);
+  --you-outline-variant: rgba(255, 255, 255, 0.85);
+  --you-r: 30px;
+  --you-r-sm: 20px;
+  --you-r-lg: 40px;
+  color-scheme: light;
+}
+
+/* ---------- Аврора-фон: лёд, золото, ёлка, ягода ---------- */
+html.theme-newyear body {
+  background:
+    radial-gradient(ellipse 55% 42% at 4% -4%, #bfe8ff 0%, transparent 56%),
+    radial-gradient(ellipse 50% 44% at 98% 2%, #ffe0ac 0%, transparent 58%),
+    radial-gradient(ellipse 62% 52% at 104% 78%, #a8e6cf 0%, transparent 58%),
+    radial-gradient(ellipse 60% 46% at -6% 88%, #ffc9d8 0%, transparent 58%),
+    radial-gradient(ellipse 70% 50% at 44% 34%, white 0%, rgba(255, 255, 255, 0) 72%),
+    linear-gradient(168deg, #f4fbff 0%, #e4f3ff 38%, #fff5e6 64%, #e7f4ff 100%);
+  background-attachment: fixed;
+  color: var(--you-on-surface);
+}
+
+/* Шрифт и общие смягчители — как в Liquid Glass 5.0.0 */
+html.theme-newyear body,
+html.theme-newyear input,
+html.theme-newyear textarea,
+html.theme-newyear select,
+html.theme-newyear button {
+  font-family: "Nunito", "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
+}
+html.theme-newyear .font-mono,
+html.theme-newyear code {
+  font-family: var(--font-mono);
+}
+
+/* ---------- Оболочка: прозрачная, фон рисует body ---------- */
+html.theme-newyear .messenger-modern {
+  background: transparent !important;
+}
+html.theme-newyear .messenger-modern::before {
+  content: "";
+  position: fixed;
+  inset: -14%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 24% 18% at 74% 8%, rgba(255, 255, 255, 0.95), transparent 70%),
+    radial-gradient(ellipse 20% 14% at 14% 82%, rgba(255, 226, 178, 0.72), transparent 70%),
+    radial-gradient(ellipse 22% 16% at 58% 52%, rgba(143, 208, 247, 0.46), transparent 70%),
+    radial-gradient(ellipse 16% 12% at 88% 64%, rgba(126, 214, 172, 0.34), transparent 70%);
+  filter: blur(30px);
+  animation: ny-drift 22s ease-in-out infinite alternate;
+}
+@keyframes ny-drift {
+  from { transform: translate3d(-2%, -1.5%, 0) scale(1); }
+  to { transform: translate3d(2.5%, 2%, 0) scale(1.07); }
+}
+@keyframes ny-msg-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes ny-page-in {
+  from { opacity: 0; transform: translateY(18px) scale(0.985); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Сайдбар: стеклянная панель во всю высоту ---------- */
+html.theme-newyear .messenger-modern .modern-sidebar,
+html.theme-newyear .messenger-modern .modern-rail {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.66) 0%, rgba(255, 255, 255, 0.38) 34%, rgba(232, 246, 255, 0.46) 100%) !important;
+  border: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.85) !important;
+  border-radius: 0;
+  backdrop-filter: blur(46px) saturate(185%);
+  -webkit-backdrop-filter: blur(46px) saturate(185%);
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+/* Логотип: стеклянная линза */
+html.theme-newyear .messenger-modern .yc-brand-logo,
+html.theme-newyear .messenger-modern .hy-phone-logo {
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.95), rgba(169, 229, 255, 0.75) 55%, rgba(31, 127, 184, 0.9)) !important;
+  color: #fff;
+  border-radius: 20px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -8px 18px -8px rgba(13, 60, 99, 0.55),
+    0 16px 32px -16px rgba(31, 127, 184, 0.75);
+}
+
+/* Поиск: стеклянная линза-пилюля */
+html.theme-newyear .messenger-modern .you-search,
+html.theme-newyear .messenger-modern .hy-phone-search input {
+  background: rgba(255, 255, 255, 0.62) !important;
+  background-color: rgba(255, 255, 255, 0.62) !important;
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  border-radius: 9999px !important;
+  color: var(--you-on-surface);
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 18px 40px -30px rgba(13, 60, 99, 0.65);
+}
+html.theme-newyear .messenger-modern .you-search:focus,
+html.theme-newyear .messenger-modern .hy-phone-search input:focus {
+  background: rgba(255, 255, 255, 0.82) !important;
+  background-color: rgba(255, 255, 255, 0.82) !important;
+  box-shadow:
+    0 0 0 3px rgba(31, 127, 184, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+html.theme-newyear .messenger-modern .you-search:-webkit-autofill,
+html.theme-newyear .messenger-modern .you-search:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--you-on-surface);
+  box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.82) inset;
+}
+
+/* Строки чатов: стеклянные плитки */
+html.theme-newyear .messenger-modern .modern-chat-row:hover {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border-radius: var(--ny-r-sm);
+}
+html.theme-newyear .messenger-modern .modern-chat-row.is-active {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.78), rgba(169, 229, 255, 0.42)) !important;
+  color: var(--you-on-primary-container);
+  border-color: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(28px) saturate(170%);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 18px 42px -28px rgba(31, 127, 184, 0.65);
+}
+
+/* ---------- Dynamic Island — «камера-островок» шапки чата ---------- */
+html.theme-newyear .messenger-modern main header {
+  position: relative;
+  margin: clamp(8px, 1.3vw, 14px) clamp(8px, 1.4vw, 16px) 0;
+  background: linear-gradient(180deg, rgba(6, 21, 38, 0.96) 0%, rgba(11, 36, 60, 0.9) 100%) !important;
+  border: none !important;
+  border-radius: 9999px !important;
+  color: #fff;
+  backdrop-filter: blur(36px) saturate(150%);
+  -webkit-backdrop-filter: blur(36px) saturate(150%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 24px 52px -28px rgba(4, 18, 36, 0.85);
+}
+/* Глянцевый блик на шапке убран — он давал белый «кусок» над никнеймом. */
+html.theme-newyear .messenger-modern main header::after {
+  display: none !important;
+}
+html.theme-newyear .messenger-modern main header [class*="text-"],
+html.theme-newyear .messenger-modern main header button {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+/* Чат-панель: стекло во всю высоту */
+html.theme-newyear .messenger-modern main .modern-feed {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.18) 40%, rgba(232, 246, 255, 0.26) 100%) !important;
+  backdrop-filter: blur(52px) saturate(170%);
+  -webkit-backdrop-filter: blur(52px) saturate(170%);
+}
+
+/* ---------- Сообщения: капли из жидкого стекла ---------- */
+html.theme-newyear .messenger-modern main .modern-bubble-own {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(158deg, rgba(169, 229, 255, 0.95) 0%, rgba(31, 127, 184, 0.92) 58%, rgba(13, 60, 99, 0.94) 100%) !important;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.55) !important;
+  border-radius: 34px 34px 10px 34px !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 22px 46px -26px rgba(13, 60, 99, 0.85);
+}
+/* Блик на пузырях убран: он давал белый «кусок» над никнеймом. */
+html.theme-newyear .messenger-modern main .modern-bubble-own::after,
+html.theme-newyear .messenger-modern main .modern-bubble-other::after {
+  display: none !important;
+}
+html.theme-newyear .messenger-modern main .modern-bubble-other {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.5) 100%) !important;
+  color: var(--you-on-surface);
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  border-radius: 34px 34px 34px 10px !important;
+  backdrop-filter: blur(30px) saturate(165%);
+  -webkit-backdrop-filter: blur(30px) saturate(165%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 20px 44px -30px rgba(28, 56, 110, 0.6);
+}
+
+/* Дата: мини-табличка мелким капсом */
+html.theme-newyear .messenger-modern main .modern-date-chip {
+  background: rgba(255, 255, 255, 0.62) !important;
+  color: var(--you-on-surface-variant) !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  border-radius: 9999px !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 10px !important;
+  font-weight: 800;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+
+/* ---------- Композер: цельная стеклянная капсула ---------- */
+html.theme-newyear .messenger-modern main footer,
+html.theme-newyear .messenger-modern main .sticky.bottom-0,
+html.theme-newyear .messenger-modern main div[class*="border-t"][class*="px-3"][class*="py-3"] {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.5)) !important;
+  backdrop-filter: blur(34px) saturate(170%);
+  -webkit-backdrop-filter: blur(34px) saturate(170%);
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.8) !important;
+  border-radius: 0 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+html.theme-newyear .messenger-modern main .modern-composer {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.48)) !important;
+  border: 1px solid rgba(255, 255, 255, 0.98) !important;
+  border-radius: 9999px !important;
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 24px 52px -32px rgba(13, 60, 120, 0.65);
+}
+html.theme-newyear .messenger-modern main .modern-composer:focus-within {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.66)) !important;
+  box-shadow:
+    0 0 0 3px rgba(31, 127, 184, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+}
+html.theme-newyear .messenger-modern main .modern-composer textarea {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+
+/* ============================================================
+   КНОПКИ — точная логика liquid-кнопок OOBE из 5.0.0:
+   пилюля, градиент 160%, внутренний блик, тень-свечение,
+   глянцевый «пробегающий» блик при наведении, мягкий active.
+   ============================================================ */
+html.theme-newyear .messenger-modern main button[class*="bg-ink"],
+html.theme-newyear .messenger-modern main button[class*="bg-accent"],
+html.theme-newyear .messenger-modern .yc-send:not(.yc-send-tonal),
+html.theme-newyear .messenger-modern .nys-btn--primary {
+  position: relative;
+  overflow: hidden !important;
+  border: none !important;
+  border-radius: 9999px !important;
+  background: linear-gradient(135deg, #1f7fb8 0%, #5aa9e8 55%, #a9e5ff 100%) !important;
+  background-size: 160% 160% !important;
+  color: #fff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -12px 24px -14px rgba(4, 35, 70, 0.8),
+    0 22px 48px -20px rgba(31, 127, 184, 0.85);
+  transition: transform 0.18s ease, box-shadow 0.25s ease, background-position 0.5s ease, opacity 0.2s ease;
+}
+html.theme-newyear .messenger-modern main button[class*="bg-ink"]::before,
+html.theme-newyear .messenger-modern main button[class*="bg-accent"]::before,
+html.theme-newyear .messenger-modern .yc-send:not(.yc-send-tonal)::before,
+html.theme-newyear .messenger-modern .nys-btn--primary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -70%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: skewX(-18deg);
+  transition: left 0.6s ease;
+  pointer-events: none;
+}
+html.theme-newyear .messenger-modern main button[class*="bg-ink"]:hover:not(:disabled),
+html.theme-newyear .messenger-modern main button[class*="bg-accent"]:hover:not(:disabled),
+html.theme-newyear .messenger-modern .yc-send:not(.yc-send-tonal):hover:not(:disabled),
+html.theme-newyear .messenger-modern .nys-btn--primary:hover:not(:disabled) {
+  background-position: 100% 100% !important;
+  transform: translateY(-1px) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset 0 -12px 24px -14px rgba(4, 35, 70, 0.8),
+    0 28px 56px -20px rgba(31, 127, 184, 0.95);
+}
+html.theme-newyear .messenger-modern main button[class*="bg-ink"]:hover:not(:disabled)::before,
+html.theme-newyear .messenger-modern main button[class*="bg-accent"]:hover:not(:disabled)::before,
+html.theme-newyear .messenger-modern .yc-send:not(.yc-send-tonal):hover:not(:disabled)::before,
+html.theme-newyear .messenger-modern .nys-btn--primary:hover:not(:disabled)::before {
+  left: 130%;
+}
+html.theme-newyear .messenger-modern main button[class*="bg-ink"]:active:not(:disabled),
+html.theme-newyear .messenger-modern main button[class*="bg-accent"]:active:not(:disabled),
+html.theme-newyear .messenger-modern .yc-send:not(.yc-send-tonal):active:not(:disabled),
+html.theme-newyear .messenger-modern .nys-btn--primary:active:not(:disabled) {
+  transform: scale(0.98) !important;
+}
+html.theme-newyear .messenger-modern main button[class*="bg-ink"]:disabled,
+html.theme-newyear .messenger-modern main button[class*="bg-accent"]:disabled,
+html.theme-newyear .messenger-modern .yc-send:disabled {
+  opacity: 0.55;
+}
+html.theme-newyear .messenger-modern main button[class*="bg-ink"]:disabled:hover,
+html.theme-newyear .messenger-modern main button[class*="bg-accent"]:disabled:hover {
+  transform: none;
+  background-position: 0% 0%;
+}
+
+/* Нейтральные кнопки: прозрачное стекло с бликом (.you-fab в 5.0.0) */
+html.theme-newyear .messenger-modern .modern-icon-btn,
+html.theme-newyear .messenger-modern .modern-rail-btn,
+html.theme-newyear .messenger-modern main header button:not([class*="bg-ink"]),
+html.theme-newyear .messenger-modern .yc-composer-icon,
+html.theme-newyear .messenger-modern .yc-send-tonal,
+html.theme-newyear .messenger-modern .yc-msg-action,
+html.theme-newyear .messenger-modern .yc-chip,
+html.theme-newyear .messenger-modern .nys-btn:not(.nys-btn--primary),
+html.theme-newyear .messenger-modern .nys-nav-btn,
+html.theme-newyear .messenger-modern .ny-bgmusic-opt,
+html.theme-newyear .messenger-modern .ny-theme-card {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.55) 55%, rgba(216, 242, 255, 0.5) 100%) !important;
+  color: var(--you-primary-strong) !important;
+  border: 1px solid rgba(255, 255, 255, 1) !important;
+  border-radius: 9999px !important;
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -10px 20px -12px rgba(31, 127, 184, 0.28),
+    0 14px 30px -18px rgba(13, 60, 120, 0.5);
+  transition: transform 0.18s ease, box-shadow 0.25s ease, background 0.3s ease;
+}
+html.theme-newyear .messenger-modern .modern-icon-btn:hover,
+html.theme-newyear .messenger-modern .modern-rail-btn:hover,
+html.theme-newyear .messenger-modern main header button:not([class*="bg-ink"]):hover,
+html.theme-newyear .messenger-modern .yc-composer-icon:hover,
+html.theme-newyear .messenger-modern .yc-send-tonal:hover,
+html.theme-newyear .messenger-modern .yc-msg-action:hover,
+html.theme-newyear .messenger-modern .yc-chip:hover,
+html.theme-newyear .messenger-modern .nys-btn:not(.nys-btn--primary):hover,
+html.theme-newyear .messenger-modern .nys-nav-btn:hover {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.95) 0%, rgba(238, 249, 255, 0.72) 60%, rgba(200, 231, 255, 0.66) 100%) !important;
+  transform: translateY(-1px) !important;
+}
+html.theme-newyear .messenger-modern .modern-icon-btn:active,
+html.theme-newyear .messenger-modern .modern-rail-btn:active,
+html.theme-newyear .messenger-modern .yc-composer-icon:active {
+  transform: scale(0.98) !important;
+}
+html.theme-newyear .messenger-modern .modern-rail-btn.is-active,
+html.theme-newyear .messenger-modern .yc-chip.is-active,
+html.theme-newyear .messenger-modern .nys-nav-btn.is-active,
+html.theme-newyear .messenger-modern .ny-bgmusic-opt.is-active,
+html.theme-newyear .messenger-modern .ny-theme-card.is-active {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.95), rgba(255, 226, 178, 0.76)) !important;
+  color: #0d3452 !important;
+  box-shadow: inset 0 1px 0 #fff, 0 16px 30px -18px rgba(214, 155, 69, 0.85);
+}
+html.theme-newyear .messenger-modern .modern-rail-btn.is-active::before {
+  background: linear-gradient(180deg, #ffd9a0, #1f7fb8) !important;
+  box-shadow: 0 0 12px rgba(255, 217, 160, 0.9);
+}
+
+/* ---------- Кнопки композера в новогодней теме ----------
+   Вместо ярких шариков — то же жидкое стекло, что в 5.0.0:
+   аккуратные круглые кнопки без колпачков и вылезающих бликов. */
+html.theme-newyear .messenger-modern .hy-chat .yc-send,
+html.theme-newyear .messenger-modern .hy-chat .yc-composer-icon,
+html.theme-newyear .messenger-modern .hy-chat .modern-composer > button {
+  position: relative;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.92) !important;
+  border-radius: 9999px !important;
+  overflow: hidden !important;
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.55) 55%, rgba(216, 242, 255, 0.5) 100%) !important;
+  color: #0d3c63 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -10px 20px -12px rgba(31, 127, 184, 0.28),
+    0 14px 30px -18px rgba(13, 60, 120, 0.5) !important;
+}
+html.theme-newyear .messenger-modern .hy-chat .yc-send:not(.yc-send-tonal) {
+  border-color: rgba(255, 255, 255, 0.55) !important;
+  background: linear-gradient(135deg, #1f7fb8 0%, #5aa9e8 55%, #a9e5ff 100%) !important;
+  color: #fff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -12px 24px -14px rgba(4, 35, 70, 0.8),
+    0 22px 48px -20px rgba(31, 127, 184, 0.85) !important;
+}
+html.theme-newyear .messenger-modern .hy-chat .yc-send.yc-send-tonal svg {
+  color: currentColor !important;
+  stroke: currentColor !important;
+}
+/* Убираем колпачки и глянцевые полоски внутри кнопок. */
+html.theme-newyear .messenger-modern .hy-chat .yc-send::before,
+html.theme-newyear .messenger-modern .hy-chat .yc-composer-icon::before,
+html.theme-newyear .messenger-modern .hy-chat .modern-composer > button::before,
+html.theme-newyear .messenger-modern .hy-chat .yc-send::after,
+html.theme-newyear .messenger-modern .hy-chat .yc-composer-icon::after,
+html.theme-newyear .messenger-modern .hy-chat .yc-send-tonal::after {
+  display: none !important;
+}
+/* Отступы, чтобы кнопки не липли к полю ввода. */
+html.theme-newyear .messenger-modern main .modern-composer {
+  gap: 6px;
+  padding: 6px 8px;
+}
+html.theme-newyear .messenger-modern main .modern-composer > button {
+  margin: 0 1px;
+}
+
+/* ---------- Модальные окна и поля: то же стекло ---------- */
+html.theme-newyear .messenger-modern .modern-modal {
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(232, 246, 255, 0.55)) !important;
+  backdrop-filter: blur(42px) saturate(175%);
+  -webkit-backdrop-filter: blur(42px) saturate(175%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 1), 0 44px 100px -46px rgba(13, 60, 99, 0.7);
+}
+html.theme-newyear .messenger-modern .modern-modal input[type="text"],
+html.theme-newyear .messenger-modern .modern-modal input[type="password"],
+html.theme-newyear .messenger-modern .modern-modal input[type="email"],
+html.theme-newyear .messenger-modern .modern-modal input:not([type]),
+html.theme-newyear .messenger-modern .modern-modal textarea {
+  background: rgba(255, 255, 255, 0.6) !important;
+  background-color: rgba(255, 255, 255, 0.6) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+  border-radius: var(--ny-r-sm) !important;
+  color: var(--you-on-surface) !important;
+}
+html.theme-newyear .messenger-modern .modern-modal input:focus,
+html.theme-newyear .messenger-modern .modern-modal textarea:focus {
+  box-shadow: 0 0 0 3px rgba(31, 127, 184, 0.22), inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+}
+html.theme-newyear .messenger-modern .modern-modal input::placeholder,
+html.theme-newyear .messenger-modern .modern-modal textarea::placeholder {
+  color: var(--you-on-surface-variant) !important;
+  opacity: 1;
+}
+
+/* Переключатель новогодней темы: золотая активная точка */
+html.theme-newyear .hy-theme-toggle {
+  border-color: rgba(255, 217, 160, 0.85) !important;
+  box-shadow: 0 0 0 3px rgba(255, 217, 160, 0.22), 0 16px 32px -18px rgba(214, 155, 69, 0.9) !important;
+}
+html.theme-newyear .hy-theme-ball {
+  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.55), inset 0 -8px 14px -8px rgba(0, 0, 0, 0.35), 0 10px 22px -12px rgba(13, 60, 99, 0.8) !important;
+}
+
+/* Живые анимации как в Liquid Glass */
+html.theme-newyear .messenger-modern .animate-msg-in,
+html.theme-newyear .messenger-modern .animate-fade-in {
+  animation: ny-msg-in 0.5s cubic-bezier(0.22, 1.3, 0.36, 1) both;
+}
+html.theme-newyear .winchat-page-transition {
+  animation: ny-page-in 0.5s cubic-bezier(0.22, 1.16, 0.4, 1) both;
+}
+
+/* ---------- Тёмный зимний вариант: полярная ночь в стекле ---------- */
+html.ny-dark.theme-newyear body {
+  background:
+    radial-gradient(ellipse 55% 42% at 4% -4%, rgba(38, 104, 160, 0.55) 0%, transparent 56%),
+    radial-gradient(ellipse 50% 44% at 98% 2%, rgba(214, 155, 69, 0.28) 0%, transparent 58%),
+    radial-gradient(ellipse 62% 52% at 104% 78%, rgba(42, 122, 98, 0.24) 0%, transparent 58%),
+    radial-gradient(ellipse 60% 46% at -6% 88%, rgba(150, 58, 90, 0.22) 0%, transparent 58%),
+    linear-gradient(168deg, #061526 0%, #0b243c 45%, #071a2e 100%);
+  background-attachment: fixed;
+  color: #eaf2ff;
+}
+html.ny-dark.theme-newyear .messenger-modern .modern-sidebar,
+html.ny-dark.theme-newyear .messenger-modern .modern-rail,
+html.ny-dark.theme-newyear .messenger-modern main header,
+html.ny-dark.theme-newyear .messenger-modern main .modern-feed,
+html.ny-dark.theme-newyear .messenger-modern main footer,
+html.ny-dark.theme-newyear .messenger-modern main .modern-composer,
+html.ny-dark.theme-newyear .messenger-modern main .modern-bubble-other,
+html.ny-dark.theme-newyear .messenger-modern .modern-modal {
+  background: linear-gradient(160deg, rgba(20, 38, 60, 0.82), rgba(9, 22, 38, 0.86)) !important;
+  border-color: rgba(180, 230, 255, 0.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 30px 70px -50px rgba(0, 0, 0, 0.95) !important;
+  color: #eaf2ff !important;
+}
+html.ny-dark.theme-newyear .messenger-modern main header {
+  background: linear-gradient(180deg, rgba(4, 14, 26, 0.96), rgba(11, 30, 50, 0.9)) !important;
+}
+html.ny-dark.theme-newyear .messenger-modern main .modern-bubble-own {
+  background: linear-gradient(158deg, #55b6e4 0%, #1f7fb8 58%, #0d3c63 100%) !important;
+  border-color: rgba(255, 217, 160, 0.5) !important;
+}
+html.ny-dark.theme-newyear .messenger-modern .modern-icon-btn,
+html.ny-dark.theme-newyear .messenger-modern .modern-rail-btn,
+html.ny-dark.theme-newyear .messenger-modern main header button:not([class*="bg-ink"]),
+html.ny-dark.theme-newyear .messenger-modern .yc-composer-icon,
+html.ny-dark.theme-newyear .messenger-modern .yc-send-tonal,
+html.ny-dark.theme-newyear .messenger-modern .yc-chip,
+html.ny-dark.theme-newyear .messenger-modern .nys-btn:not(.nys-btn--primary),
+html.ny-dark.theme-newyear .messenger-modern .nys-nav-btn {
+  background: linear-gradient(165deg, rgba(38, 66, 96, 0.7), rgba(14, 30, 50, 0.8)) !important;
+  border-color: rgba(180, 230, 255, 0.18) !important;
+  color: #d8efff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 14px 30px -18px rgba(0, 0, 0, 0.9) !important;
+}
+html.ny-dark.theme-newyear .messenger-modern .modern-modal input[type="text"],
+html.ny-dark.theme-newyear .messenger-modern .modern-modal input[type="password"],
+html.ny-dark.theme-newyear .messenger-modern .modern-modal input[type="email"],
+html.ny-dark.theme-newyear .messenger-modern .modern-modal input:not([type]),
+html.ny-dark.theme-newyear .messenger-modern .modern-modal textarea {
+  background: rgba(255, 255, 255, 0.06) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(180, 230, 255, 0.18) !important;
+  color: #eaf2ff !important;
+}
+html.ny-dark.theme-newyear .messenger-modern .modern-modal input::placeholder,
+html.ny-dark.theme-newyear .messenger-modern .modern-modal textarea::placeholder {
+  color: rgba(215, 236, 255, 0.45) !important;
+}
+
+/* Тёмный вариант: кнопки композера — тёмное жидкое стекло. */
+html.ny-dark.theme-newyear .messenger-modern .hy-chat .yc-send,
+html.ny-dark.theme-newyear .messenger-modern .hy-chat .yc-composer-icon,
+html.ny-dark.theme-newyear .messenger-modern .hy-chat .modern-composer > button {
+  border-color: rgba(180, 230, 255, 0.18) !important;
+  background: linear-gradient(165deg, rgba(38, 66, 96, 0.8), rgba(14, 30, 50, 0.92)) !important;
+  color: #d8efff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 14px 30px -18px rgba(0, 0, 0, 0.9) !important;
+}
+html.ny-dark.theme-newyear .messenger-modern .hy-chat .yc-send:not(.yc-send-tonal) {
+  border-color: rgba(255, 217, 160, 0.35) !important;
+  background: linear-gradient(135deg, #1f7fb8 0%, #5aa9e8 55%, #a9e5ff 100%) !important;
+  color: #fff !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -12px 24px -14px rgba(4, 35, 70, 0.8),
+    0 22px 48px -20px rgba(31, 127, 184, 0.9) !important;
+}
+
+/* Нижняя панель и разделители: убираем белую полосу в тёмной теме. */
+html.ny-dark.theme-newyear .messenger-modern main .sticky.bottom-0,
+html.ny-dark.theme-newyear .messenger-modern main div[class*="border-t"][class*="px-3"][class*="py-3"] {
+  background: linear-gradient(160deg, rgba(20, 38, 60, 0.82), rgba(9, 22, 38, 0.86)) !important;
+  border: none !important;
+  border-top: 1px solid rgba(180, 230, 255, 0.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+html.ny-dark.theme-newyear .messenger-modern main footer {
+  border-top-color: rgba(180, 230, 255, 0.18) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Тёмные стеклянные строки и дата — без светлых «кусков». */
+html.ny-dark.theme-newyear .messenger-modern .modern-chat-row.is-active {
+  background: linear-gradient(150deg, rgba(42, 88, 130, 0.55), rgba(20, 44, 72, 0.62)) !important;
+  border-color: rgba(180, 230, 255, 0.22) !important;
+  color: #eaf2ff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 18px 42px -28px rgba(0, 0, 0, 0.9) !important;
+}
+/* В активной строке цвет ника задан inline-стилем — перекрываем его. */
+html.ny-dark.theme-newyear .messenger-modern .modern-chat-row.is-active span[style] {
+  color: #eaf2ff !important;
+}
+html.ny-dark.theme-newyear .messenger-modern .modern-chat-row.is-active [class~="text-black/45"],
+html.ny-dark.theme-newyear .messenger-modern .modern-chat-row.is-active [class~="text-black/40"] {
+  color: rgba(215, 236, 255, 0.62) !important;
+}
+html.ny-dark.theme-newyear .messenger-modern .modern-chat-row.is-active span[class*="bg-black"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(215, 236, 255, 0.72) !important;
+}
+html.ny-dark.theme-newyear .messenger-modern main .modern-date-chip {
+  background: rgba(20, 38, 60, 0.82) !important;
+  border-color: rgba(180, 230, 255, 0.18) !important;
+  color: rgba(215, 236, 255, 0.7) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+html.ny-dark.theme-newyear .messenger-modern .you-search {
+  background: rgba(255, 255, 255, 0.06) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: rgba(180, 230, 255, 0.18) !important;
+  color: #eaf2ff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Уважаем системную настройку «меньше движения». */
+@media (prefers-reduced-motion: reduce) {
+  html.theme-newyear .messenger-modern::before { animation: none !important; }
+  html.theme-newyear .messenger-modern main button[class*="bg-ink"]::before,
+  html.theme-newyear .messenger-modern main button[class*="bg-accent"]::before,
+  html.theme-newyear .messenger-modern .yc-send::before,
+  html.theme-newyear .messenger-modern .nys-btn--primary::before { display: none !important; }
+  html.theme-newyear .messenger-modern .animate-msg-in,
+  html.theme-newyear .messenger-modern .animate-fade-in,
+  html.theme-newyear .winchat-page-transition { animation: none !important; }
+}

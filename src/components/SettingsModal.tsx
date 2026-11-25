@@ -37,6 +37,7 @@ import {
   onOtaStatus,
   reportDeviceStatus,
   searchOta,
+  showOta7IfAvailable,
   type DeviceInfo,
   type OtaInfo,
   type OtaState,
@@ -168,6 +169,7 @@ export default function SettingsModal({
       ]);
       setServerVersion(server);
       setAboutOta(otaRes);
+      showOta7IfAvailable(otaRes);
       const latest =
         otaRes?.version && server && isVersionNewer(otaRes.version, server)
           ? otaRes.version
@@ -374,7 +376,7 @@ export default function SettingsModal({
       />
       <div
         className={cn(
-          "animate-scale-in relative flex max-h-[92dvh] w-full max-w-md flex-col overflow-hidden shadow-2xl sm:max-h-[90dvh]",
+          "ny-settings-surface animate-scale-in relative flex max-h-[92dvh] w-full max-w-md flex-col overflow-hidden shadow-2xl sm:max-h-[90dvh]",
           you
             ? "you-gate-card rounded-t-[28px] sm:rounded-[36px]"
             : "rounded-t-[26px] bg-white sm:rounded-[28px]"

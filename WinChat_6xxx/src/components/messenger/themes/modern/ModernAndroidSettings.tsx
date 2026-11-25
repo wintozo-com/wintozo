@@ -56,6 +56,7 @@ import {
   DOWNLOAD_URL,
   fetchLatestVersion,
   getCachedServerVersion,
+  isVersion7,
   isVersionNewer,
 } from "../../../../lib/checkVersion";
 import {
@@ -64,6 +65,7 @@ import {
   markOtaSeen,
   onOtaStatus,
   reportDeviceStatus,
+  requestOta7Overlay,
   searchOta,
   type DeviceInfo,
   type OtaInfo,
@@ -244,6 +246,9 @@ export default function AndroidSettings({
       ]);
       setServerVersion(server);
       setAboutOta(otaRes);
+      if (otaRes?.version && isVersion7(otaRes.version)) {
+        requestOta7Overlay(otaRes);
+      }
       const latest =
         otaRes?.version && server && isVersionNewer(otaRes.version, server)
           ? otaRes.version

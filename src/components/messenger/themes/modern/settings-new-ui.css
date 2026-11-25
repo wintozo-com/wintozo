@@ -1,0 +1,402 @@
+/* ============================================================
+   Новый интерфейс обычных настроек WinChat.
+   Functions и state остаются в ModernSettingsModal.tsx — здесь только
+   оформление: зимнее стекло, боковая навигация, карточки, анимации.
+   Без эмодзи, только иконки.
+   ============================================================ */
+
+.nys-surface {
+  border: 1px solid rgba(255, 255, 255, .75) !important;
+  border-radius: 32px !important;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(158, 220, 255, .5), transparent 38%),
+    linear-gradient(160deg, #ffffff 0%, #f2f9ff 58%, #e8f2ff 100%) !important;
+  box-shadow: 0 50px 120px -46px rgba(10, 48, 82, .8), inset 0 1px 0 rgba(255, 255, 255, .95) !important;
+  color: #123a5c;
+}
+.nys-surface::before {
+  content: "";
+  position: absolute;
+  top: -90px;
+  right: -40px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(110, 200, 255, .42), transparent 68%);
+  filter: blur(18px);
+  pointer-events: none;
+  animation: nys-orb 9s ease-in-out infinite alternate;
+}
+@keyframes nys-orb {
+  to { transform: translate(-60px, 60px) scale(1.18); opacity: .7; }
+}
+
+.nys-head {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 20px 22px 14px;
+  border-bottom: 1px solid rgba(28, 88, 138, .08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, .8), rgba(255, 255, 255, .15));
+}
+.nys-head-mark {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(145deg, #2e8cc4, #0d3c63);
+  box-shadow: 0 12px 26px -10px rgba(15, 68, 110, .85), inset 0 1px 0 rgba(255, 255, 255, .45);
+  animation: nys-mark 6s ease-in-out infinite;
+}
+@keyframes nys-mark { 50% { transform: rotate(8deg); } }
+.nys-head-copy { min-width: 0; flex: 1; }
+.nys-head-eyebrow {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(18, 58, 92, .45);
+}
+.nys-head-copy h3 {
+  margin: 2px 0 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.025em;
+  color: #0d3452;
+}
+.nys-close {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(20, 80, 120, .12);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, .75);
+  color: rgba(18, 58, 92, .55);
+  cursor: pointer;
+  transition: transform .22s ease, background .22s ease, color .22s ease;
+}
+.nys-close:hover { transform: rotate(90deg); background: #fff; color: #0d3452; }
+.nys-close:active { transform: scale(.92); }
+
+/* ---------- Body: сайдбар + контент ---------- */
+.nys-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 178px minmax(0, 1fr);
+  min-height: 0;
+  flex: 1;
+}
+.nys-nav-wrap {
+  border-right: 1px solid rgba(28, 88, 138, .08);
+  padding: 14px 10px;
+  background: rgba(240, 248, 255, .55);
+}
+.nys-nav-title {
+  padding: 0 10px 9px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: rgba(18, 58, 92, .38);
+}
+.nys-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.nys-nav-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  color: rgba(18, 58, 92, .6);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background .22s ease, color .22s ease, transform .22s ease;
+}
+.nys-nav-btn:hover { background: rgba(255, 255, 255, .78); transform: translateX(2px); }
+.nys-nav-btn.is-active {
+  background: linear-gradient(135deg, rgba(46, 140, 196, .16), rgba(46, 140, 196, .06));
+  color: #0d5183;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9);
+}
+.nys-nav-btn.is-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 22px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #4aa8e0, #0d3c63);
+  transform: translateY(-50%);
+  animation: nys-nav-line .35s cubic-bezier(.2, 1.3, .2, 1);
+}
+@keyframes nys-nav-line { from { height: 0; opacity: 0; } to { height: 22px; opacity: 1; } }
+.nys-nav-btn svg { flex: none; }
+.nys-nav-foot {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(46, 140, 196, .08);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: rgba(18, 58, 92, .48);
+}
+
+.nys-content {
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 18px 20px 26px;
+  scrollbar-width: thin;
+}
+.nys-page {
+  animation: nys-page .38s cubic-bezier(.2, .9, .2, 1) both;
+}
+@keyframes nys-page {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.nys-card {
+  padding: 18px;
+  border: 1px solid rgba(28, 88, 138, .09);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .95), 0 12px 30px -24px rgba(20, 80, 120, .7);
+}
+.nys-page > .nys-card + .nys-card { margin-top: 14px; }
+.nys-card > .nys-card { margin-top: 14px; }
+.nys-card--stack > * + * { margin-top: 14px; }
+.nys-card > div + div { margin-top: 14px; }
+.nys-card--soft {
+  background: linear-gradient(160deg, rgba(255, 255, 255, .9), rgba(226, 243, 255, .65));
+}
+.nys-card-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: rgba(18, 58, 92, .46);
+}
+.nys-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #0d3452;
+}
+.nys-hint {
+  font-size: 11px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: rgba(18, 58, 92, .52);
+}
+
+.nys-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(20, 80, 120, .14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .92);
+  color: #0d3452;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.nys-input::placeholder { color: rgba(18, 58, 92, .35); }
+.nys-input:focus {
+  border-color: rgba(46, 140, 196, .55);
+  box-shadow: 0 0 0 4px rgba(46, 140, 196, .12);
+  background: #fff;
+}
+
+.nys-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border: 1px solid rgba(20, 80, 120, .14);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .8);
+  color: #0d3452;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+.nys-btn:hover { transform: translateY(-2px); background: #fff; box-shadow: 0 12px 24px -18px rgba(20, 80, 120, .9); }
+.nys-btn:active { transform: scale(.98); }
+.nys-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.nys-btn--primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #2e8cc4, #0d3c63);
+  color: #fff;
+  box-shadow: 0 14px 28px -16px rgba(15, 68, 110, .95);
+}
+.nys-btn--primary:hover { background: linear-gradient(135deg, #399ad4, #104a78); }
+.nys-btn--danger { color: #c0392b; border-color: rgba(192, 57, 43, .24); }
+.nys-btn--wide { width: 100%; }
+
+.nys-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.nys-switch {
+  position: relative;
+  width: 44px;
+  height: 25px;
+  flex: none;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(20, 80, 120, .16);
+  cursor: pointer;
+  transition: background .25s ease;
+}
+.nys-switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(10, 45, 75, .3);
+  transition: transform .28s cubic-bezier(.2, 1.2, .2, 1);
+}
+.nys-switch.is-on { background: linear-gradient(135deg, #2e8cc4, #0d3c63); }
+.nys-switch.is-on::after { transform: translateX(19px); }
+
+.nys-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.nys-avatar-wrap { position: relative; flex: none; }
+.nys-avatar-edit {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2e8cc4, #0d3c63);
+  color: #fff;
+  cursor: pointer;
+  transition: transform .2s ease;
+}
+.nys-avatar-edit:hover { transform: scale(1.08); }
+.nys-profile-meta { min-width: 0; }
+.nys-profile-name {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: #0d3452;
+}
+
+.nys-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.nys-theme-card {
+  position: relative;
+  min-height: 92px;
+  padding: 10px;
+  border: 2px solid transparent;
+  border-radius: 17px;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+}
+.nys-theme-card:hover { transform: translateY(-3px); }
+.nys-theme-card.is-active { border-color: #2e8cc4; box-shadow: 0 12px 24px -16px rgba(46, 140, 196, .95); }
+.nys-theme-card p { margin: 8px 0 0; font-size: 11px; font-weight: 800; }
+
+/* ---------- Тёмная тема ---------- */
+html.ny-dark .nys-surface {
+  border-color: rgba(180, 230, 255, .16) !important;
+  background:
+    radial-gradient(circle at 8% 0%, rgba(70, 150, 210, .22), transparent 40%),
+    linear-gradient(160deg, rgba(16, 30, 48, .98), rgba(8, 18, 32, .99)) !important;
+  color: #eaf2ff;
+  box-shadow: 0 50px 120px -46px rgba(0, 0, 0, .95), inset 0 1px 0 rgba(255, 255, 255, .08) !important;
+}
+html.ny-dark .nys-head { border-color: rgba(180, 230, 255, .1); background: linear-gradient(180deg, rgba(30, 52, 76, .45), transparent); }
+html.ny-dark .nys-head-eyebrow { color: rgba(234, 242, 255, .4); }
+html.ny-dark .nys-head-copy h3 { color: #eaf2ff; }
+html.ny-dark .nys-close { border-color: rgba(255, 215, 120, .16); background: rgba(255, 255, 255, .06); color: rgba(234, 242, 255, .6); }
+html.ny-dark .nys-close:hover { background: rgba(255, 255, 255, .12); color: #fff; }
+html.ny-dark .nys-nav-wrap { border-color: rgba(180, 230, 255, .1); background: rgba(8, 18, 32, .5); }
+html.ny-dark .nys-nav-title { color: rgba(234, 242, 255, .32); }
+html.ny-dark .nys-nav-btn { color: rgba(234, 242, 255, .58); }
+html.ny-dark .nys-nav-btn:hover { background: rgba(255, 255, 255, .06); }
+html.ny-dark .nys-nav-btn.is-active { color: #d6f0ff; background: linear-gradient(135deg, rgba(74, 168, 224, .2), rgba(74, 168, 224, .06)); }
+html.ny-dark .nys-nav-foot { background: rgba(74, 168, 224, .1); color: rgba(234, 242, 255, .42); }
+html.ny-dark .nys-card { border-color: rgba(255, 215, 120, .12); background: rgba(255, 255, 255, .045); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .05); }
+html.ny-dark .nys-card--soft { background: linear-gradient(160deg, rgba(46, 140, 196, .16), rgba(255, 255, 255, .035)); }
+html.ny-dark .nys-card-label { color: rgba(234, 242, 255, .42); }
+html.ny-dark .nys-title { color: #eaf2ff; }
+html.ny-dark .nys-hint { color: rgba(234, 242, 255, .48); }
+html.ny-dark .nys-input { border-color: rgba(255, 215, 120, .16); background: rgba(255, 255, 255, .06); color: #eaf2ff; }
+html.ny-dark .nys-input::placeholder { color: rgba(234, 242, 255, .3); }
+html.ny-dark .nys-input:focus { border-color: rgba(140, 205, 255, .55); box-shadow: 0 0 0 4px rgba(120, 190, 245, .14); background: rgba(255, 255, 255, .08); }
+html.ny-dark .nys-btn { border-color: rgba(255, 215, 120, .14); background: rgba(255, 255, 255, .06); color: #eaf2ff; }
+html.ny-dark .nys-btn:hover { background: rgba(255, 255, 255, .12); }
+html.ny-dark .nys-btn--primary { border-color: transparent; background: linear-gradient(135deg, #4aa8e0, #1b5e8c); color: #fff; }
+html.ny-dark .nys-btn--danger { color: #ff9b8f; border-color: rgba(255, 120, 100, .25); }
+html.ny-dark .nys-switch { background: rgba(255, 255, 255, .14); }
+html.ny-dark .nys-profile-name { color: #eaf2ff; }
+html.ny-dark .nys-avatar-edit { border-color: rgba(10, 20, 35, .9); }
+
+@media (max-width: 640px) {
+  .nys-body { grid-template-columns: 1fr; }
+  .nys-nav-wrap {
+    padding: 8px 12px;
+    border-right: 0;
+    border-bottom: 1px solid rgba(28, 88, 138, .08);
+  }
+  .nys-nav-title, .nys-nav-foot { display: none; }
+  .nys-nav { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
+  .nys-nav::-webkit-scrollbar { display: none; }
+  .nys-nav-btn { width: auto; flex: none; padding: 9px 12px; border-radius: 12px; }
+  .nys-nav-btn.is-active::before { display: none; }
+  .nys-content { padding: 14px 14px 22px; }
+  .nys-grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .nys-surface { border-radius: 24px !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nys-surface::before,
+  .nys-head-mark,
+  .nys-page,
+  .nys-nav-btn.is-active::before { animation: none !important; }
+}

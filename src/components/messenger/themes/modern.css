@@ -301,6 +301,27 @@
   border-color: color-mix(in srgb, var(--color-accent) 45%, rgba(16,18,20,0.1)) !important;
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent) 13%, transparent), inset 0 1px 0 rgba(255,255,255,0.7) !important;
 }
+/* Тёмная тема: перекрываем белые поля выше — иначе никнейм/пароль белым по белому. */
+html.ny-dark .messenger-modern .modern-modal input[type="text"],
+html.ny-dark .messenger-modern .modern-modal input[type="password"],
+html.ny-dark .messenger-modern .modern-modal input[type="email"],
+html.ny-dark .messenger-modern .modern-modal input:not([type]),
+html.ny-dark .messenger-modern .modern-modal textarea {
+  background: rgba(255, 255, 255, .06) !important;
+  background-color: rgba(255, 255, 255, .06) !important;
+  border-color: rgba(255, 215, 120, .18) !important;
+  color: #eaf2ff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04) !important;
+}
+html.ny-dark .messenger-modern .modern-modal input::placeholder,
+html.ny-dark .messenger-modern .modern-modal textarea::placeholder {
+  color: rgba(234, 242, 255, .35) !important;
+}
+html.ny-dark .messenger-modern .modern-modal input:focus,
+html.ny-dark .messenger-modern .modern-modal textarea:focus {
+  border-color: rgba(140, 205, 255, .55) !important;
+  box-shadow: 0 0 0 4px rgba(120, 190, 245, .16), inset 0 1px 0 rgba(255, 255, 255, .04) !important;
+}
 .messenger-modern .modern-modal [role="switch"],
 .messenger-modern .modern-modal [aria-checked] { transition: transform .15s ease, background-color .18s ease; }
 .messenger-modern .modern-modal .group\/member {

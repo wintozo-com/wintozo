@@ -36,7 +36,8 @@ function isPhoneSettings(): boolean {
 }
 import CreateGroupModal from "../../CreateGroupModal";
 import AdminPanel from "../../AdminPanel";
-import AdminTerminal from "./modern/ModernAdminTerminal";
+/* Полностью старый (legacy) терминал: в нём уже есть GUI через /gui. */
+import AdminTerminal from "../../AdminTerminal";
 import CheckVersion from "../../CheckVersion";
 import YouBackdrop from "../../YouBackdrop";
 import { cn } from "../../../utils/cn";

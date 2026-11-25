@@ -68,6 +68,7 @@ import {
   onOtaStatus,
   reportDeviceStatus,
   searchOta,
+  showOta7IfAvailable,
   type DeviceInfo,
   type OtaInfo,
   type OtaState,
@@ -247,6 +248,7 @@ export default function AndroidSettings({
       ]);
       setServerVersion(server);
       setAboutOta(otaRes);
+      showOta7IfAvailable(otaRes);
       const latest =
         otaRes?.version && server && isVersionNewer(otaRes.version, server)
           ? otaRes.version
@@ -428,7 +430,7 @@ export default function AndroidSettings({
   }
 
   return (
-    <div className="modern-phone-settings fixed inset-0 z-[80] flex flex-col animate-fade-in">
+    <div className="ny-settings-surface modern-phone-settings fixed inset-0 z-[80] flex flex-col animate-fade-in">
       <HappyYearGarland className="hy-modal-garland" bulbs={16} />
       {/* ================= ШАПКА ================= */}
       <div className="hy-phone-settings-head relative z-10 shrink-0 border-b border-black/6 bg-white/75 px-4 pb-3 pt-[max(1rem,env(safe-area-inset-top,0px))] backdrop-blur-xl">

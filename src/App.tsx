@@ -13,9 +13,20 @@ import {
   YOU_THEME_ID,
 } from "./lib/themes";
 import { getAnimationId } from "./lib/animations";
+import { applyNyDark, getNyDark } from "./lib/nyTheme";
 import { initSecureAccountStore, rememberAccount } from "./lib/secureAccountStore";
-import { APP_VERSION, applyLegacyGate, declineLegacyUi, isLegacyUi, resetLegacyChoice } from "./lib/checkVersion";
-import { reportDeviceStatus } from "./lib/ota";
+import {
+  APP_VERSION,
+  UPDATE7_ROUTE,
+  applyLegacyGate,
+  declineLegacyUi,
+  isLegacyUi,
+  resetLegacyChoice,
+  clearOta7Dismissed,
+  setUpdate7DemoActive,
+} from "./lib/checkVersion";
+import { OTA7_SHOW_EVENT, getDemoOta7, reportDeviceStatus } from "./lib/ota";
+import OtaUpdate7Overlay from "./components/OtaUpdate7Overlay";
 import {
   getOobeUpdateExpectedKey,
   isPhoneDevice,
@@ -28,6 +39,11 @@ import { navigate } from "./lib/router";
 import { devLog } from "./lib/devLogs";
 import { APP_BRAND, isStoreApp, isYouOnlyApp } from "./lib/appVariant";
 import Auth from "./components/Auth";
+import {
+  AuthSecurityCheck,
+  AuthWinpassGift,
+  type AuthFlow,
+} from "./components/AuthWinterFlow";
 import BootAnimation from "./components/BootAnimation";
 import BootAnimationYou from "./components/BootAnimation_you";
 import YouBootPrompt from "./components/YouBootPrompt";
@@ -94,6 +110,10 @@ export { navigate } from "./lib/router";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
+  /* Сессия, полученная при входе, держится до красивого постовходного экрана. */
+  const [pendingSession, setPendingSession] = useState<Session | null>(null);
+  const [authFlow, setAuthFlow] = useState<AuthFlow | null>(null);
+  const authFlowRef = useRef<AuthFlow | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [booting, setBooting] = useState(true);
   const [banned, setBanned] = useState(false);
@@ -137,6 +157,23 @@ export default function App() {
     ? path.match(/^\/themes\/glass\/chat\/([^/?#]+)/)?.[1] ?? null
     : null;
   const wasGlass = useRef(false);
+
+  useEffect(() => {
+    authFlowRef.current = authFlow;
+  }, [authFlow]);
+
+  /* На всякий случай: если ивент SIGNED_IN пришёл позже колбэка формы,
+   * всё равно подтягиваем сессию, чтобы флоу не завис. */
+  useEffect(() => {
+    if (!authFlow || pendingSession) return;
+    let alive = true;
+    void supabase.auth.getSession().then(({ data }) => {
+      if (alive && data.session) setPendingSession(data.session);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [authFlow, pendingSession]);
   /** Активный «особый» режим интерфейса: You или Glass. */
   const themedMode = youMode || glassMode;
   const themeRoutePrefix = glassMode ? GLASS_PREFIX : YOU_PREFIX;
@@ -150,6 +187,20 @@ export default function App() {
   useEffect(() => {
     devLog(`route: ${path}`);
   }, [path]);
+
+  /* Демо-роут /update_7_active:
+     открываем настройки (ПК или телефон) и показываем новогодний экран
+     «доступна 7.x». Ни версию сервера, ни реальный OTA это не меняет. */
+  const update7Route = path === UPDATE7_ROUTE;
+  useEffect(() => {
+    if (!update7Route) return;
+    setUpdate7DemoActive(true);
+    // Старый ключ от прежней сломанной версии не должен прятать демо.
+    clearOta7Dismissed();
+    window.dispatchEvent(
+      new CustomEvent(OTA7_SHOW_EVENT, { detail: getDemoOta7() })
+    );
+  }, [update7Route]);
 
   useEffect(() => {
     if (!inviteChatId || !session || !profile) return;
@@ -297,6 +348,7 @@ export default function App() {
 
       // Тема применяется после восстановления настроек из зашифрованного файла.
       applyTheme(getCurrentTheme());
+      applyNyDark(getNyDark());
 
       // OTA: отправить статус устройства (is_wintozo_web_true / _no).
       // Сам поиск OTA делает CheckVersion после входа (см. lib/ota.ts).
@@ -304,7 +356,7 @@ export default function App() {
 
       const { data } = await supabase.auth.getSession();
       if (!alive) return;
-      setSession(data.session);
+      if (!authFlowRef.current) setSession(data.session);
       setBooting(false);
 
       /* Access-token живёт ~1 час: после перезагрузки ПК/браузера или просто
@@ -314,7 +366,7 @@ export default function App() {
         try {
           const { data: refreshed } = await supabase.auth.refreshSession();
           if (!alive) return;
-          if (refreshed.session) setSession(refreshed.session);
+          if (refreshed.session && !authFlowRef.current) setSession(refreshed.session);
         } catch {
           /* refreshSession сам дошлёт SIGNED_OUT через onAuthStateChange —
            * здесь просто не оставляем «висящий» промис без обработки. */
@@ -324,7 +376,21 @@ export default function App() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, s) => setSession(s));
+    } = supabase.auth.onAuthStateChange((event, s) => {
+      if (!s) {
+        setSession(null);
+        setPendingSession(null);
+        setAuthFlow(null);
+        return;
+      }
+      /* SIGNED_IN приходит из формы входа — сначала показываем зимний флоу,
+       * и только после него пускаем пользователя в приложение. */
+      if (event === "SIGNED_IN" || authFlowRef.current) {
+        setPendingSession(s);
+      } else {
+        setSession(s);
+      }
+    });
     return () => {
       alive = false;
       subscription.unsubscribe();
@@ -603,7 +669,34 @@ export default function App() {
     if (!themedMode) document.title = "WinChat";
   }, [profile, glassMode, path, youMode, themedMode]);
 
+  /* ---------- Красивый зимний флоу сразу после входа/регистрации ---------- */
+  if (authFlow && pendingSession) {
+    const finishAuthGate = () => {
+      setSession(pendingSession);
+      setAuthFlow(null);
+      setPendingSession(null);
+    };
+    document.title = "WinChat 7.0";
+    if (authFlow.kind === "register") {
+      return <AuthWinpassGift winpass={authFlow.winpass} onDone={finishAuthGate} />;
+    }
+    return <AuthSecurityCheck userId={pendingSession.user.id} onDone={finishAuthGate} />;
+  }
+
   if (!splashDone || booting || (session && !profile)) {
+    /* Демо /update_7_active: без авторизации сразу показываем экран,
+       иначе после логина — обычные настройки с наложенным демо-оверлеем. */
+    if (update7Route && !session) {
+      return (
+        <OtaUpdate7Overlay
+          ota={getDemoOta7()}
+          version={getDemoOta7().version}
+          url={getDemoOta7().url}
+          onClose={() => navigate("/login")}
+        />
+      );
+    }
+
     /* Прямая ссылка на OOBE (/winchat_7_oobe, /install_oobe) — без заставки,
        чтобы экран можно было смотреть и отлаживать сразу. */
     if (!banned && oobeForceInstall) {
@@ -686,7 +779,7 @@ export default function App() {
     if (!session || !profile) {
       // не авторизован — сначала вход
       window.history.replaceState({}, "", "/login");
-      return <Auth />;
+      return <Auth onAuthenticated={setAuthFlow} />;
     }
     return (
       <LegacyScreen
@@ -705,12 +798,23 @@ export default function App() {
 
   /* ---------- Не авторизован: /login и /registration ---------- */
   if (!session || !profile) {
+    if (update7Route) {
+      const demo = getDemoOta7();
+      return (
+        <OtaUpdate7Overlay
+          ota={demo}
+          version={demo.version}
+          url={demo.url}
+          onClose={() => navigate("/login")}
+        />
+      );
+    }
     const route = path === "/registration" ? "register" : "login";
     // нормализуем адрес, если пользователь открыл корень
     if (path !== "/login" && path !== "/registration") {
       window.history.replaceState({}, "", `/${route}`);
     }
-    return <Auth initialMode={route} />;
+    return <Auth initialMode={route} onAuthenticated={setAuthFlow} />;
   }
   /* Авторизован на странице входа — уводим в чаты */
   if (path === "/login" || path === "/registration") {
@@ -786,10 +890,11 @@ export default function App() {
   }
 
   /* ---------- /settings, /settings/status/winpro, /themes/{you,glass}/settings ---------- */
-  const settingsTab =
-    path === "/settings/status/winpro" ||
-    path === "/themes/you/winpro" ||
-    path === "/themes/glass/winpro"
+  const settingsTab = update7Route
+    ? "profile" as const
+    : path === "/settings/status/winpro" ||
+      path === "/themes/you/winpro" ||
+      path === "/themes/glass/winpro"
       ? "winpro" as const
       : path === "/settings"
         ? "profile" as const
@@ -800,6 +905,7 @@ export default function App() {
   /* Отладка на ПК: /setting_phone=1 (и в темах You/Glass) — открыть
      полноэкранные Android-настройки */
   const phoneSettingsRoute =
+    (update7Route && isPhoneDevice()) ||
     path.startsWith("/setting_phone") ||
     path.startsWith("/themes/you/setting_phone") ||
     path.startsWith("/themes/glass/setting_phone");

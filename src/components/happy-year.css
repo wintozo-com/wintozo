@@ -1183,6 +1183,24 @@
   opacity: .55;
   z-index: 1;
 }
+/* Гирлянда и шарики поверх зимнего фона. */
+.hy-backdrop-garland {
+  position: absolute !important;
+  top: -18px;
+  left: -6%;
+  width: 112%;
+  height: auto;
+  z-index: 2;
+  opacity: .72;
+  filter: drop-shadow(0 10px 14px rgba(12, 32, 52, .25));
+  animation: hy-backdrop-garland-breathe 7s ease-in-out infinite alternate;
+}
+@keyframes hy-backdrop-garland-breathe {
+  from { opacity: .58; }
+  to   { opacity: .88; }
+}
+.hy-backdrop-hanging { z-index: 2; opacity: .38; }
+
 /* ---------- Ёлка-загрузчик ---------- */
 .hy-loader {
   display: flex;
@@ -1891,14 +1909,73 @@ html.ny-dark body { background: #070b14; }
 .modern-modal textarea::placeholder {
   color: rgba(31, 42, 36, 0.35) !important;
 }
-/* Тёмная тема: поле никнейма — светлый текст. */
+/* Тёмная тема: поля никнейма и смены пароля — тёмный фон, светлый текст. */
 html.ny-dark .modern-modal input[type="text"],
-html.ny-dark .modern-modal textarea {
+html.ny-dark .modern-modal input[type="password"],
+html.ny-dark .modern-modal textarea,
+html.ny-dark .you-gate-card input[type="text"],
+html.ny-dark .you-gate-card input[type="password"],
+html.ny-dark .hy-messenger .modern-phone-settings input[type="text"],
+html.ny-dark .hy-messenger .modern-phone-settings input[type="password"],
+html.ny-dark .hy-messenger .modern-phone-settings textarea {
   background: rgba(255, 255, 255, .06) !important;
+  border-color: rgba(255, 215, 120, .18) !important;
+  color: #eaf2ff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+html.ny-dark .modern-modal input::placeholder,
+html.ny-dark .you-gate-card input::placeholder,
+html.ny-dark .hy-messenger .modern-phone-settings input::placeholder,
+html.ny-dark .modern-modal textarea::placeholder,
+html.ny-dark .hy-messenger .modern-phone-settings textarea::placeholder {
+  color: rgba(234, 242, 255, .35) !important;
+}
+/* Класс bg-paper из Tailwind задавал белый фон даже в тёмной теме. */
+html.ny-dark .modern-modal .bg-paper,
+html.ny-dark .you-gate-card .bg-paper,
+html.ny-dark .hy-messenger .modern-phone-settings .bg-paper {
+  background-color: rgba(255, 255, 255, .06) !important;
+}
+
+/* Все экраны настроек (новый, legacy, телефон): surfaces и поля в тёмной теме. */
+html.ny-dark .ny-settings-surface:not(.you-gate-card):not(.nys-surface) {
+  background: rgba(12, 18, 32, .97) !important;
   color: #eaf2ff !important;
 }
-html.ny-dark .modern-modal input[type="text"]::placeholder,
-html.ny-dark .modern-modal textarea::placeholder { color: rgba(234, 242, 255, .35) !important; }
+html.ny-dark .ny-settings-surface input,
+html.ny-dark .ny-settings-surface textarea {
+  background: rgba(255, 255, 255, .06) !important;
+  background-color: rgba(255, 255, 255, .06) !important;
+  border-color: rgba(255, 215, 120, .18) !important;
+  color: #eaf2ff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04);
+}
+html.ny-dark .ny-settings-surface input::placeholder,
+html.ny-dark .ny-settings-surface textarea::placeholder {
+  color: rgba(234, 242, 255, .35) !important;
+}
+html.ny-dark .ny-settings-surface .bg-white,
+html.ny-dark .ny-settings-surface .bg-white\/95,
+html.ny-dark .ny-settings-surface .bg-white\/75,
+html.ny-dark .ny-settings-surface .bg-white\/70,
+html.ny-dark .ny-settings-surface .bg-white\/60,
+html.ny-dark .ny-settings-surface .bg-paper {
+  background-color: rgba(255, 255, 255, .06) !important;
+}
+html.ny-dark .ny-settings-surface .border-black\/10,
+html.ny-dark .ny-settings-surface .border-black\/8,
+html.ny-dark .ny-settings-surface .border-black\/6,
+html.ny-dark .ny-settings-surface .border-black\/5 {
+  border-color: rgba(255, 215, 120, .14) !important;
+}
+html.ny-dark .ny-settings-surface .text-ink,
+html.ny-dark .ny-settings-surface .text-ink-soft { color: #eaf2ff !important; }
+html.ny-dark .ny-settings-surface .text-black\/70,
+html.ny-dark .ny-settings-surface .text-black\/60,
+html.ny-dark .ny-settings-surface .text-black\/50,
+html.ny-dark .ny-settings-surface .text-black\/45 { color: rgba(234, 242, 255, .62) !important; }
+html.ny-dark .ny-settings-surface .text-black\/40,
+html.ny-dark .ny-settings-surface .text-black\/35 { color: rgba(234, 242, 255, .42) !important; }
 .ny-dark .modern-modal .ny-theme-picker-label { color: rgba(234, 242, 255, .55); }
 .ny-dark .modern-modal .ny-bgmusic-card { background: rgba(255, 255, 255, .06); border-color: rgba(255, 215, 120, .18); }
 .ny-dark .modern-modal .ny-bgmusic-title { color: #eaf2ff; }
@@ -2626,7 +2703,8 @@ html.ny-dark .modern-modal textarea::placeholder { color: rgba(234, 242, 255, .3
   .hy-snowman,
   .hy-shooting-star,
   .hy-secret-dot,
-  .hy-mini-tree {
+  .hy-mini-tree,
+  .hy-backdrop-garland {
     animation: none !important;
   }
 }

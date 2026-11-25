@@ -24,16 +24,20 @@ const NY_MOBILE_GARLAND_COLORS = ["#e53935", "#ffca28", "#43a047", "#1e88e5", "#
 export function HappyYearGarland({
   bulbs = 16,
   className = "",
+  stretch = true,
 }: {
   bulbs?: number;
   className?: string;
+  /** Растягивать по ширине (для узких рамок) или сохранять форму лампочек. */
+  stretch?: boolean;
 }) {
   const step = 56;
   const width = bulbs * step;
+  const sags = Array.from({ length: bulbs }, (_, i) => 42 + (i % 3) * 4);
   const segments: string[] = [];
   for (let i = 0; i < bulbs; i++) {
     const x = i * step + step / 2;
-    segments.push(`Q ${x} 48 ${(i + 1) * step} 8`);
+    segments.push(`Q ${x} ${sags[i]} ${(i + 1) * step} 8`);
   }
   const path = `M 0 8 ${segments.join(" ")}`;
 
@@ -43,7 +47,7 @@ export function HappyYearGarland({
       viewBox={`0 0 ${width} 104`}
       width="100%"
       height={104}
-      preserveAspectRatio="none"
+      preserveAspectRatio={stretch ? "none" : "xMidYMid meet"}
       aria-hidden="true"
       focusable="false"
     >
@@ -51,7 +55,8 @@ export function HappyYearGarland({
       <path className="hy-garland-wire hy-garland-wire--light" d={path} />
       {Array.from({ length: bulbs }, (_, i) => {
         const x = i * step + step / 2;
-        const y = 28;
+        // Точка на кривой Q: её середина чуть ниже контрольной точки.
+        const y = (8 + 2 * sags[i] + 8) / 4;
         const color = GARLAND_COLORS[i % GARLAND_COLORS.length];
         return (
           <g
@@ -953,6 +958,8 @@ export function HappyYearBackdrop({
       <div className="hy-backdrop-glow hy-backdrop-glow--red" />
       <div className="hy-backdrop-glow hy-backdrop-glow--green" />
       <div className="hy-backdrop-glow hy-backdrop-glow--gold" />
+      <HappyYearGarland className="hy-backdrop-garland" bulbs={22} stretch={false} />
+      <HappyYearHangingOrnaments className="hy-backdrop-hanging" />
       <div className="hy-backdrop-stars">
         {stars.map((s, i) => (
           <span

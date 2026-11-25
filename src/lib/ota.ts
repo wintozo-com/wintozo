@@ -13,7 +13,17 @@
  */
 import { Capacitor, registerPlugin, type PluginListenerHandle } from "@capacitor/core";
 import { supabase } from "./supabase";
-import { APP_VERSION, fetchLatestVersion, isVersionNewer, markUpdatedTo, shouldOfferOta } from "./checkVersion";
+import {
+  APP_VERSION,
+  DOWNLOAD_URL,
+  fetchLatestVersion,
+  getDemoAvailableVersion,
+  isUpdate7DemoActive,
+  isVersion7,
+  isVersionNewer,
+  markUpdatedTo,
+  shouldOfferOta,
+} from "./checkVersion";
 
 /* ============================================================
    Нативный плагин (android/app/.../WinChatOtaPlugin.java)
@@ -196,12 +206,138 @@ export interface OtaInfo {
   target: string;
   /** Когда админ перезалил запись OTA (пересборка APK с той же версией). */
   updatedAt: string | null;
+  /** Текст из `--note ...` в команде /set ota. */
+  description: string | null;
 }
 
 export interface OtaInitResult {
   device: DeviceInfo;
   ota: OtaInfo | null;
   latestVersion: string | null;
+}
+
+/** Событие для экрана обновления WinChat 7.x (кнопка «Проверить обновления»). */
+export const OTA7_SHOW_EVENT = "winchat:show-ota7";
+
+export function requestOta7Overlay(ota: OtaInfo): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent<OtaInfo>(OTA7_SHOW_EVENT, { detail: ota }));
+}
+
+/** Демо-запись OTA для /update_7_active: «установлена 6, доступна 7». */
+export function getDemoOta7(): OtaInfo {
+  return {
+    url: DOWNLOAD_URL,
+    version: getDemoAvailableVersion(),
+    target: "*",
+    updatedAt: null,
+    description:
+      "В версии 7.0 добавлено: новогодний дизайн, OTA-обновления, новые темы и многое другое.",
+  };
+}
+
+/**
+ * Кнопка «Проверить обновления»: открывает экран 7.x для реальной OTA
+ * либо для демо-роута /update_7_active (и на ПК, и на телефоне).
+ */
+export function showOta7IfAvailable(ota: OtaInfo | null): void {
+  if (ota?.version && isVersion7(ota.version)) {
+    requestOta7Overlay(ota);
+    return;
+  }
+  if (isUpdate7DemoActive()) {
+    requestOta7Overlay(getDemoOta7());
+  }
+}
+
+/* ============================================================
+   Разбор аргументов /set ota
+   /set ota https://…apk 7.0.0 --note В версии 7.0 добавлено...
+   /set ota @admin https://…apk 7.0.0 --note "В версии 7.0..."
+   плюс старый формат с описанием в кавычках.
+   ============================================================ */
+
+export interface ParsedSetOtaArgs {
+  off: boolean;
+  url: string | null;
+  version: string | null;
+  target: string | null;
+  description: string | null;
+}
+
+const OTA_VERSION_RE =
+  /^\d+\.\d+(?:\.\d+)?(?:-[0-9A-Za-z][0-9A-Za-z.\-]*)?(?:\+[0-9A-Za-z.\-]+)?$/;
+
+function unquoteOtaToken(value: string): string {
+  return value.trim().replace(/^["']+|["']+$/g, "").trim();
+}
+
+/** Разобрать всё, что стоит после `/set ota`. */
+export function parseSetOtaArgs(raw: string): ParsedSetOtaArgs {
+  const empty: ParsedSetOtaArgs = {
+    off: false,
+    url: null,
+    version: null,
+    target: null,
+    description: null,
+  };
+  const trimmed = (raw || "").trim();
+  if (!trimmed) return empty;
+  if (/^(off|clear|remove|delete|disable)$/i.test(trimmed)) {
+    return { ...empty, off: true };
+  }
+
+  let rest = trimmed;
+
+  // `--note` забирает весь остаток строки: в описании могут быть
+  // пробелы, запятые и даже ссылки.
+  let note: string | null = null;
+  const noteMatch = rest.match(/--(?:note|desc|description)\b\s*([\s\S]*)$/i);
+  if (noteMatch) {
+    note = unquoteOtaToken(noteMatch[1]) || null;
+    rest = rest.slice(0, noteMatch.index ?? 0).trim();
+  }
+
+  const urlMatch = /https?:\/\/[^\s"']+/i.exec(rest);
+  if (!urlMatch) return { ...empty, description: note };
+  const url = unquoteOtaToken(urlMatch[0]);
+  const urlIndex = urlMatch.index ?? 0;
+  rest = (
+    rest.slice(0, urlIndex) +
+    " " +
+    rest.slice(urlIndex + urlMatch[0].length)
+  ).trim();
+
+  // Старый формат: описание в кавычках без --note.
+  const quoted: string[] = [];
+  rest = rest.replace(/"([^"]*)"/g, (_m, g: string) => {
+    if (g.trim()) quoted.push(g.trim());
+    return " ";
+  });
+  rest = rest.replace(/'([^']*)'/g, (_m, g: string) => {
+    if (g.trim()) quoted.push(g.trim());
+    return " ";
+  });
+
+  const tokens = rest.split(/\s+/).filter(Boolean);
+  const versionToken = tokens.find((t) => OTA_VERSION_RE.test(unquoteOtaToken(t)));
+  const version = versionToken ? unquoteOtaToken(versionToken) : null;
+  const extras = tokens.filter((t) => t !== versionToken);
+  const targetToken =
+    extras.find((t) => t.startsWith("@") || t === "*") ?? extras[0] ?? null;
+  const leftover = extras
+    .filter((t) => t !== targetToken)
+    .map(unquoteOtaToken)
+    .filter(Boolean)
+    .join(" ");
+
+  return {
+    off: false,
+    url,
+    version,
+    target: targetToken ? unquoteOtaToken(targetToken) : null,
+    description: note ?? quoted[0] ?? (leftover || null),
+  };
 }
 
 export async function searchOta(deviceId: string): Promise<OtaInfo | null> {
@@ -217,6 +353,8 @@ export async function searchOta(deviceId: string): Promise<OtaInfo | null> {
       version?: string | null;
       target?: string | null;
       updated_at?: string | null;
+      /** Появляется после миграции winchat_update_21_ota7_note.sql. */
+      description?: string | null;
     };
     if (!res.ok || !res.available || !res.url) return null;
     const ota: OtaInfo = {
@@ -224,6 +362,7 @@ export async function searchOta(deviceId: string): Promise<OtaInfo | null> {
       version: res.version ?? null,
       target: res.target ?? "*",
       updatedAt: res.updated_at ?? null,
+      description: res.description ?? null,
     };
     // На нативном Android фильтруем по версии (versionName из APK),
     // только если админ указал версию у OTA. Без версии OTA работает

@@ -165,7 +165,7 @@ export default function NewYearBanner() {
           ))}
         </svg>
         <div className="ny-banner-bulbs">
-          {Array.from({ length: sections }, (_, s) =>
+          {Array.from({ length: sections }, () =>
             Array.from({ length: perSection }, (_, b) => {
               const idx = bulbIndex++;
               const t = (b + 0.5) / perSection;

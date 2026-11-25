@@ -25,7 +25,6 @@ import BootStylePicker from "../../../BootStylePicker";
 import YouShapePicker from "../../../YouShapePicker";
 import NyThemePicker from "../../../NyThemePicker";
 import BgMusicToggle from "../../../BgMusicToggle";
-import { HappyYearGarland } from "../../../HappyYearDecor";
 import {
   APP_VERSION,
   DOWNLOAD_URL,
@@ -40,6 +39,7 @@ import {
   onOtaStatus,
   reportDeviceStatus,
   searchOta,
+  showOta7IfAvailable,
   type DeviceInfo,
   type OtaInfo,
   type OtaState,
@@ -52,6 +52,7 @@ import {
   subscribeDevMode,
 } from "../../../../lib/devMode";
 import { devLog } from "../../../../lib/devLogs";
+import "./settings-new-ui.css";
 
 interface Props {
   me: Profile;
@@ -171,6 +172,7 @@ export default function SettingsModal({
       ]);
       setServerVersion(server);
       setAboutOta(otaRes);
+      showOta7IfAvailable(otaRes);
       const latest =
         otaRes?.version && server && isVersionNewer(otaRes.version, server)
           ? otaRes.version
@@ -342,13 +344,13 @@ export default function SettingsModal({
     setPwStatus({ type: "ok", text: "Пароль обновлён — теперь входите с ним." });
   }
 
-  const tabs: { id: Tab; label: string; icon: typeof User }[] = [
-    { id: "profile", label: "Профиль", icon: User },
-    { id: "customization", label: "Кастомизация", icon: Palette },
-    { id: "security", label: "Безопасность", icon: ShieldCheck },
-    { id: "winpro", label: "WinPro", icon: Sparkles },
-    { id: "about", label: "О приложении", icon: Info },
-    ...(devMode ? [{ id: "dev" as Tab, label: "Разработчик", icon: Bug }] : []),
+  const tabs: { id: Tab; label: string; short: string; icon: typeof User }[] = [
+    { id: "profile", label: "Профиль", short: "Профиль", icon: User },
+    { id: "customization", label: "Кастомизация", short: "Оформление", icon: Palette },
+    { id: "security", label: "Безопасность", short: "Безопасность", icon: ShieldCheck },
+    { id: "winpro", label: "WinPro", short: "WinPro", icon: Sparkles },
+    { id: "about", label: "О приложении", short: "О приложении", icon: Info },
+    ...(devMode ? [{ id: "dev" as Tab, label: "Разработчик", short: "Разработчик", icon: Bug }] : []),
   ];
 
   /** 4 нажатия на версию приложения открывают режим разработчика. */
@@ -362,7 +364,7 @@ export default function SettingsModal({
   }
 
 
-  const showTab = (t: Tab) => (activeTab === t ? "animate-fade-in" : "hidden");
+  const showTab = (t: Tab) => (activeTab === t ? "nys-page" : "hidden");
   const you = youMode || currentId === YOU_THEME_ID;
   /** WinChat Glass виден в кастомизации только тем, у кого есть доступ (флаг профиля). */
   const glassAllowed = isGlassGranted(me);
@@ -373,125 +375,58 @@ export default function SettingsModal({
       <button
         aria-label="Закрыть"
         onClick={onClose}
-        className="animate-fade-in absolute inset-0 bg-ink/40 backdrop-blur-[3px]"
+        className="animate-fade-in absolute inset-0 bg-[#05192c]/55 backdrop-blur-[6px]"
       />
       <div
         className={cn(
-          "animate-scale-in relative flex max-h-[92dvh] w-full max-w-md flex-col overflow-hidden shadow-2xl sm:max-h-[90dvh]",
-          you
-            ? "you-gate-card rounded-t-[28px] sm:rounded-[36px]"
-            : "modern-modal rounded-t-[30px] bg-white/95 sm:rounded-[32px]"
+          "ny-settings-surface nys-surface animate-scale-in relative flex max-h-[92dvh] w-full max-w-5xl flex-col overflow-hidden shadow-2xl sm:max-h-[90dvh]",
+          you ? "you-gate-card" : "modern-modal"
         )}
       >
-        <HappyYearGarland className="hy-modal-garland" bulbs={18} />
-        {/* Шапка */}
-        <div
-          className={cn(
-            "relative z-10 flex shrink-0 items-center justify-between border-b px-5 py-4 sm:px-8 sm:pt-7 sm:pb-4",
-            you
-              ? "border-[var(--you-outline-variant)] sm:border-0 sm:pb-0"
-              : "border-black/5 bg-gradient-to-r from-white to-accent-soft/25"
-          )}
-        >
-          <div className="flex items-center gap-3">
-            {you ? (
-              <span className="you-logo flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[14px]">
-                <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
-              </span>
-            ) : (
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-ink text-white shadow-lg shadow-ink/20">
-                <Settings2 className="h-5 w-5" />
-              </span>
-            )}
-            <div>
-              {!you && <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-black/35">Центр управления</p>}
-              <h3
-                className={cn(
-                  "text-lg font-extrabold tracking-tight",
-                  you ? "text-[var(--you-on-surface)]" : "text-ink leading-none mt-0.5"
-                )}
-              >
-                Настройки
-              </h3>
-            </div>
+        <div className="nys-head">
+          <span className="nys-head-mark">
+            <Settings2 className="h-5 w-5" />
+          </span>
+          <div className="nys-head-copy">
+            <span className="nys-head-eyebrow">Центр управления</span>
+            <h3>Настройки</h3>
           </div>
-          <button
-            onClick={onClose}
-            className={cn(
-              "flex h-10 w-10 items-center justify-center transition active:scale-95",
-              you
-                ? "rounded-full text-[var(--you-on-surface-variant)] hover:bg-[var(--you-surface-container)]"
-                : "rounded-2xl border border-black/8 bg-white/70 text-black/45 shadow-sm hover:bg-black/5 hover:text-ink"
-            )}
-            aria-label="Закрыть настройки"
-          >
-            <X className="h-5 w-5" />
+          <button type="button" onClick={onClose} className="nys-close" aria-label="Закрыть настройки">
+            <X className="h-[18px] w-[18px]" />
           </button>
         </div>
 
-        {/* Вкладки — новая навигация */}
-        <div
-          className={cn(
-            "relative z-10 shrink-0 px-4 py-3 sm:px-8",
-            you
-              ? "border-b border-[var(--you-outline-variant)]"
-              : "border-b border-black/5 bg-gradient-to-b from-white/90 to-white/40"
-          )}
-        >
-          <div
-            className={cn(
-              "flex gap-2 overflow-x-auto pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
-              you ? "rounded-2xl bg-[var(--you-surface-container)] p-1" : "rounded-[22px] bg-black/[0.03] p-1.5"
-            )}
-          >
-            {tabs.map((t) => {
-              const Icon = t.icon;
-              const active = activeTab === t.id;
-              return (
-                <button
-                  key={t.id}
-                  type="button"
-                  onClick={() => {
-                    setActiveTab(t.id);
-                    scrollRef.current?.scrollTo({ top: 0 });
-                  }}
-                  className={cn(
-                    "flex shrink-0 items-center justify-center gap-2 px-3.5 py-2.5 text-[12px] font-bold transition sm:px-4",
-                    you
-                      ? cn(
-                          "flex-1 flex-col gap-1 rounded-xl px-1 py-2 text-[11px]",
-                          active
-                            ? "bg-[var(--you-surface-highest)] text-[var(--you-on-surface)] shadow-sm"
-                            : "text-[var(--you-on-surface-variant)]"
-                        )
-                      : cn(
-                          "min-w-[max-content] rounded-[16px]",
-                          active
-                            ? "bg-white text-ink shadow-sm ring-1 ring-black/6"
-                            : "text-black/50 hover:bg-white/70 hover:text-ink"
-                        )
-                  )}
-                >
-                  <Icon className={cn("h-4 w-4", !you && active && "text-accent")} strokeWidth={2.2} />
-                  <span>{t.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <div className="nys-body">
+          <aside className="nys-nav-wrap">
+            <div className="nys-nav-title">Разделы</div>
+            <nav className="nys-nav">
+              {tabs.map((t) => {
+                const Icon = t.icon;
+                const active = activeTab === t.id;
+                return (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveTab(t.id);
+                      scrollRef.current?.scrollTo({ top: 0 });
+                    }}
+                    className={cn("nys-nav-btn", active && "is-active")}
+                  >
+                    <Icon className="h-4 w-4" strokeWidth={2.2} />
+                    <span>{t.short}</span>
+                  </button>
+                );
+              })}
+            </nav>
+            <div className="nys-nav-foot">Изменения применяются сразу. Настройки сохраняются автоматически.</div>
+          </aside>
 
-        {/* Скроллируемое содержимое */}
-        <div
-          ref={scrollRef}
-          className={cn(
-            "relative z-10 min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] sm:px-7 sm:pt-5 sm:pb-8",
-            you ? "text-[var(--you-on-surface)]" : "bg-gradient-to-b from-transparent via-transparent to-black/[0.01]"
-          )}
-        >
+          <div ref={scrollRef} className="nys-content">
           
           {/* ===== Профиль ===== */}
           <div className={showTab("profile")}>
-            <div className="relative overflow-hidden rounded-[28px] border border-black/8 bg-gradient-to-br from-white via-white to-accent-soft/30 p-5 shadow-sm">
+            <div className="nys-card nys-card--soft relative overflow-hidden p-5">
               <span className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-accent/10 blur-2xl" />
               <div className="relative flex flex-col items-center gap-4 text-center sm:flex-row sm:items-center sm:text-left">
                 <div className="group relative shrink-0">
@@ -540,14 +475,14 @@ export default function SettingsModal({
               </div>
             </div>
 
-            <div className="mt-4 grid gap-4 rounded-[28px] border border-black/8 bg-white/70 p-5">
+            <div className="nys-card mt-4 grid gap-4 p-5">
               <div>
                 <span className="mb-1.5 block font-mono text-[11px] font-semibold tracking-[0.16em] text-black/45 uppercase">Никнейм</span>
                 <input
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && saveProfile()}
-                  className="ny-nickname-input w-full rounded-2xl border border-black/10 px-4 py-3.5 text-[15px] font-semibold outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
+                  className="ny-nickname-input nys-input"
                   placeholder="Ваш никнейм"
                 />
               </div>
@@ -562,7 +497,7 @@ export default function SettingsModal({
                   onChange={(e) => setBio(e.target.value.slice(0, 160))}
                   rows={3}
                   placeholder="Пара слов о вас — это описание увидят собеседники"
-                  className="w-full resize-none rounded-2xl border border-black/10 px-4 py-3.5 text-sm font-medium outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
+                  className="nys-input w-full resize-none"
                 />
               </div>
 
@@ -571,8 +506,8 @@ export default function SettingsModal({
                   onClick={saveProfile}
                   disabled={saving}
                   className={cn(
-                    "flex items-center justify-center gap-2 rounded-2xl px-6 py-3 text-sm font-bold text-white transition active:scale-[0.98] disabled:opacity-60",
-                    savedTick ? "bg-emerald-500" : "bg-ink hover:bg-black shadow-lg shadow-ink/20"
+                    "nys-btn nys-btn--primary",
+                    savedTick && "bg-emerald-500 hover:bg-emerald-500"
                   )}
                 >
                   {saving ? (
@@ -594,7 +529,7 @@ export default function SettingsModal({
               </div>
             )}
 
-            <div className="mt-5 space-y-2 rounded-2xl bg-paper p-4 font-mono text-[11px] tracking-wide text-black/45">
+            <div className="nys-card mt-4 font-mono text-[11px] tracking-wide">
               <div className="flex justify-between gap-3">
                 <span>ID</span>
                 <span className="truncate text-black/70">{me.id}</span>
@@ -604,8 +539,10 @@ export default function SettingsModal({
 
           {/* ===== Кастомизация ===== */}
           <div className={showTab("customization")}>
-            <NyThemePicker className="mb-4" />
-            <BgMusicToggle className="mb-6" />
+            <div className="nys-card nys-card--soft p-4">
+              <NyThemePicker className="mb-4" />
+              <BgMusicToggle />
+            </div>
             <div>
               <span className={cn("mb-3 flex items-center gap-2 text-[12px] font-bold", you ? "text-[var(--you-on-surface-variant)]" : "text-black/45")}>
                 <Palette className="h-3.5 w-3.5" />
@@ -989,7 +926,7 @@ export default function SettingsModal({
                   onChange={(e) => setNewPw(e.target.value)}
                   autoComplete="new-password"
                   placeholder="Новый пароль"
-                  className="w-full rounded-xl border border-black/10 bg-paper px-4 py-3 text-[15px] font-medium outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
+                  className="nys-input"
                 />
                 <input
                   type="password"
@@ -997,14 +934,14 @@ export default function SettingsModal({
                   onChange={(e) => setNewPw2(e.target.value)}
                   autoComplete="new-password"
                   placeholder="Повторите пароль"
-                  className="w-full rounded-xl border border-black/10 bg-paper px-4 py-3 text-[15px] font-medium outline-none transition focus:border-accent focus:ring-4 focus:ring-accent/15"
+                  className="nys-input"
                 />
               </div>
               <button
                 type="button"
                 onClick={changePassword}
                 disabled={pwSaving || !newPw || !newPw2}
-                className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3 text-sm font-bold text-white transition hover:bg-black active:scale-[0.99] disabled:opacity-40"
+                className="nys-btn nys-btn--primary nys-btn--wide mt-3"
               >
                 {pwSaving ? <Loader2 className="h-4.5 w-4.5 animate-spin" /> : <Lock className="h-4 w-4" />}
                 Обновить пароль
@@ -1060,7 +997,7 @@ export default function SettingsModal({
 
             <button
               onClick={onLogout}
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/25 py-3 text-sm font-bold text-red-600 transition hover:bg-red-500/5 active:scale-[0.99]"
+              className="nys-btn nys-btn--danger nys-btn--wide mt-5"
             >
               <LogOut className="h-4 w-4" />
               Выйти из аккаунта
@@ -1073,7 +1010,7 @@ export default function SettingsModal({
                   onClose();
                   onShowLegacy();
                 }}
-                className="mt-2.5 flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/35 bg-gradient-to-r from-amber-50 to-orange-50 py-3 text-sm font-bold text-amber-700 transition hover:brightness-105 active:scale-[0.99]"
+                className="nys-btn nys-btn--wide mt-2.5"
               >
                 <History className="h-4 w-4" />
                 Память о Wintozo — сменить интерфейс
@@ -1144,7 +1081,7 @@ export default function SettingsModal({
               type="button"
               onClick={checkUpdates}
               disabled={checking}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3 text-sm font-bold text-white transition hover:bg-black active:scale-[0.99] disabled:opacity-40"
+              className="nys-btn nys-btn--primary nys-btn--wide mt-3"
             >
               {checking ? <Loader2 className="h-4.5 w-4.5 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
               Проверить обновления
@@ -1194,6 +1131,7 @@ export default function SettingsModal({
                 </div>
               );
             })()}
+          </div>
           </div>
         </div>
       </div>

@@ -61,6 +61,12 @@ export function isVersionNewer(remote: string, local: string): boolean {
   return compareFullVersions(r.core, l.core, r.pre, l.pre) > 0;
 }
 
+/** Версия начинается с 7 (7.0.0-closed-beta, 7.0.0-beta, 7.0.0-release, 7.0.0, …). */
+export function isVersion7(version: string | null | undefined): boolean {
+  if (!version) return false;
+  return (splitVersion(version).core[0] ?? 0) === 7;
+}
+
 /** Сравнение версий: -1 | 0 | 1. */
 function compareVersions(a: string, b: string): number {
   const ra = splitVersion(a);

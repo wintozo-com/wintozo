@@ -11,6 +11,9 @@ export const YOU_THEME_ID = "material-you";
 /** id темы Liquid Glass — отдельный режим WinChat Glass. */
 export const GLASS_THEME_ID = "glass";
 
+/** id новогодней темы — «Ледяное стекло». Отдельный CSS-слой .theme-newyear. */
+export const NEW_YEAR_THEME_ID = "new-year";
+
 export const THEMES = [
   {
     id: "ink-blue",
@@ -106,6 +109,25 @@ export const THEMES = [
     otherMsgBorder: "rgba(224,87,138,0.16)",
     chatTitle: "#5a1530",
     chatSubtitle: "rgba(90,21,48,0.45)",
+  },
+  {
+    id: NEW_YEAR_THEME_ID,
+    name: "Ледяное стекло",
+    description: "Новогодний liquid glass: лёд, золото и дрейфующий снег",
+    accent: "#1f7fb8",
+    accentSoft: "rgba(214,239,255,0.75)",
+    chatBg: "#eaf6ff",
+    headerBg: "rgba(255,255,255,0.62)",
+    border: "rgba(255,255,255,0.85)",
+    gradientFrom: "#a9e5ff",
+    gradientTo: "#ffd9a0",
+    ownerMsg: "#0d3c63",
+    ownerMsgText: "#eaf7ff",
+    otherMsg: "rgba(255,255,255,0.74)",
+    otherMsgText: "#123a5c",
+    otherMsgBorder: "rgba(255,255,255,0.92)",
+    chatTitle: "#0d3452",
+    chatSubtitle: "rgba(13,52,82,0.55)",
   },
 ] as const;
 
@@ -238,6 +260,11 @@ export function isGlassTheme(id: string): boolean {
   return id === GLASS_THEME_ID;
 }
 
+/** Проверить, что включена новогодняя тема «Ледяное стекло». */
+export function isNewYearTheme(id: string): boolean {
+  return id === NEW_YEAR_THEME_ID;
+}
+
 export interface ChatThemeColors {
   accent: string;
   accentSoft: string;
@@ -349,6 +376,9 @@ export function applyTheme(theme: Theme | WinProTheme): void {
 
   // WinChat Glass: прозрачные стеклянные панели (CSS-слой .theme-glass).
   document.documentElement.classList.toggle("theme-glass", isGlassTheme(theme.id));
+
+  // Новогодняя тема: ледяной liquid glass + золотой свет (CSS-слой .theme-newyear).
+  document.documentElement.classList.toggle("theme-newyear", isNewYearTheme(theme.id));
 
   // WinChat You: отдельная тональная схема Material You + «обои» пользователя.
   if (isYouTheme(theme.id)) {

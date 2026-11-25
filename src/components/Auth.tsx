@@ -5,14 +5,12 @@ import {
   CircleAlert,
   Eye,
   EyeOff,
-  ImagePlus,
   KeyRound,
   Lock,
   Loader2,
   ShieldCheck,
   TriangleAlert,
   User,
-  Zap,
 } from "lucide-react";
 import { emailFor, loginByWinpass, supabase } from "../lib/supabase";
 import { rememberLegacyPassword } from "./LegacyScreen";
@@ -20,6 +18,14 @@ import { normalizeWinpass, validateNickname, validatePassword, validateUsername 
 void normalizeWinpass; // канонизация в supabase.loginByWinpass
 import { cn } from "../utils/cn";
 import { devLog } from "../lib/devLogs";
+import {
+  WinterSnow,
+  WinterThemeToggle,
+  useWinterLight,
+  type AuthFlow,
+} from "./AuthWinterFlow";
+import { HappyYearBackdrop } from "./HappyYearDecor";
+import "./auth-winter.css";
 
 const inputCls =
   "w-full rounded-xl border border-black/10 bg-white py-3 pr-4 pl-11 text-[15px] font-medium outline-none transition placeholder:text-black/30 focus:border-accent focus:ring-4 focus:ring-accent/15";
@@ -34,12 +40,6 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
     </label>
   );
 }
-
-const FEATURES = [
-  { icon: Zap, title: "Мгновенная доставка", sub: "Realtime-сообщения без обновления страницы" },
-  { icon: ImagePlus, title: "Фотографии в чате", sub: "Отправляйте снимки прямо в диалог" },
-  { icon: ShieldCheck, title: "Защита на уровне БД", sub: "Row Level Security и изолированные диалоги" },
-];
 
 /** Достаёт читаемый текст из любой ошибки (никогда не вернёт "{}"). */
 function rawMessage(err: unknown): string {
@@ -66,28 +66,54 @@ export function mapAuthError(err: unknown): string {
   const code = String(e?.error_code ?? e?.code ?? "");
   const t = `${code} ${raw}`.toLowerCase();
 
+  const NO_SERVER = "Нет подключения к серверу";
+  const NO_SERVERS = "Не удалось подключится к серверам WinChat. У вас включен интернет?";
+
+  // Сырые сетевые ошибки вроде "unable to host ...supabase.co" больше
+  // не показываем пользователю — только понятное сообщение.
+  if (
+    t.includes("supabase.co") ||
+    t.includes("unable to host") ||
+    t.includes("err_name_not_resolved") ||
+    t.includes("err_connection") ||
+    t.includes("err_network_changed") ||
+    t.includes("err_internet_disconnected") ||
+    t.includes("enotfound") ||
+    t.includes("eai_again") ||
+    t.includes("getaddrinfo") ||
+    t.includes("timed out") ||
+    t.includes("timeout")
+  )
+    return NO_SERVERS;
   if (t.includes("failed to fetch") || t.includes("network") || t.includes("load failed"))
-    return "Нет соединения с сервером. Проверьте интернет и что проект Supabase не на паузе.";
+    return NO_SERVER;
   if (t.includes("rate limit") || t.includes("over_request_rate_limit") || t.includes("too many"))
     return "Слишком много попыток. Подождите пару минут и повторите.";
   if (t.includes("signup_disabled") || t.includes("email_provider_disabled") || t.includes("signups not allowed"))
-    return "Регистрация отключена на сервере. В Supabase включите провайдер Email: Authentication → Sign In / Providers.";
+    return "Регистрация временно недоступна.";
   if (t.includes("database error") || t.includes("unexpected_failure") || t.includes("error saving"))
-    return "Сервер не смог создать профиль. Выполните целиком SQL из файла winchat_setup.sql — особенно шаг 5 (триггер handle_new_user).";
+    return NO_SERVER;
   if (t.includes("already registered") || t.includes("already exists") || t.includes("user_already_exists"))
     return "Такой аккаунт уже существует — войдите.";
   if (t.includes("invalid login credentials"))
     return "Неверный username или пароль. Если раньше вы входили по WinPass — пароль был сброшен: войдите по WinPass, затем задайте новый пароль в Настройки → Безопасность.";
   if (t.includes("email_address_invalid") || (t.includes("invalid") && t.includes("email")))
-    return "Supabase отклонил служебную почту аккаунта. Проверьте настройки Email-провайдера в разделе Authentication.";
+    return "Не удалось создать аккаунт. Попробуйте другой username.";
   if (t.includes("weak_password") || (t.includes("password") && (t.includes("least") || t.includes("short") || t.includes("weak"))))
     return "Пароль слишком простой — минимум 6 символов с английскими буквами.";
-  if (raw) return raw;
-  return "Сервер вернул пустой ответ об ошибке. Проверьте: 1) SQL из winchat_setup.sql выполнен целиком; 2) включён провайдер Email; 3) отключено «Confirm email». Подробности — в консоли браузера.";
+  if (raw) return NO_SERVER;
+  return NO_SERVER;
 }
 
-export default function Auth({ initialMode }: { initialMode?: "login" | "register" } = {}) {
+export default function Auth({
+  initialMode,
+  onAuthenticated,
+}: {
+  initialMode?: "login" | "register";
+  onAuthenticated?: (flow: AuthFlow) => void;
+} = {}) {
   const [mode, setMode] = useState<"login" | "register" | "winpass">(initialMode ?? "login");
+  const [winterLight, toggleWinterLight] = useWinterLight();
   const [nickname, setNickname] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -98,8 +124,6 @@ export default function Auth({ initialMode }: { initialMode?: "login" | "registe
   const [serverOk, setServerOk] = useState<"checking" | "ok" | "fail">("checking");
   /* WinPass */
   const [wpInput, setWpInput] = useState("");
-  const [issuedWinpass, setIssuedWinpass] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
 
   /* Проверка: выполнен ли SQL на сервере (таблица profiles существует) */
   useEffect(() => {
@@ -170,6 +194,7 @@ export default function Auth({ initialMode }: { initialMode?: "login" | "registe
         }
 
         /* Забрать WinPass, который выдал триггер на сервере */
+        let winpass = "";
         const uid = data.user?.id;
         if (uid) {
           let code: string | null = null;
@@ -182,9 +207,10 @@ export default function Auth({ initialMode }: { initialMode?: "login" | "registe
             code = (prof as { winpass?: string } | null)?.winpass || null;
             if (!code) await new Promise((r) => setTimeout(r, 400));
           }
-          if (code) setIssuedWinpass(code);
+          winpass = code ?? "";
         }
         devLog("auth: account created");
+        onAuthenticated?.({ kind: "register", winpass });
       } else {
         devLog(`auth: signing in @${username.trim().toLowerCase()}`);
         const { error: inErr } = await supabase.auth.signInWithPassword({
@@ -193,6 +219,7 @@ export default function Auth({ initialMode }: { initialMode?: "login" | "registe
         });
         if (inErr) return setError(mapAuthError(inErr));
         devLog("auth: signed in");
+        onAuthenticated?.({ kind: "login" });
       }
     } catch (errCaught) {
       setError(mapAuthError(errCaught));
@@ -214,6 +241,7 @@ export default function Auth({ initialMode }: { initialMode?: "login" | "registe
       devLog("auth: signing in with winpass");
       // Вход по WinPass без пароля — сервер сам сбрасывает пароль и выдаёт сессию
       await loginByWinpass(code);
+      onAuthenticated?.({ kind: "login" });
     } catch (errCaught) {
       setError(mapAuthError(errCaught));
     } finally {
@@ -221,113 +249,32 @@ export default function Auth({ initialMode }: { initialMode?: "login" | "registe
     }
   }
 
-  /* ---------- Экран-подарок: выданный WinPass ---------- */
-  if (issuedWinpass) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-paper px-5">
-        <div className="animate-scale-in w-full max-w-[420px] rounded-[28px] bg-white p-8 text-center shadow-2xl">
-          <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[22px] bg-accent-soft">
-            <ShieldCheck className="h-8 w-8 text-accent" />
-          </div>
-          <h2 className="text-xl font-extrabold tracking-tight">Аккаунт создан!</h2>
-          <p className="mt-2 text-sm font-medium leading-relaxed text-black/50">
-            Сохраните <b>WinPass</b> — это ваш код восстановления. Он навсегда привязан к аккаунту и
-            поможет войти, если вы забудете пароль.
-          </p>
-
-          <div className="relative mt-6 rounded-2xl border border-dashed border-accent/40 bg-accent-soft px-4 py-5">
-            <p className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-accent/70">
-              Ваш WinPass
-            </p>
-            <p className="mt-2 break-all font-mono text-lg font-extrabold text-ink">
-              {issuedWinpass}
-            </p>
-          </div>
-
-          <button
-            onClick={() => {
-              navigator.clipboard?.writeText(issuedWinpass).catch(() => undefined);
-              setCopied(true);
-              setTimeout(() => setCopied(false), 1800);
-            }}
-            className={cn(
-              "mt-4 w-full rounded-xl py-3 text-sm font-bold transition active:scale-[0.99]",
-              copied ? "bg-emerald-500 text-white" : "bg-ink text-white hover:bg-black"
-            )}
-          >
-            {copied ? "Скопировано ✓" : "Скопировать код"}
-          </button>
-
-          <button
-            onClick={() => setIssuedWinpass(null)}
-            className="mt-3 w-full rounded-xl border border-black/10 py-3 text-sm font-bold text-black/60 transition hover:bg-black/5"
-          >
-            Войти в мессенджер
-          </button>
-          <p className="mt-4 text-[11px] font-semibold text-black/35">
-            После закрытия окна код можно посмотреть в Настройках профиля.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="flex min-h-dvh bg-paper">
-      {/* ---- Брендовая панель ---- */}
-      <aside className="relative hidden w-[46%] flex-col justify-between overflow-hidden bg-ink p-12 text-white lg:flex xl:w-1/2 xl:p-16">
-        <div className="dot-grid absolute inset-0 opacity-70" />
-        <div className="animate-drift absolute -right-40 -bottom-44 h-[520px] w-[520px] rounded-full bg-accent/50 blur-[150px]" />
-        <div
-          className="animate-drift absolute -top-32 -left-28 h-96 w-96 rounded-full bg-white/10 blur-[130px]"
-          style={{ animationDelay: "-7s" }}
-        />
-
-        <header className="relative flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-lg font-extrabold text-ink">
-            W
+    <div className={`auth-winter flex min-h-dvh bg-paper${winterLight ? " is-light" : ""}`}>
+      <HappyYearBackdrop className="auth-winter-backdrop" easterEggs={false} />
+      <WinterSnow />
+      <WinterThemeToggle light={winterLight} onToggle={toggleWinterLight} />
+      {/* ---- Зимняя сцена ---- */}
+      <div className="auth-aurora-ribbon" aria-hidden="true" />
+      <main className="auth-stage relative flex flex-1 flex-col items-center justify-center px-5 py-10">
+        <div className="auth-hero relative z-10 flex flex-col items-center text-center">
+          <div className="auth-hero-emblem" aria-hidden="true">
+            <i className="auth-hero-ring auth-hero-ring-a" />
+            <i className="auth-hero-ring auth-hero-ring-b" />
+            <span className="auth-hero-spark auth-hero-spark-a" />
+            <span className="auth-hero-spark auth-hero-spark-b" />
+            <span className="auth-hero-spark auth-hero-spark-c" />
+            <b>W</b>
           </div>
-          <span className="text-xl font-extrabold tracking-tight">WinChat</span>
-        </header>
-
-        <div className="relative">
-          <h1 className="max-w-xl text-[56px] leading-[1.02] font-extrabold tracking-[-0.035em] xl:text-[68px]">
-            Пишите.
-            <br />
-            Делитесь.
-            <br />
-            <span className="text-accent">В моменте.</span>
+          <h1 className="auth-hero-title">
+            Зима начинается <span>здесь</span>
           </h1>
-          <ul className="mt-12 space-y-4">
-            {FEATURES.map(({ icon: Icon, title, sub }) => (
-              <li key={title} className="flex items-center gap-4">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/15 bg-white/5">
-                  <Icon className="h-5 w-5 text-white/85" strokeWidth={1.8} />
-                </span>
-                <div>
-                  <p className="text-[15px] font-bold">{title}</p>
-                  <p className="text-[13px] font-medium text-white/45">{sub}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <p className="auth-hero-sub">Тёплое место для ваших сообщений.</p>
         </div>
 
-        <div aria-hidden="true" />
-      </aside>
-
-      {/* ---- Форма ---- */}
-      <main className="relative flex flex-1 items-center justify-center px-5 py-10">
-        <div className="dot-grid-dark absolute inset-0 opacity-40 lg:hidden" />
-        <div className="animate-slide-up relative w-full max-w-[400px]">
-          <div className="mb-8 flex items-center gap-3 lg:hidden">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-ink text-lg font-extrabold text-white">
-              W
-            </div>
-            <span className="text-xl font-extrabold tracking-tight">WinChat</span>
-          </div>
-
-          <h2 className="text-[28px] font-extrabold tracking-tight">
+        <div className="auth-card-holder relative z-10 mt-8 w-full max-w-[430px]">
+          <div className="auth-winter-card animate-slide-up relative">
+            <h2 className="text-[28px] font-extrabold tracking-tight">
             {mode === "login" ? "С возвращением" : "Создать аккаунт"}
           </h2>
           <p className="mt-1 text-sm font-medium text-black/45">
@@ -339,19 +286,15 @@ export default function Auth({ initialMode }: { initialMode?: "login" | "registe
           {serverOk === "fail" && (
             <div className="animate-fade-in mt-5 flex items-start gap-2.5 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-[13px] leading-relaxed font-semibold text-amber-800">
               <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />
-              <span>
-                Сервер не настроен: таблица <span className="font-mono">profiles</span> не найдена.
-                Выполните целиком <span className="font-mono">winchat_setup.sql</span> в SQL Editor
-                проекта Supabase — иначе регистрация не заработает.
-              </span>
+              <span>Нет подключения к серверу</span>
             </div>
           )}
 
-          <div className="mt-7 flex rounded-xl bg-black/5 p-1">
+          <div className="mt-7 flex rounded-full bg-black/5 p-1">
             {([
               ["login", "Вход"],
               ["register", "Регистрация"],
-              ["winpass", "По WinPass"],
+              ["winpass", "WinPass"],
             ] as const).map(([m, label]) => (
               <button
                 key={m}
@@ -362,7 +305,7 @@ export default function Auth({ initialMode }: { initialMode?: "login" | "registe
                   setNotice(null);
                 }}
                 className={cn(
-                  "flex-1 rounded-lg py-2 text-sm font-bold transition",
+                  "flex-1 rounded-full py-2 text-[13px] font-bold transition",
                   mode === m
                     ? "bg-ink text-white shadow-sm"
                     : "text-black/45 hover:text-ink"
@@ -443,7 +386,7 @@ export default function Auth({ initialMode }: { initialMode?: "login" | "registe
                   <button
                     type="button"
                     onClick={() => setShowPw((s) => !s)}
-                    className="absolute top-1/2 right-3 -translate-y-1/2 rounded-lg p-1.5 text-black/35 transition hover:bg-black/5 hover:text-ink"
+                    className="absolute top-1/2 right-3 -translate-y-1/2 rounded-full p-1.5 text-black/35 transition hover:bg-black/5 hover:text-ink"
                     aria-label={showPw ? "Скрыть пароль" : "Показать пароль"}
                   >
                     {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -468,19 +411,20 @@ export default function Auth({ initialMode }: { initialMode?: "login" | "registe
             <button
               type="submit"
               disabled={loading}
-              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3.5 text-[15px] font-bold text-white transition hover:bg-black active:scale-[0.99] disabled:opacity-60"
+              className="group flex w-full items-center justify-center gap-2 rounded-full bg-ink py-3 text-[14px] font-bold text-white transition hover:bg-black active:scale-[0.99] disabled:opacity-60"
             >
               {loading ? (
                 <Loader2 className="h-4.5 w-4.5 animate-spin" />
               ) : (
                 <>
-                  {mode === "login" ? "Войти" : mode === "register" ? "Создать аккаунт" : "Войти по WinPass"}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  {mode === "login" ? "Войти" : mode === "register" ? "Создать" : "Войти"}
+                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </>
               )}
             </button>
           </form>
 
+          </div>
         </div>
       </main>
     </div>
