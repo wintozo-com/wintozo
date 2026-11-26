@@ -855,3 +855,56 @@
 @media (prefers-reduced-motion: reduce) {
   .ny7-step, .ny7-loader span, .ny7-loader svg, .ny7-bg { animation: none !important; }
 }
+/* Зимняя открытка: общая сцена для установки и обновления. */
+.ny7, .ny-dark .ny7 {
+  background: linear-gradient(90deg, rgba(7, 29, 42, .86), rgba(9, 34, 45, .54)),
+    url('/new-year-winter-scene.webp') center bottom / cover fixed, #102e3c;
+}
+.ny7::before { opacity: .22; background-image: radial-gradient(rgba(255,255,255,.7) 1px, transparent 1px); }
+.ny7::after { background: linear-gradient(180deg, rgba(5,21,33,.16), transparent 35%, rgba(5,21,33,.25)); }
+.ny7-bg { opacity: .3; }
+.ny7-garland { opacity: .65; height: 74px; }
+.ny7-hanging { opacity: .55; }
+.ny7-tree, .ny7-gifts { display: none; }
+.ny7-brand-copy strong, .ny-dark .ny7-brand-copy strong { color: #fff; }
+.ny7-brand-copy small { color: #c8ded7; }
+.ny7-badge, .ny-dark .ny7-badge { background: rgba(8, 36, 44, .52); color: #f7dfaa; border-color: rgba(247,223,170,.35); box-shadow: none; }
+.ny7-badge svg { color: #d2edf1; }
+.ny7-hero-title, .ny-dark .ny7-hero-title { color: #fffdf7; text-shadow: 0 5px 30px rgba(3,20,30,.25); }
+.ny7-hero-title em { background-image: linear-gradient(110deg, #fff5d1, #e7bb72); }
+.ny7-hero-text, .ny-dark .ny7-hero-text, .ny7-features li { color: #d6e8e7; }
+.ny7-eyebrow { background: rgba(7, 35, 43, .55); color: #d5eadc; border-color: rgba(218, 237, 218, .28); }
+.ny7-year-digits { background-image: linear-gradient(180deg, #fff7dc, #e4bc75 65%, #fbebbf); }
+.ny7-panel { border-color: rgba(255,255,255,.8); box-shadow: 0 30px 90px rgba(2,22,32,.32), inset 0 1px 0 #fff; }
+.ny7-panel::before { border-style: solid; opacity: .6; }
+.ny7-primary { background: linear-gradient(135deg, #1d6858, #104d49); box-shadow: 0 14px 30px -16px rgba(14,79,69,.8); }
+.ny7-primary:hover { box-shadow: 0 20px 36px -16px rgba(14,79,69,.75); }
+.ny7-secondary { color: #245b56; border-color: rgba(34,95,85,.25); }
+.ny7-progress span.is-active { background: linear-gradient(90deg, #277e6a, #d3a25d); }
+.ny7 .hy-countdown { background: rgba(8, 37, 46, .6); border-color: rgba(221,239,225,.25); box-shadow: 0 20px 45px -24px rgba(1,15,22,.6); }
+.ny7 .hy-countdown-label { color: #d6e9df; }
+.ny7 .hy-countdown-cell { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.15); }
+.ny7 .hy-countdown-value, .ny7 .hy-countdown-finished { color: #ffe4a5; }
+.ny7 .hy-countdown-unit { color: #d4e5e2; }
+.ny7 .hy-countdown-cell:not(:last-child)::after { color: rgba(255,231,177,.6); }
+.ny7 button:focus-visible, .ny7 input:focus-visible { outline:3px solid #dba853; outline-offset:3px; }
+@media (max-width: 560px) {
+  .ny7, .ny-dark .ny7 { background-attachment: scroll; background-position: center bottom; }
+  .ny7-shell { padding-bottom: 90px; }
+  .ny7-panel { box-shadow: 0 24px 65px rgba(0,20,28,.3); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ny7 *, .ny7 *::before, .ny7 *::after, .oobe-ice-intro *, .oobe-ice-intro *::before, .oobe-ice-intro *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}
+
+/* Просторная открытка с мягким стеклом и тёплым светом. */
+@media (min-width: 981px) {
+  .ny7-shell { width: min(1320px, calc(100% - 96px)); grid-template-columns: minmax(0, 1fr) minmax(380px, 470px); gap: clamp(60px, 8vw, 140px); min-height: calc(100dvh - 120px); margin-top: 0; align-items: center; }
+  .ny7-hero { padding-left: 0; }
+  .ny7-hero-title { font-size: clamp(56px, 6vw, 88px); line-height: 1.02; }
+  .ny7-hero-text { font-size: 17px; max-width: 480px; }
+  .ny7-panel { padding: 38px; }
+}
+.ny7-panel { backdrop-filter: blur(28px) saturate(150%); -webkit-backdrop-filter: blur(28px) saturate(150%); }
+.ny7-year-snow { background: rgba(235,250,250,.14); border-color: rgba(255,255,255,.28); color: #d6f3ef; }
+.ny7-feature-orb { box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 8px 24px rgba(0,0,0,.18); }

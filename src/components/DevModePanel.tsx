@@ -24,13 +24,13 @@ interface Props {
 /** Панель «Режим разработчика»: однотонный интерфейс и логи. */
 export default function DevModePanel({ className, you = false }: Props) {
   const [mono, setMono] = useState<boolean>(() => isMonoEnabled());
-  const [lines, setLines] = useState<string[]>(() => getLogLines().slice(-80));
+  const [lines, setLines] = useState<string[]>(() => getLogLines().slice(-200));
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(
-    () => subscribeLogs(() => setLines(getLogLines().slice(-80))),
+    () => subscribeLogs(() => setLines(getLogLines().slice(-200))),
     []
   );
 
@@ -142,7 +142,7 @@ export default function DevModePanel({ className, you = false }: Props) {
       <div className={cn("overflow-hidden rounded-2xl border", card)}>
         <div className="flex items-center justify-between gap-2 border-b border-black/5 px-4 py-2.5">
           <span className="text-[12px] font-bold text-black/50">
-            Логи · {lines.length ? `${Math.min(lines.length, 80)} последних` : "пусто"}
+            Логи · {lines.length ? `${Math.min(lines.length, 200)} последних` : "пусто"}
           </span>
           <button
             type="button"

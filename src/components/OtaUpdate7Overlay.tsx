@@ -171,10 +171,8 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
           position: fixed; inset: 0; z-index: 400;
           display: flex; align-items: center; justify-content: center;
           padding: 24px 16px; overflow-y: auto;
-          background:
-            radial-gradient(circle at 50% 8%, rgba(22, 92, 64, 0.95) 0%, transparent 46%),
-            radial-gradient(circle at 8% 92%, rgba(122, 18, 28, 0.55) 0%, transparent 42%),
-            linear-gradient(180deg, #061c13 0%, #03110b 58%, #010805 100%);
+          background: linear-gradient(180deg, rgba(4,25,35,.8), rgba(3,22,30,.68)),
+            url('/new-year-winter-scene.webp') center bottom / cover, #092b35;
           color: #f4fff8;
           backdrop-filter: blur(14px);
           -webkit-backdrop-filter: blur(14px);
@@ -226,16 +224,6 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
         .ota7-glow-a { width: 340px; height: 340px; left: -120px; top: 18%; background: rgba(54, 220, 130, .22); animation: ota7-float 7s ease-in-out infinite; }
         .ota7-glow-b { width: 300px; height: 300px; right: -110px; bottom: 12%; background: rgba(255, 74, 74, .2); animation: ota7-float 9s ease-in-out infinite reverse; }
         @keyframes ota7-float { 0%, 100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(18px,-24px,0); } }
-
-        .ota7-tree { position: fixed; bottom: -10px; width: 170px; height: 250px; pointer-events: none; opacity: .5; }
-        .ota7-tree::before, .ota7-tree::after {
-          content: ""; position: absolute; inset: 0;
-          background: linear-gradient(180deg, #1c7a4d 0%, #0a3a25 70%, #062016 100%);
-          clip-path: polygon(50% 0, 100% 100%, 0 100%);
-        }
-        .ota7-tree::after { transform: translateY(58px) scale(.82); opacity: .85; }
-        .ota7-tree-left { left: -42px; }
-        .ota7-tree-right { right: -42px; transform: scaleX(-1); }
 
         .ota7-close {
           position: fixed; top: 46px; right: 18px; z-index: 3;
@@ -526,8 +514,6 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
 
       <div className="ota7-glow ota7-glow-a" aria-hidden />
       <div className="ota7-glow ota7-glow-b" aria-hidden />
-      <div className="ota7-tree ota7-tree-left" aria-hidden />
-      <div className="ota7-tree ota7-tree-right" aria-hidden />
 
       <button className="ota7-close" onClick={onClose} aria-label="Закрыть">
         <X />

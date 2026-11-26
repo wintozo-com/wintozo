@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { devServerConnect } from "./devLogs";
 
 /**
  * WinChat files storage — два Supabase-проекта для файлов
@@ -12,6 +13,8 @@ const FILES_URL = "https://liprykmtennsmjtfpbuw.supabase.co";
 const FILES_KEY = "sb_publishable_ZYjFzVYy0VkaUTGDW9uHow_-u9HnbFn";
 
 export const filesClient = createClient(FILES_URL, FILES_KEY);
+
+devServerConnect(2, "media");
 
 export type FilesBucket = "avatars" | "attachments" | "video-attachments";
 

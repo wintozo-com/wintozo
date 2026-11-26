@@ -1,10 +1,13 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { devServerConnect } from "./devLogs";
 
 /**
  * Второй сервер хранения медиа — ahikheicrjrocnlpurpw.supabase.co
  */
 const FILES2_URL = "https://ahikheicrjrocnlpurpw.supabase.co";
 const FILES2_KEY = "sb_publishable_9d7c7yQ1BQO_UFVhlEOWJw_RDry7zuu";
+
+devServerConnect(3, "media");
 
 export const files2Client: SupabaseClient = createClient(FILES2_URL, FILES2_KEY);
 

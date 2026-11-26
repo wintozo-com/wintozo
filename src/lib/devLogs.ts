@@ -10,7 +10,7 @@ import { saveLogsNative } from "./nativeStorage";
 import { APP_VERSION } from "./checkVersion";
 
 const STORAGE_KEY = "winchat_dev_logs";
-const MAX_LINES = 600;
+const MAX_LINES = 2000;
 
 let lines: string[] = [];
 let initialized = false;
@@ -52,15 +52,21 @@ function notify() {
 }
 
 /** Добавить строку в лог. */
-export function devLog(message: string, level: "info" | "warn" | "error" = "info") {
+export function devLog(message: string, level: "info" | "warn" | "error" | "debug" = "info") {
   const text = String(message ?? "").replace(/\s+/g, " ").trim();
   if (!text) return;
-  const prefix = level === "error" ? "[error] " : level === "warn" ? "[warn] " : "";
+  const prefix =
+    level === "error" ? "[error] " : level === "warn" ? "[warn] " : level === "debug" ? "[debug] " : "";
   const line = `${timeStamp()} ${prefix}${text}`;
   lines.push(line);
   if (lines.length > MAX_LINES) lines = lines.slice(-MAX_LINES);
   persist();
   notify();
+}
+
+/** Подключение к серверу: «connecting in server N (label)». */
+export function devServerConnect(serverId: number, label: string): void {
+  devLog(`connecting in server ${serverId} (${label})`);
 }
 
 /** Все строки лога (копия). */
@@ -133,6 +139,84 @@ export function initDevLogs() {
     devLog(`console.error: ${args.map(describeError).join(" ")}`, "error");
     originalError(...args);
   };
+  const originalWarn = console.warn.bind(console);
+  console.warn = (...args: unknown[]) => {
+    devLog("console.warn: " + args.map(describeError).join(" "));
+    originalWarn(...args);
+  };
+  const originalInfo = console.info.bind(console);
+  console.info = (...args: unknown[]) => {
+    devLog("console.info: " + args.map(describeError).join(" "));
+    originalInfo(...args);
+  };
+  const originalDebug = console.debug.bind(console);
+  console.debug = (...args: unknown[]) => {
+    devLog("console.debug: " + args.map(describeError).join(" "));
+    originalDebug(...args);
+  };
+  installNetworkLogging();
+}
+
+/** Подробный сетевой лог в режиме разработчика: fetch / XHR / WebSocket / ресурсы. */
+function installNetworkLogging() {
+  if (typeof window === "undefined") return;
+
+  const nativeFetch = window.fetch.bind(window);
+  const fetchWithLog = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const method = init?.method ?? (input instanceof Request ? input.method : "GET");
+    const start = performance.now();
+    devLog("net fetch " + method + " -> connecting");
+    try {
+      const res = await nativeFetch(input, init);
+      devLog("net fetch " + method + " -> done (HTTP " + res.status + ")");
+      return res;
+    } catch (err) {
+      devLog("net fetch " + method + " -> FAIL " + describeError(err), "error");
+      throw err;
+    } finally {
+      devLog("net fetch " + method + " -> done in " + Math.round(performance.now() - start) + "ms");
+    }
+  };
+  (window as unknown as { fetch: typeof fetch }).fetch = fetchWithLog;
+
+  const xhrProto: any = XMLHttpRequest.prototype;
+  const origOpen = xhrProto.open;
+  xhrProto.open = function (this: XMLHttpRequest, ...args: unknown[]) {
+    devLog("net xhr " + String(args[1] ?? "GET") + " -> connecting");
+    return origOpen.apply(this, args);
+  };
+  const origSend = xhrProto.send;
+  xhrProto.send = function (this: XMLHttpRequest, ...args: unknown[]) {
+    devLog("net xhr send -> sending");
+    return origSend.apply(this, args);
+  };
+
+  const wsProto: any = window.WebSocket ? window.WebSocket.prototype : null;
+  if (wsProto) {
+    const origWSSend = wsProto.send;
+    wsProto.send = function (this: WebSocket, ...args: unknown[]) {
+      devLog("net ws send " + String(args[0]));
+      return origWSSend.apply(this, args);
+    };
+    const origWSClose = wsProto.close;
+    wsProto.close = function (this: WebSocket, ...args: unknown[]) {
+      devLog("net ws close");
+      return origWSClose.apply(this, args);
+    };
+  }
+
+  try {
+    if (typeof PerformanceObserver !== "undefined") {
+      const po = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          devLog("net resource " + entry.entryType + " -> done");
+        }
+      });
+      po.observe({ type: "resource", buffered: true });
+    }
+  } catch {
+    /* no-op */
+  }
 }
 
 export interface SaveLogsOutcome {

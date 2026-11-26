@@ -7,7 +7,7 @@ import {
   type CSSProperties,
   type ReactNode,
 } from "react";
-import { MoonStar, Sun, Volume2, VolumeX } from "lucide-react";
+import { MoonStar, Snowflake, Sun, Volume2, VolumeX } from "lucide-react";
 import code1 from "../bages/code_1.png";
 import { useNyDark } from "../lib/nyTheme";
 import "./happy-year.css";
@@ -138,29 +138,6 @@ export function HappyYearSnow({
         </svg>
       ))}
     </div>
-  );
-}
-
-/** Ёлочка с ярусами, снежными шапками и звездой. */
-export function HappyYearTree({ className = "" }: { className?: string }) {
-  return (
-    <svg className={`hy-tree ${className}`} viewBox="0 0 120 156" width={120} height={156} aria-hidden="true">
-      <ellipse className="hy-tree-shadow" cx="60" cy="148" rx="34" ry="5" />
-      <path className="hy-tree-trunk" d="M53 124h14v22H53z" />
-      <path className="hy-tree-tier" d="M60 8 31 58h17L17 98h27L13 128h94L80 98h27L76 58h17z" />
-      <path
-        className="hy-tree-snow"
-        d="M31 58h17L17 98h27l-9 8H13l31-48zm58 0H76l31 40H80l9 8h25L89 58z"
-      />
-      <path className="hy-tree-star" d="M60 0l4.2 8.4 9.3 1.3-6.7 6.6 1.6 9.2-8.4-4.4-8.4 4.4 1.6-9.2-6.7-6.6 9.3-1.3z" />
-      <circle cx="45" cy="60" r="4.2" fill="#e53935" />
-      <circle cx="76" cy="60" r="4.2" fill="#1e88e5" />
-      <circle cx="36" cy="96" r="4.2" fill="#f9a825" />
-      <circle cx="84" cy="96" r="4.2" fill="#e53935" />
-      <circle cx="60" cy="80" r="4.2" fill="#8e24aa" />
-      <circle cx="52" cy="116" r="4.2" fill="#f9a825" />
-      <circle cx="72" cy="116" r="4.2" fill="#1e88e5" />
-    </svg>
   );
 }
 
@@ -567,7 +544,7 @@ export function HappyYearThemeToggle({ className = "" }: { className?: string })
   );
 }
 
-/** Анимированная ёлка-загрузчик с мигающей гирляндой. */
+/** Ледяная снежинка-загрузчик. */
 export function HappyYearLoader({
   label,
   className = "",
@@ -583,31 +560,10 @@ export function HappyYearLoader({
       role="status"
       aria-live="polite"
     >
-      <svg className="hy-loader-tree" viewBox="0 0 120 156" width={compact ? 54 : 78} height={compact ? 70 : 101} aria-hidden="true">
-        <path className="hy-loader-tier" d="M60 10 34 54h15L22 92h22L14 126h92L78 92h22L73 54h15z" />
-        <path className="hy-loader-snow" d="M34 54h15L22 92h22l-8 8H14l26-46zm52 0H73l27 38H78l8 8h22L86 54z" />
-        <path className="hy-loader-trunk" d="M53 122h14v24H53z" />
-        <path className="hy-loader-star" d="M60 0l4.4 8.8 9.7 1.4-7 6.8 1.7 9.6-8.8-4.6-8.8 4.6 1.7-9.6-7-6.8 9.7-1.4z" />
-        {[
-          { cx: 46, cy: 58, fill: "#ff5252", delay: 0 },
-          { cx: 74, cy: 58, fill: "#ffd54f", delay: 0.35 },
-          { cx: 37, cy: 90, fill: "#69f0ae", delay: 0.7 },
-          { cx: 83, cy: 90, fill: "#ff5252", delay: 1.05 },
-          { cx: 60, cy: 76, fill: "#40c4ff", delay: 0.2 },
-          { cx: 52, cy: 114, fill: "#ffd54f", delay: 0.55 },
-          { cx: 72, cy: 114, fill: "#69f0ae", delay: 0.9 },
-        ].map((light, i) => (
-          <circle
-            key={i}
-            className="hy-loader-light"
-            cx={light.cx}
-            cy={light.cy}
-            r="4.4"
-            fill={light.fill}
-            style={{ animationDelay: `${light.delay}s` }}
-          />
-        ))}
-      </svg>
+      <span className="hy-loader-crystal" aria-hidden="true">
+        <span className="hy-loader-crystal-ring" />
+        <Snowflake />
+      </span>
       {label && <span className="hy-loader-label">{label}</span>}
     </div>
   );
@@ -892,41 +848,7 @@ export function HappyYearSecretOrb({ className = "" }: { className?: string }) {
   );
 }
 
-/** Мини-ёлочки-заполнители для пустых мест. */
-export function HappyYearMiniTrees({ className = "" }: { className?: string }) {
-  const trees = useMemo(
-    () => Array.from({ length: 6 }, (_, i) => ({
-      left: (i * 17 + 3) % 85 + 5,
-      size: 20 + (i % 3) * 12,
-      delay: i * 0.5,
-    })),
-    [],
-  );
-
-  return (
-    <div className={`hy-mini-trees ${className}`} aria-hidden="true">
-      {trees.map((t, i) => (
-        <svg
-          key={i}
-          className="hy-mini-tree"
-          style={{
-            left: `${t.left}%`,
-            width: t.size,
-            height: t.size * 1.3,
-            animationDelay: `${t.delay}s`,
-          }}
-          viewBox="0 0 40 52"
-        >
-          <path d="M20 2 10 18h6L6 32h8l-8 14h32l-8-14h8l-10-14h6z" fill="#2e7d32" />
-          <path d="M10 18h6L6 32h8l-4 4H6l10-14zm20 0h-8l10 14h8l-4 4h-8l10-14z" fill="rgba(255,255,255,0.7)" />
-          <path d="M20 0l2.5 5 5.5.8-4 3.9 1 5.3-5-2.6-5 2.6 1-5.3-4-3.9 5.5-.8z" fill="#f6c445" />
-        </svg>
-      ))}
-    </div>
-  );
-}
-
-/** Фоновый новогодний слой: снег, ёлки, огоньки, пасхалки. */
+/** Фоновый новогодний слой: снег, огоньки и пасхалки. */
 export function HappyYearBackdrop({
   className = "",
   dense = false,
@@ -976,15 +898,6 @@ export function HappyYearBackdrop({
         ))}
       </div>
       <HappyYearSnow className="hy-backdrop-snow" count={dense ? 34 : 24} />
-      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--l1" />
-      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--l2" />
-      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--l3" />
-      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--r1" />
-      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--r2" />
-      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--r3" />
-      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--c1" />
-      <HappyYearTree className="hy-backdrop-tree hy-backdrop-tree--c2" />
-      <HappyYearGifts className="hy-backdrop-gifts" />
       {easterEggs &&
         eggs.map((egg, i) => (
           <img

@@ -1212,46 +1212,13 @@
   color: var(--hy-green);
 }
 .hy-loader--compact { padding: 2px 0 8px; gap: 6px; }
-.hy-loader-tree {
-  overflow: visible;
-  filter: drop-shadow(0 14px 24px rgba(31, 42, 36, .16));
-  animation: hy-loader-sway 2.6s ease-in-out infinite;
-}
-.hy-loader-tier { fill: #2e7d32; }
-.hy-loader-snow { fill: #eef7ff; opacity: .9; }
-.hy-loader-trunk { fill: #7a4a1f; }
-.hy-loader-star {
-  fill: #f6c344;
-  filter: drop-shadow(0 0 8px rgba(246, 195, 68, .9));
-  animation: hy-loader-star 1.5s ease-in-out infinite;
-}
-.hy-loader-light {
-  filter: drop-shadow(0 0 6px currentColor);
-  animation: hy-loader-blink 1.25s ease-in-out infinite;
-}
 .hy-loader-label {
   font-size: 12px;
   font-weight: 800;
   letter-spacing: .02em;
   color: rgba(29, 42, 36, .55);
 }
-@keyframes hy-loader-sway {
-  0%, 100% { transform: rotate(-1.6deg) translateY(0); }
-  50% { transform: rotate(1.6deg) translateY(-3px); }
-}
-@keyframes hy-loader-star {
-  0%, 100% { opacity: .65; transform: scale(.92); }
-  50% { opacity: 1; transform: scale(1.12); }
-}
-@keyframes hy-loader-blink {
-  0%, 100% { opacity: .35; }
-  50% { opacity: 1; }
-}
-.ny-dark .hy-loader-tier { fill: #1b5e20; }
-.ny-dark .hy-loader-snow { fill: #cfe2ff; opacity: .65; }
 .ny-dark .hy-loader-label { color: rgba(234, 242, 255, .6); }
-.ny-dark .hy-loader-tree { filter: drop-shadow(0 0 18px rgba(120, 255, 170, .35)); }
-.ny-dark .hy-loader-light { filter: drop-shadow(0 0 8px currentColor); }
 
 .hy-easter-egg {
   position: absolute;
@@ -2708,3 +2675,23 @@ html.ny-dark .ny-settings-surface .text-black\/35 { color: rgba(234, 242, 255, .
     animation: none !important;
   }
 }
+
+/* Ледяной кристалл вместо декоративных SVG-ёлок. */
+.hy-loader-crystal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 26px;
+  color: #267b9f;
+  background: linear-gradient(145deg, rgba(255,255,255,.95), rgba(184,226,240,.65));
+  border: 1px solid rgba(255,255,255,.9);
+  box-shadow: 0 14px 35px -16px rgba(26,100,128,.5), inset 0 1px 0 #fff;
+}
+.hy-loader--compact .hy-loader-crystal { width: 54px; height: 54px; border-radius: 19px; }
+.hy-loader-crystal svg { width: 43%; height: 43%; animation: hy-crystal-turn 8s linear infinite; }
+.hy-loader-crystal-ring { position: absolute; inset: 7px; border: 1px solid rgba(55,142,167,.22); border-radius: 50%; }
+.ny-dark .hy-loader-crystal { color: #d5f3ff; background: linear-gradient(145deg, #315c70, #173246); border-color: rgba(199,239,255,.3); box-shadow: 0 0 30px rgba(115,202,228,.2); }
+@keyframes hy-crystal-turn { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .hy-loader-crystal svg { animation: none; } }

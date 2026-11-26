@@ -11,12 +11,15 @@
  */
 import { createClient } from "@supabase/supabase-js";
 import { uuid } from "./utils";
+import { devServerConnect } from "./devLogs";
 
 export const STICKER_URL = "https://qscgbkwmbprzbwciyemh.supabase.co";
 export const STICKER_KEY = "sb_publishable_aeuwpnO92vU0nzMLFNFpXg__1O_4AX3";
 export const STICKER_BUCKET = "stickers";
 export const STICKER_MAX_BYTES = 10 * 1024 * 1024;
 export const SAVED_PACK_NAME = "Сохранённые";
+
+devServerConnect(4, "gifs");
 
 export interface StickerItem {
   id: string;

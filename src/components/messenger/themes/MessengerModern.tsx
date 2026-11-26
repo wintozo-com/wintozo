@@ -199,6 +199,7 @@ function Placeholder({
             </div>
 
             <div className="min-w-0 flex-1">
+              <span className="hy-empty-season">WinChat · зимняя история</span>
               <h1 className="text-3xl font-extrabold tracking-tight text-ink sm:text-[2.2rem]">
                 {greeting}
               </h1>

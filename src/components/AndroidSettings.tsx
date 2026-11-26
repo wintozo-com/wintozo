@@ -29,6 +29,7 @@ import { cn } from "../utils/cn";
 import {
   ALL_THEMES,
   applyTheme,
+  getCurrentTheme,
   getThemeById,
   GLASS_THEME_ID,
   saveThemeId,
@@ -131,7 +132,7 @@ export default function AndroidSettings({
 
   /* --- Кастомизация --- */
   const [currentId, setCurrentId] = useState<string>(
-    () => localStorage.getItem("winchat_theme_id") || "ink-blue"
+    () => getCurrentTheme().id
   );
   const [youSeed, setYouSeed] = useState<string>(() => getYouSeedId());
   const [youShape, setYouShape] = useState<YouShape>(() => getYouShape());

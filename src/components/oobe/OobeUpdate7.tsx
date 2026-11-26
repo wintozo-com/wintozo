@@ -15,12 +15,10 @@ import type { OobeVariant } from "./OobeThemeChooser";
 import {
   HappyYearCountdown,
   HappyYearGarland,
-  HappyYearGifts,
   HappyYearHangingOrnaments,
   HappyYearMelody,
   HappyYearThemeToggle,
   HappyYearSnow,
-  HappyYearTree,
 } from "../HappyYearDecor";
 import "./oobe-7.css";
 import OobeIceIntro from "./OobeIceIntro";
@@ -39,13 +37,13 @@ const WHATS_NEW = [
     icon: <Sparkles />,
     tone: "red" as const,
     title: "Новогодний интерфейс",
-    text: "Гирлянды, снег и тёплая праздничная палитра по всему WinChat.",
+    text: "Ледяное стекло, зимний пейзаж и мягкий свет в классическом оформлении.",
   },
   {
     icon: <Mic />,
     tone: "green" as const,
     title: "Кнопки-шарики",
-    text: "Микрофон, отправка и действия стали ёлочными игрушками с SVG.",
+    text: "Праздничные акценты украшают привычные действия в чатах.",
   },
   {
     icon: <Clock3 />,
@@ -87,8 +85,6 @@ export default function OobeUpdate7({ winPro, onFinish, variant = "you" }: Props
       <HappyYearGarland className="ny7-garland" bulbs={22} />
       <HappyYearHangingOrnaments className="ny7-hanging" />
       <HappyYearSnow className="ny7-snow" count={34} />
-      <HappyYearTree className="ny7-tree" />
-      <HappyYearGifts className="ny7-gifts" />
       <HappyYearMelody className="ny7-melody" />
       <HappyYearThemeToggle className="ny7-theme" />
 

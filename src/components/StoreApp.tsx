@@ -397,7 +397,7 @@ export default function StoreApp({
                   <input
                     value={otaVersion}
                     onChange={(e) => setOtaVersion(e.target.value)}
-                    placeholder="7.0.0-closed-beta"
+                    placeholder="7.0.0-open-beta"
                     className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-medium outline-none transition focus:border-accent/40 focus:ring-4 focus:ring-accent/10"
                   />
                 </label>

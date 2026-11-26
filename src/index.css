@@ -3366,3 +3366,46 @@ html.ny-dark.theme-newyear .messenger-modern .you-search {
   html.theme-newyear .messenger-modern .animate-fade-in,
   html.theme-newyear .winchat-page-transition { animation: none !important; }
 }
+
+/* Праздничная сцена в выбранной теме: мягко видна сквозь ледяное стекло. */
+html.theme-newyear body {
+  background: linear-gradient(155deg, rgba(233,248,255,.91), rgba(236,248,242,.84)), url('/new-year-winter-scene.webp') center bottom / cover fixed;
+}
+html.theme-newyear .messenger-modern main .modern-feed {
+  background: linear-gradient(180deg, rgba(243,251,255,.74), rgba(228,246,244,.58)), url('/new-year-winter-scene.webp') center bottom / cover !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.theme-newyear .messenger-modern::before { animation: none; }
+}
+
+/* Классическая тема: просторный зимний экран и стеклянная карточка. */
+.hy-empty-season { display: none; }
+html.theme-newyear .messenger-modern .hy-empty {
+  background: linear-gradient(135deg, rgba(222,243,249,.79), rgba(233,246,241,.65)), url('/new-year-winter-scene.webp') center bottom / cover !important;
+}
+html.theme-newyear .messenger-modern .hy-empty-card {
+  background: linear-gradient(145deg, rgba(255,255,255,.84), rgba(235,249,247,.7)) !important;
+  border-color: rgba(255,255,255,.84) !important;
+  box-shadow: 0 32px 90px -35px rgba(12,69,85,.38), inset 0 1px 0 #fff !important;
+}
+html.theme-newyear .hy-empty-season { display: block; margin-bottom: 12px; color: #357a79; font-size: 10px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+html.ny-dark.theme-newyear body { background: linear-gradient(160deg, rgba(4,22,33,.88), rgba(6,31,40,.68)), url('/new-year-winter-scene.webp') center bottom / cover fixed; }
+html.ny-dark.theme-newyear .messenger-modern .hy-empty { background: linear-gradient(145deg, rgba(4,22,35,.78), rgba(8,38,45,.62)), url('/new-year-winter-scene.webp') center bottom / cover !important; }
+html.ny-dark.theme-newyear .messenger-modern .hy-empty-card { background: linear-gradient(145deg, rgba(18,42,58,.87), rgba(9,28,41,.9)) !important; border-color: rgba(202,239,239,.18) !important; box-shadow: 0 32px 90px -35px rgba(0,10,20,.8), inset 0 1px 0 rgba(255,255,255,.12) !important; }
+html.ny-dark.theme-newyear .hy-empty-season { color: #b4ddd2; }
+html.ny-dark.theme-newyear .messenger-modern main .modern-feed { background: linear-gradient(180deg, rgba(9,31,45,.83), rgba(9,34,44,.75)), url('/new-year-winter-scene.webp') center bottom / cover !important; }
+
+/* Тёмный чат: и оболочка, и пустое состояние, и заглушки должны быть тёмными. */
+html.ny-dark .messenger-modern .modern-chat-surface { background: #0a202c !important; color: #eaf4fa; }
+html.ny-dark .messenger-modern .modern-chat-empty,
+html.ny-dark .messenger-modern .modern-chat-skeleton-card {
+  background: linear-gradient(145deg, rgba(28,58,70,.88), rgba(12,34,47,.92)) !important;
+  border-color: rgba(198,235,238,.18) !important;
+  box-shadow: 0 24px 70px -30px rgba(0,10,20,.8), inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+html.ny-dark .messenger-modern .modern-chat-empty .text-ink { color: #f2fafb !important; }
+html.ny-dark .messenger-modern .modern-chat-empty .text-black\/50 { color: rgba(216,238,241,.7) !important; }
+html.ny-dark .messenger-modern .modern-chat-surface .modern-skeleton { background: linear-gradient(90deg, rgba(180,220,225,.07), rgba(180,220,225,.18), rgba(180,220,225,.07)) !important; background-size: 200% 100% !important; }
+
+/* Тёмная новогодняя тема: цветовая схема переходит в тёмную вместе с палитрой. */
+html.ny-dark.theme-newyear { color-scheme: dark; }

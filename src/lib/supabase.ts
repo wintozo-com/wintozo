@@ -1,7 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
+import { devServerConnect } from "./devLogs";
 
 export const SUPABASE_URL = "https://iksgubxxxspkjwsazrwq.supabase.co";
 export const SUPABASE_KEY = "sb_publishable_uEwTj3pmRCCbVg4HaQFeOg_GFmVoaHl";
+
+devServerConnect(1, "system_info");
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   realtime: { params: { eventsPerSecond: 10 } },
