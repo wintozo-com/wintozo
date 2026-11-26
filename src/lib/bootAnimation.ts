@@ -1,8 +1,7 @@
 /* ============================================================
    Настройки стартовой заставки (boot animation).
 
-   • classic — старая «переливающаяся» заставка из первых релизов:
-     логотип по центру с бегущим блеском;
+   • classic — зимняя заставка, подстраивающаяся под светлую/тёмную тему;
    • dots — новая: чёрные точки слетаются в логотип;
    • you — WinChat You (Material You): голубой тональный фон,
      настоящий логотип и перетекающие формы Material 3 Expressive.
@@ -10,7 +9,7 @@
 
 export type BootStyle = "classic" | "dots" | "you";
 
-/** Уникальный номер каждой boot-анимации. Изначально активна — «dots» (№1). */
+/** Уникальный номер каждой boot-анимации. По умолчанию активна стандартная заставка «classic» (№3). */
 export const BOOT_STYLE_NUMBERS: Record<BootStyle, number> = {
   dots: 1,
   you: 2,
@@ -25,7 +24,7 @@ export const BOOT_STYLES: { id: BootStyle; name: string; description: string }[]
   {
     id: "classic",
     name: "Стандартная",
-    description: "Классический логотип с переливом",
+    description: "Вращающиеся ёлочки в светлой или тёмной теме",
   },
   {
     id: "dots",
@@ -46,9 +45,9 @@ const YOU_BOOT_ASKED_KEY = "winchat_you_boot_asked";
 export function getBootStyle(): BootStyle {
   try {
     const v = localStorage.getItem(BOOT_STYLE_KEY);
-    return v === "classic" || v === "dots" || v === "you" ? v : "dots";
+    return v === "classic" || v === "dots" || v === "you" ? v : "classic";
   } catch {
-    return "dots";
+    return "classic";
   }
 }
 

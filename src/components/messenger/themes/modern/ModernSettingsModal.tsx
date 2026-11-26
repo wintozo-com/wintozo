@@ -8,7 +8,7 @@ import Avatar from "../../../Avatar";
 import Crown from "../../../Crown";
 import Verified from "../../../Verified";
 import { cn } from "../../../../utils/cn";
-import { ALL_THEMES, applyTheme, getThemeById, GLASS_THEME_ID, saveThemeId, THEMES, WINPRO_THEMES, YOU_THEME_ID } from "../../../../lib/themes";
+import { ALL_THEMES, applyTheme, getCurrentTheme, getThemeById, GLASS_THEME_ID, saveThemeId, THEMES, WINPRO_THEMES, YOU_THEME_ID } from "../../../../lib/themes";
 import {
   YOU_SEEDS,
   applyYouPalette,
@@ -109,7 +109,7 @@ export default function SettingsModal({
 
   /* --- Палитра --- */
   const [currentId, setCurrentId] = useState<string>(
-    () => localStorage.getItem("winchat_theme_id") || "ink-blue"
+    () => getCurrentTheme().id
   );
   /* --- Бут-анимация --- */
   const [bootStyle, setBootStyle] = useState<BootStyle>(() => getBootStyle());

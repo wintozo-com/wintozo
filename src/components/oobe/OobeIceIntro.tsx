@@ -196,6 +196,12 @@ export default function OobeIceIntro({ onDone }: Props) {
         </span>
       </button>
 
+      {phase === "frozen" && (
+        <button type="button" className="oobe-ice-skip" onClick={() => doneRef.current()}>
+          Пропустить заставку
+        </button>
+      )}
+
       {phase !== "frozen" && (
         <div className="oobe-ice-reveal" aria-hidden="true">
           <div

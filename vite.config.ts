@@ -12,6 +12,7 @@ export default defineConfig({
   // Бандл НЕ сливаем в один файл: на телефонах мобильный инлайн JS+CSS
   // весит 3.4+ МБ и долго парсится в WebView (показывает белый экран).
   plugins: [react(), tailwindcss()],
+  server: { allowedHosts: [".e2b.app"] },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),

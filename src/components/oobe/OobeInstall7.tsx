@@ -37,13 +37,11 @@ import type { OobeVariant } from "./OobeThemeChooser";
 import {
   HappyYearCountdown,
   HappyYearGarland,
-  HappyYearGifts,
   HappyYearHangingOrnaments,
   HappyYearLoader,
   HappyYearMelody,
   HappyYearThemeToggle,
   HappyYearSnow,
-  HappyYearTree,
 } from "../HappyYearDecor";
 import "./oobe-7.css";
 import OobeIceIntro from "./OobeIceIntro";
@@ -270,8 +268,6 @@ export default function OobeInstall7({
       <HappyYearGarland className="ny7-garland" bulbs={22} />
       <HappyYearHangingOrnaments className="ny7-hanging" />
       <HappyYearSnow className="ny7-snow" count={30} />
-      <HappyYearTree className="ny7-tree" />
-      <HappyYearGifts className="ny7-gifts" />
       <HappyYearMelody className="ny7-melody" />
       <HappyYearThemeToggle className="ny7-theme" />
 
@@ -311,9 +307,8 @@ export default function OobeInstall7({
             <em>2027 годом!</em>
           </h1>
           <p className="ny7-hero-text">
-            Праздничная версия WinChat уже установлена. Создайте аккаунт —
-            и мессенджер откроется в новогоднем стиле: с гирляндами, снегом
-            и кнопками-шариками.
+            Праздничная версия WinChat уже установлена. Создайте аккаунт,
+            чтобы оставаться на связи с близкими в уютной зимней атмосфере.
           </p>
 
           <div className="ny7-year" aria-hidden="true">
@@ -576,7 +571,7 @@ export default function OobeInstall7({
 
           {step === "checking" && (
             <div className="ny7-step ny7-step--center" key="checking">
-              <HappyYearLoader className="ny7-tree-loader" compact label="Готовим праздник…" />
+              <HappyYearLoader className="ny7-crystal-loader" compact label="Готовим праздник…" />
               <div className="ny7-loader" aria-hidden="true">
                 <span />
                 <span />

@@ -12,7 +12,7 @@ interface Props {
 }
 
 /**
- * Выбор стартовой заставки: стандартная (старый переливающийся логотип),
+ * Выбор стартовой заставки: стандартная (зимняя заставка),
  * новая (точки) и WinChat You (иконка на тональном фоне). Превью живые.
  */
 export default function BootStylePicker({ value, onChange, you = false }: Props) {
@@ -35,11 +35,14 @@ export default function BootStylePicker({ value, onChange, you = false }: Props)
             )}
             style={{ borderRadius: you ? "var(--you-r-sm)" : 16 }}
           >
-            <span className="bootpick__visual" aria-hidden="true">
+            <span className={cn("bootpick__visual", s.id === "classic" && "bootpick__visual--winter")} aria-hidden="true">
               {s.id === "classic" && (
-                <span className="bootpick__logo">
-                  <img src="/logo.jpg" alt="" draggable={false} />
-                  <span className="bootpick__gloss" />
+                <span className="bootpick__fir-preview">
+                  {Array.from({ length: 6 }, (_, i) => (
+                    <svg key={i} viewBox="0 0 32 44" style={{ "--i": i } as CSSProperties}>
+                      <path d="M16 2 7.2 15h4.5L5.2 25h5.2L3 35h11v5h4v-5h11l-7.4-10h5.2l-6.5-10h4.5L16 2Z" />
+                    </svg>
+                  ))}
                 </span>
               )}
 
