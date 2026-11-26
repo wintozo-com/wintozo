@@ -1135,7 +1135,7 @@ export default function ChatView({
   );
 
   return (
-    <div className={cn("flex h-full flex-col", youMode ? "you-chat yc-chat" : "bg-paper")}>
+    <div className={cn("flex h-full flex-col", youMode ? "you-chat yc-chat" : "modern-chat-surface bg-paper")}>
       {/* Шапка */}
       <header
         className={cn(
@@ -1292,7 +1292,7 @@ export default function ChatView({
                 <HappyYearLoader label="Зажигаем гирлянды…" />
                 {[0, 1, 2, 3, 4].map((i) => (
                   <div key={i} className={cn("flex", i % 2 === 0 ? "justify-start" : "justify-end")}>
-                    <div className={cn("max-w-[78%] space-y-2 rounded-[26px] border border-black/5 bg-white/70 p-3 shadow-sm", i % 2 === 0 ? "rounded-bl-lg" : "rounded-br-lg")}>
+                    <div className={cn("modern-chat-skeleton-card max-w-[78%] space-y-2 rounded-[26px] border border-black/5 bg-white/70 p-3 shadow-sm", i % 2 === 0 ? "rounded-bl-lg" : "rounded-br-lg")}>
                       {i % 3 === 0 && <div className="modern-skeleton h-28 w-56 max-w-full rounded-2xl" />}
                       <div className={cn("modern-skeleton h-3.5 rounded-full", i % 2 === 0 ? "w-48" : "w-40")} />
                       <div className={cn("modern-skeleton h-3 rounded-full", i % 2 === 0 ? "w-32" : "w-24")} />
@@ -1320,7 +1320,7 @@ export default function ChatView({
                   </p>
                 </>
               ) : (
-                <div className="relative w-full max-w-sm rounded-[32px] border border-white/70 bg-white/70 p-8 shadow-[0_24px_70px_-30px_rgba(16,18,20,0.3)] backdrop-blur-xl">
+                <div className="modern-chat-empty relative w-full max-w-sm rounded-[32px] border border-white/70 bg-white/70 p-8 shadow-[0_24px_70px_-30px_rgba(16,18,20,0.3)] backdrop-blur-xl">
                   <span className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-accent/10 blur-2xl" />
                   <span className="pointer-events-none absolute -left-6 -bottom-6 h-24 w-24 rounded-full bg-ink/5 blur-2xl" />
                   <div className="relative mx-auto flex h-20 w-20 items-center justify-center rounded-[28px] bg-gradient-to-br from-ink to-ink/80 text-white shadow-xl shadow-ink/20">

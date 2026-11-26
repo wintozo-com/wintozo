@@ -130,8 +130,8 @@ export default function App() {
   });
   /* Выбранный стиль стартовой заставки (читается один раз на запуск). */
   const [bootStyle] = useState(() => (isYouOnlyApp ? "you" : getBootStyle()));
-  /* Первый запуск OOBE: играем заставку You ~10 секунд даже без темы You. */
-  const useYouBoot = bootStyle === "you" || longBoot || isYouOnlyApp;
+  /* Долгий первый запуск сохраняет выбранный пользователем стиль заставки. */
+  const useYouBoot = bootStyle === "you" || isYouOnlyApp;
   /* Плашка «переключить заставку на You-стиль?» после активации темы. */
   const [youBootAsk, setYouBootAsk] = useState(false);
   /* Ивент «Память о Wintozo»: показывать ли legacy-экран выбора/старый UI */
@@ -721,8 +721,7 @@ export default function App() {
         />
       );
     }
-    /* Первый запуск после установки/обновления: даже без темы You играем
-       заставку You ~10 секунд — один раз на ступень OOBE. */
+    /* Первый запуск после установки/обновления показывает выбранную заставку дольше. */
     return useYouBoot ? (
       <BootAnimationYou
         ready={!booting && !(session && !profile)}

@@ -29,6 +29,12 @@
       На телефонах приложение весит несколько мегабайт, и без неё
       WebView успевает показать белый экран — выглядит как «не грузится».
     -->
+    <script>
+      // Учитываем сохранённую тему ещё до загрузки React, без белой вспышки.
+      try {
+        if (localStorage.getItem("winchat_ny_dark") === "on") document.documentElement.classList.add("ny-dark");
+      } catch (_) {}
+    </script>
     <style>
       html,
       body {
@@ -40,22 +46,23 @@
         inset: 0;
         display: grid;
         place-items: center;
-        background: radial-gradient(
-            70% 55% at 50% 42%,
-            #c8f0ee 0%,
-            transparent 70%
-          ),
-          linear-gradient(168deg, #f6f9ff 0%, #eef4fd 52%, #e1ecfb 100%);
+        background: radial-gradient(circle at 50% 45%, #fff 0%, #f4f4f3 100%);
         font-family: Roboto, ui-sans-serif, system-ui, sans-serif;
       }
+      html.ny-dark, html.ny-dark body { background: #0b0c0e; }
+      html.ny-dark #boot-static {
+        background: radial-gradient(circle at 50% 45%, #202124 0%, #0b0c0e 100%);
+      }
+      html.ny-dark #boot-static i { background: #111214; box-shadow: 0 26px 60px -34px #000; }
+      html.ny-dark #boot-static span { color: #fff; }
       #boot-static i {
         display: grid;
         place-items: center;
         width: 108px;
         height: 108px;
         border-radius: 38%;
-        background: linear-gradient(140deg, #d3e3fd, #c2e7ff);
-        box-shadow: 0 26px 60px -34px rgba(11, 87, 208, 0.7);
+        background: #fff;
+        box-shadow: 0 26px 60px -34px rgba(0, 0, 0, 0.32);
         animation: boot-static-pulse 1.8s ease-in-out infinite;
       }
       #boot-static span {
@@ -63,7 +70,7 @@
         font-weight: 800;
         letter-spacing: -4px;
         line-height: 1;
-        color: #0b1a2b;
+        color: #111;
       }
       @keyframes boot-static-pulse {
         50% {
@@ -71,9 +78,7 @@
         }
       }
       @media (prefers-reduced-motion: reduce) {
-        #boot-static i {
-          animation: none;
-        }
+        #boot-static i { animation: none; }
       }
     </style>
   </head>

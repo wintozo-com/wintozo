@@ -11,28 +11,30 @@ export const YOU_THEME_ID = "material-you";
 /** id темы Liquid Glass — отдельный режим WinChat Glass. */
 export const GLASS_THEME_ID = "glass";
 
-/** id новогодней темы — «Ледяное стекло». Отдельный CSS-слой .theme-newyear. */
-export const NEW_YEAR_THEME_ID = "new-year";
+/** Классическая палитра включает праздничное ледяное оформление. */
+export const CLASSIC_THEME_ID = "ink-blue";
+/** Старый id сохраняется только для переноса настроек предыдущих версий. */
+const LEGACY_NEW_YEAR_THEME_ID = "new-year";
 
 export const THEMES = [
   {
-    id: "ink-blue",
+    id: CLASSIC_THEME_ID,
     name: "Классика",
-    description: "Тёмный акцент, синий акцент — базовая палитра WinChat",
-    accent: "#2b4fff",
-    accentSoft: "#e8edff",
-    chatBg: "#f5f5f2",
-    headerBg: "rgba(255,255,255,0.85)",
-    border: "rgba(0,0,0,0.08)",
-    gradientFrom: "#2b4fff",
-    gradientTo: "#6366f1",
-    ownerMsg: "#101214",
-    ownerMsgText: "#ffffff",
-    otherMsg: "#ffffff",
-    otherMsgText: "#101214",
-    otherMsgBorder: "rgba(0,0,0,0.08)",
-    chatTitle: "#101214",
-    chatSubtitle: "rgba(16,18,20,0.45)",
+    description: "Зимняя классика: ледяное стекло, мягкий свет и снег",
+    accent: "#1f7fb8",
+    accentSoft: "rgba(214,239,255,0.75)",
+    chatBg: "#eaf6ff",
+    headerBg: "rgba(255,255,255,0.62)",
+    border: "rgba(255,255,255,0.85)",
+    gradientFrom: "#a9e5ff",
+    gradientTo: "#ffd9a0",
+    ownerMsg: "#0d3c63",
+    ownerMsgText: "#eaf7ff",
+    otherMsg: "rgba(255,255,255,0.74)",
+    otherMsgText: "#123a5c",
+    otherMsgBorder: "rgba(255,255,255,0.92)",
+    chatTitle: "#0d3452",
+    chatSubtitle: "rgba(13,52,82,0.55)",
   },
   {
     id: "ocean",
@@ -109,25 +111,6 @@ export const THEMES = [
     otherMsgBorder: "rgba(224,87,138,0.16)",
     chatTitle: "#5a1530",
     chatSubtitle: "rgba(90,21,48,0.45)",
-  },
-  {
-    id: NEW_YEAR_THEME_ID,
-    name: "Ледяное стекло",
-    description: "Новогодний liquid glass: лёд, золото и дрейфующий снег",
-    accent: "#1f7fb8",
-    accentSoft: "rgba(214,239,255,0.75)",
-    chatBg: "#eaf6ff",
-    headerBg: "rgba(255,255,255,0.62)",
-    border: "rgba(255,255,255,0.85)",
-    gradientFrom: "#a9e5ff",
-    gradientTo: "#ffd9a0",
-    ownerMsg: "#0d3c63",
-    ownerMsgText: "#eaf7ff",
-    otherMsg: "rgba(255,255,255,0.74)",
-    otherMsgText: "#123a5c",
-    otherMsgBorder: "rgba(255,255,255,0.92)",
-    chatTitle: "#0d3452",
-    chatSubtitle: "rgba(13,52,82,0.55)",
   },
 ] as const;
 
@@ -241,7 +224,8 @@ export function getAllThemes(includeWinPro: boolean): Array<Theme | WinProTheme>
 
 /** Получить тему по id, иначе дефолт (Классика) */
 export function getThemeById(id: string): Theme | WinProTheme | undefined {
-  const found = [...THEMES, ...WINPRO_THEMES].find((t) => t.id === id);
+  const normalizedId = id === LEGACY_NEW_YEAR_THEME_ID ? CLASSIC_THEME_ID : id;
+  const found = [...THEMES, ...WINPRO_THEMES].find((t) => t.id === normalizedId);
   return found ?? THEMES[0];
 }
 
@@ -260,9 +244,9 @@ export function isGlassTheme(id: string): boolean {
   return id === GLASS_THEME_ID;
 }
 
-/** Проверить, что включена новогодняя тема «Ледяное стекло». */
+/** Ледяное оформление теперь часть классической палитры. */
 export function isNewYearTheme(id: string): boolean {
-  return id === NEW_YEAR_THEME_ID;
+  return id === CLASSIC_THEME_ID || id === LEGACY_NEW_YEAR_THEME_ID;
 }
 
 export interface ChatThemeColors {
@@ -321,13 +305,19 @@ export function getChatThemeColors(): ChatThemeColors {
 /** Получить текущую тему из localStorage (id сохраняется при выборе) */
 export function getCurrentTheme(): Theme {
   let id = "";
-  try { id = localStorage.getItem("winchat_theme_id") || ""; } catch {}
+  try {
+    id = localStorage.getItem("winchat_theme_id") || "";
+    if (id === LEGACY_NEW_YEAR_THEME_ID) {
+      id = CLASSIC_THEME_ID;
+      localStorage.setItem("winchat_theme_id", id);
+    }
+  } catch {}
   return getThemeById(id) as Theme;
 }
 
 /** Сохранить id выбранной темы */
 export function saveThemeId(id: string): void {
-  try { localStorage.setItem("winchat_theme_id", id); } catch {}
+  try { localStorage.setItem("winchat_theme_id", id === LEGACY_NEW_YEAR_THEME_ID ? CLASSIC_THEME_ID : id); } catch {}
 }
 
 /** CSS-переменные Material You, которые applyYouPalette задаёт inline.
@@ -377,7 +367,7 @@ export function applyTheme(theme: Theme | WinProTheme): void {
   // WinChat Glass: прозрачные стеклянные панели (CSS-слой .theme-glass).
   document.documentElement.classList.toggle("theme-glass", isGlassTheme(theme.id));
 
-  // Новогодняя тема: ледяной liquid glass + золотой свет (CSS-слой .theme-newyear).
+  // Зимнее ледяное стекло — часть классической палитры.
   document.documentElement.classList.toggle("theme-newyear", isNewYearTheme(theme.id));
 
   // WinChat You: отдельная тональная схема Material You + «обои» пользователя.

@@ -903,3 +903,14 @@
 }
 .auth-winter.is-light .auth-check-progress { background: rgba(20, 80, 120, .12); }
 .auth-winter.is-light .auth-check-snowman { filter: drop-shadow(0 14px 18px rgba(30, 90, 140, .28)); }
+
+/* Общий зимний пейзаж связывает вход с OOBE и классическим мессенджером. */
+.auth-winter {
+  background: linear-gradient(180deg, rgba(4,24,36,.78), rgba(7,30,42,.48)), url('/new-year-winter-scene.webp') center bottom / cover !important;
+}
+.auth-winter.is-light {
+  background: linear-gradient(150deg, rgba(234,248,252,.9), rgba(213,239,239,.78)), url('/new-year-winter-scene.webp') center bottom / cover !important;
+}
+.auth-winter-backdrop .hy-backdrop-garland { opacity: .35; }
+.auth-winter-backdrop .hy-backdrop-hanging { opacity: .18; }
+.auth-winter-card { box-shadow: 0 35px 100px -30px rgba(1,17,27,.7), inset 0 1px 0 rgba(255,255,255,.2); }
