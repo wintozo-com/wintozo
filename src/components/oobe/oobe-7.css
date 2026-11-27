@@ -68,7 +68,7 @@
     radial-gradient(circle at 92% 10%, rgba(46, 125, 50, 0.12), transparent 30%),
     radial-gradient(circle at 50% 110%, rgba(217, 154, 23, 0.16), transparent 50%),
     linear-gradient(180deg, #ffffff 0%, #fffdf8 48%, #fff6e8 100%);
-  font-family: "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   isolation: isolate;
 }
@@ -231,7 +231,7 @@
 .ny7-eyebrow svg { width: 14px; height: 14px; }
 .ny7-hero-title {
   margin: 0 0 16px;
-  font-family: "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(42px, 6vw, 76px);
   line-height: 0.98;
   font-weight: 800;
@@ -274,7 +274,7 @@
 }
 .ny7-year-snow svg { width: 22px; height: 22px; }
 .ny7-year-digits {
-  font-family: "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(52px, 7vw, 88px);
   line-height: 0.86;
   font-weight: 800;
@@ -405,7 +405,7 @@
 
 .ny7-step h2 {
   margin: 0 0 10px;
-  font-family: "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(28px, 3.4vw, 38px);
   line-height: 1.08;
   font-weight: 800;
@@ -623,7 +623,7 @@
 .ny7-winpass-cta svg { width: 17px; height: 17px; }
 .ny7-winpass-card h3 {
   margin: 0 0 4px;
-  font-family: "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
   font-size: 22px;
   font-weight: 800;
   color: var(--ny-ink);
@@ -639,7 +639,7 @@
   background: linear-gradient(135deg, #fff7e6, #ffffff);
   border: 1px dashed rgba(184,134,11,.45);
   color: #b71c1c;
-  font-family: "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
   font-size: clamp(16px, 2.4vw, 22px);
   font-weight: 700;
   letter-spacing: .04em;

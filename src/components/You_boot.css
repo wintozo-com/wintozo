@@ -20,7 +20,7 @@
   isolation: isolate;
   background: var(--yb-surface-low, #f6f9ff);
   color: var(--yb-on-surface, #0f1c2c);
-  font-family: "Google Sans", "Google Sans Text", "Product Sans", "Outfit",
+  font-family: "WinChat Zusker", "Google Sans", "Google Sans Text", "Product Sans", "Outfit",
     "Roboto", ui-sans-serif, system-ui, sans-serif;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
@@ -175,7 +175,7 @@
    Клип формы задаётся в SVG (см. компонент). */
 .youboot__logo {
   fill: #0b1a2b;
-  font-family: "Google Sans", "Google Sans Text", "Product Sans", "Outfit",
+  font-family: "WinChat Zusker", "Google Sans", "Google Sans Text", "Product Sans", "Outfit",
     "Roboto", ui-sans-serif, system-ui, sans-serif;
   transform-box: fill-box;
   transform-origin: center;

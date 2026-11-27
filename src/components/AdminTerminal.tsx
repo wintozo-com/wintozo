@@ -2,7 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { Terminal, X } from "lucide-react";
 import { supabase, type Profile } from "../lib/supabase";
 import { BADGE_LABELS } from "../lib/badges";
-import { parseSetOtaArgs } from "../lib/ota";
+import { parseSetOtaArgs, type OtaChannel } from "../lib/ota";
+import {
+  adminListBetaRequests,
+  adminReviewBetaRequest,
+  type BetaRequest,
+} from "../lib/beta";
 import AdminTerminalGui from "./AdminTerminalGui";
 
 interface Props {
@@ -41,10 +46,12 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
     url: string;
     version: string | null;
     target: string;
+    channel: OtaChannel;
     description: string | null;
   } | null>(null);
   const [otaPickerDevices, setOtaPickerDevices] = useState<OtaDeviceRow[]>([]);
   const [otaPickerBusy, setOtaPickerBusy] = useState(false);
+  const [betaRequests, setBetaRequests] = useState<BetaRequest[]>([]);
   const [guiMode, setGuiMode] = useState(false);
 
   useEffect(() => {
@@ -62,9 +69,10 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
     target: string,
     url: string,
     version: string | null,
-    description: string | null = null
+    description: string | null = null,
+    channel: OtaChannel = "full"
   ) {
-    setOtaPicker({ url, version, target, description });
+    setOtaPicker({ url, version, target, channel, description });
     setOtaPickerBusy(false);
     const { data, error } = await supabase.rpc("get_winchat_ota_devices", {
       _admin_id: me.id,
@@ -82,7 +90,7 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
     }
     setOtaPickerDevices(list);
     if (list.length === 1) {
-      void selectOtaDevice(list[0].device_id, url, version, description);
+      void selectOtaDevice(list[0].device_id, url, version, description, channel);
     }
   }
 
@@ -90,7 +98,8 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
     deviceId: string,
     url: string,
     version: string | null,
-    description: string | null = null
+    description: string | null = null,
+    channel: OtaChannel = "full"
   ) {
     setOtaPickerBusy(true);
     const { data } = await supabase.rpc("set_winchat_ota", {
@@ -99,6 +108,7 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
       _version: version,
       _target: deviceId,
       _desc: description,
+      _channel: channel,
     });
     setOtaPickerBusy(false);
     const res = data as { ok: boolean; message?: string; error?: string };
@@ -124,7 +134,8 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
     urlRaw: string,
     versionRaw: string | null,
     targetRaw: string | null,
-    descRaw: string | null
+    descRaw: string | null,
+    channel: OtaChannel = "full"
   ): Promise<OtaSetResult> {
     const url = (urlRaw || "").trim().replace(/^"|"$/g, "");
     const version = versionRaw ? versionRaw.trim() : null;
@@ -137,6 +148,7 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
       _version: version,
       _target: target,
       _desc: description,
+      _channel: channel,
     });
 
     const res = data as {
@@ -214,9 +226,12 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
             { type: "info", text: "/channel delete <id|название> — Удалить канал" },
             { type: "info", text: "/set version <X.Y.Z>        — Установить версию (можно 4.0.0-beta)" },
             { type: "info", text: "/get version                — Текущая версия приложения" },
-            { type: "info", text: '/set ota [@username] "<ссылка>" [версия] [@target|*] --note "что нового" — OTA для Android' },
-            { type: "info", text: "/set ota off                — Отключить OTA" },
-            { type: "info", text: "/get ota                    — Текущая OTA-настройка" },
+            { type: "info", text: "/set ota <ссылка> beta|full <версия> [@target|*] --note \"что нового\" — OTA для Android" },
+            { type: "info", text: "/set ota off [beta|full]    — Отключить OTA канала (по умолчанию full)" },
+            { type: "info", text: "/get ota [beta|full]        — Текущая OTA-настройка канала" },
+            { type: "info", text: "/get beta requests          — Заявки на бета-тест (in-app бот)" },
+            { type: "info", text: "/beta accept <id>           — Принять заявку в бета-программу" },
+            { type: "info", text: "/beta reject <id> [причина] — Отклонить заявку" },
             { type: "info", text: "/set legacy @username       — Включить базовый (legacy) интерфейс WinChat" },
             { type: "info", text: "/del legacy @username       — Вернуть новый интерфейс WinChat" },
             { type: "info", text: '/set oobe @username "<X.Y>" — Показать пользователю OOBE версии (5.0 / 6.0) при следующем входе' },
@@ -421,7 +436,7 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
                 ...prev,
                 {
                   type: "error",
-                  text: 'Использование: /set ota [@username] "<ссылка>" [версия] [@target|*] --note "описание обновления"',
+                  text: 'Использование: /set ota <ссылка> beta|full <версия> [@target|*] --note "описание обновления"',
                 },
               ]);
               break;
@@ -434,6 +449,8 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
                 _url: "",
                 _version: null,
                 _target: null,
+                _desc: null,
+                _channel: parsed.channel,
               });
               if (error) {
                 setHistory((prev) => [...prev, { type: "error", text: `Ошибка: ${error.message}` }]);
@@ -462,12 +479,14 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
               url,
               parsed.version,
               parsed.target,
-              parsed.description
+              parsed.description,
+              parsed.channel
             );
 
             setHistory((prev) => [
               ...prev,
               { type: res.ok ? "success" : "error", text: res.ok ? `✓ ${res.message}` : `✗ ${res.error}` },
+              { type: "info", text: `Канал: ${parsed.channel === "beta" ? "beta (только принятые тестеры)" : "full (все пользователи)"}` },
               { type: "info", text: `URL: ${res.url ?? url}` },
               { type: "info", text: `Версия: ${res.version ?? "не указана"} · Цель: ${res.target ?? "*"}` },
               ...(res.description
@@ -481,7 +500,8 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
                 parsed.target,
                 res.url ?? url,
                 res.version ?? null,
-                res.description ?? null
+                res.description ?? null,
+                parsed.channel
               );
             }
             break;
@@ -656,8 +676,11 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
           }
 
           if (what === "ota") {
+            const rawChannel = parts[2];
+            const channel: OtaChannel = rawChannel === "beta" ? "beta" : "full";
             const { data, error } = await supabase.rpc("get_winchat_ota", {
               _admin_id: me.id,
+              _channel: channel,
             });
             if (error) {
               setHistory((prev) => [...prev, { type: "error", text: `Ошибка: ${error.message}` }]);
@@ -666,9 +689,11 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
             const res = data as {
               ok: boolean;
               error?: string;
+              channel?: string;
               url?: string | null;
               version?: string | null;
               target?: string;
+              description?: string | null;
             };
             if (!res.ok) {
               setHistory((prev) => [...prev, { type: "error", text: `✗ ${res.error}` }]);
@@ -677,15 +702,15 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
             if (!res.url) {
               setHistory((prev) => [
                 ...prev,
-                { type: "info", text: 'OTA не настроена. Используйте /set ota [@username] "<ссылка>" [версия]' },
+                { type: "info", text: `OTA канала ${channel} не настроена. Используйте /set ota <ссылка> ${channel} <версия>` },
               ]);
               break;
             }
             setHistory((prev) => [
               ...prev,
-              { type: "info", text: `OTA URL: ${res.url}` },
-              { type: "info", text: `Версия: ${res.version ?? "не указана"}` },
-              { type: "info", text: `Цель: ${res.target ?? "*"}` },
+              { type: "info", text: `OTA (${channel}) URL: ${res.url}` },
+              { type: "info", text: `Версия: ${res.version ?? "не указана"} · Цель: ${res.target ?? "*"}` },
+              ...(res.description ? [{ type: "info" as const, text: `Описание: ${res.description}` }] : []),
             ]);
             break;
           }
@@ -712,6 +737,10 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
                 manufacturer: string | null;
                 os_version: string | null;
                 username: string | null;
+                nickname?: string | null;
+                joined_at?: string | null;
+                days_in_winchat?: number | null;
+                beta_accepted?: boolean;
               }>;
             };
             if (!res.ok) {
@@ -731,10 +760,36 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
               { type: "info", text: `═══ Устройства (${devices.length}) ═══` },
               ...devices.map((d) => ({
                 type: "info" as const,
-                text: `${d.username ? `@${d.username}` : "—"} · ${[d.manufacturer, d.model].filter(Boolean).join(" ") || d.platform || "устройство"} · ${
+                text: `${d.nickname || (d.username ? `@${d.username}` : "—")} · ${[d.manufacturer, d.model].filter(Boolean).join(" ") || d.platform || "устройство"} · ${
                   d.status ?? (d.is_wintozo_web ? "is_wintozo_web_true" : "is_wintozo_web_no")
-                } · v${d.app_version ?? "?"} · ${d.device_id}`,
+                } · v${d.app_version ?? "?"} · в WinChat ${d.days_in_winchat ?? "?"} дн.${d.beta_accepted ? " · бета" : ""} · ${d.device_id}`,
               })),
+            ]);
+            break;
+          }
+
+          if (what === "beta" && parts[2] === "requests") {
+            const res = await adminListBetaRequests(me.id, "pending");
+            if (!res.ok) {
+              setHistory((prev) => [...prev, { type: "error", text: `✗ ${res.error ?? "Ошибка"}` }]);
+              break;
+            }
+            setBetaRequests(res.requests);
+            if (!res.requests.length) {
+              setHistory((prev) => [
+                ...prev,
+                { type: "info", text: "Новых заявок на бета-тест нет" },
+              ]);
+              break;
+            }
+            setHistory((prev) => [
+              ...prev,
+              { type: "info", text: `═══ Заявки на бета-тест (${res.requests.length}) ═══` },
+              ...res.requests.map((r) => ({
+                type: "info" as const,
+                text: `${r.nickname || `@${r.username || "?"}`} · ${[r.manufacturer, r.model].filter(Boolean).join(" ") || r.platform || "устройство"} · ${r.app_version ? `v${r.app_version}` : "версия ?"} · в WinChat ${r.days_in_winchat ?? "?"} дн. · ${new Date(r.created_at).toLocaleString("ru-RU")} · id ${r.id}`,
+              })),
+              { type: "info", text: "Принять: /beta accept <id> · Отклонить: /beta reject <id> [причина]" },
             ]);
             break;
           }
@@ -773,8 +828,42 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
 
           setHistory((prev) => [
             ...prev,
-            { type: "error", text: "Использование: /get winpass @username | /get version | /get ota | /get devices | /get badges @username" },
+            { type: "error", text: "Использование: /get winpass @username | /get version | /get ota [beta|full] | /get devices | /get beta requests | /get badges @username" },
           ]);
+          break;
+        }
+
+        case "/beta": {
+          const action = parts[1];
+          if (action !== "accept" && action !== "reject") {
+            setHistory((prev) => [
+              ...prev,
+              { type: "error", text: "Использование: /beta accept <id> | /beta reject <id> [причина]" },
+            ]);
+            break;
+          }
+          const requestId = parts[2];
+          if (!requestId) {
+            setHistory((prev) => [
+              ...prev,
+              { type: "error", text: "Укажите id заявки из /get beta requests" },
+            ]);
+            break;
+          }
+          const note = action === "reject" ? parts.slice(3).join(" ") || null : null;
+          const res = await adminReviewBetaRequest(
+            me.id,
+            requestId,
+            action === "accept",
+            note
+          );
+          setHistory((prev) => [
+            ...prev,
+            { type: res.ok ? "success" : "error", text: `${res.ok ? "✓" : "✗"} ${res.message}` },
+          ]);
+          if (res.ok) {
+            setBetaRequests((prev) => prev.filter((r) => r.id !== requestId));
+          }
           break;
         }
 
@@ -1163,7 +1252,8 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
                       d.device_id,
                       otaPicker.url,
                       otaPicker.version,
-                      otaPicker.description
+                      otaPicker.description,
+                      otaPicker.channel
                     )
                   }
                   disabled={otaPickerBusy}
@@ -1228,7 +1318,12 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
           </div>
         </div>
 
-        {guiMode && <AdminTerminalGui onRun={runCommand} />}
+        {guiMode && (
+          <AdminTerminalGui
+            onRun={runCommand}
+            betaRequestIds={betaRequests.map((r) => r.id)}
+          />
+        )}
 
         {/* Лента */}
         <div className="flex-1 overflow-y-auto p-4 font-mono text-[13px] leading-relaxed">

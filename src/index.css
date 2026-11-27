@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
+/* Основной шрифт WinChat — пользовательский файл №1 (YFF Zusker). */
+@font-face {
+  font-family: "WinChat Zusker";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/winchat_font_1.otf") format("opentype");
+}
+
 @theme {
-  --font-sans: "Roboto", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-app: "Roboto", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: "WinChat Zusker", "Roboto", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-app: "WinChat Zusker", "Roboto", ui-sans-serif, system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
 
   --color-ink: #101214;
@@ -1133,7 +1142,7 @@ html.oobe-active .winpro-glow-overlay {
 .theme-you textarea,
 .theme-you select,
 .theme-you button {
-  font-family: "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
 }
 .theme-you .font-mono,
 .theme-you code {
@@ -1994,7 +2003,7 @@ html.oobe-active .winpro-glow-overlay {
 .theme-glass textarea,
 .theme-glass select,
 .theme-glass button {
-  font-family: "Nunito", "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Nunito", "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
 }
 .theme-glass .font-mono,
 .theme-glass code {
@@ -2495,7 +2504,7 @@ html.oobe-active .winpro-glow-overlay {
 .oobe-font button,
 .oobe-font textarea,
 .oobe-font select {
-  font-family: "Nunito", "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Nunito", "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
 }
 
 @keyframes oobe-rise {
@@ -2785,7 +2794,7 @@ html.theme-newyear input,
 html.theme-newyear textarea,
 html.theme-newyear select,
 html.theme-newyear button {
-  font-family: "Nunito", "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Nunito", "Libre Franklin", Roboto, ui-sans-serif, system-ui, sans-serif;
 }
 html.theme-newyear .font-mono,
 html.theme-newyear code {

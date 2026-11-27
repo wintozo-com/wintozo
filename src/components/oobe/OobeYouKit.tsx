@@ -352,7 +352,7 @@ export function OobeMorphMark({
             fillOpacity="0.94"
             style={{
               fontFamily:
-                '"Google Sans", "Outfit", "Roboto", ui-sans-serif, system-ui, sans-serif',
+                '"WinChat Zusker", "Google Sans", "Outfit", "Roboto", ui-sans-serif, system-ui, sans-serif',
             }}
           >
             W

@@ -43,7 +43,7 @@ html.oobe-intro-active .ny7-melody {
   z-index: 2147483000;
   overflow: hidden;
   color: var(--ice-ink);
-  font-family: "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Google Sans", "Product Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 .oobe-ice-intro[data-phase="fly"] { pointer-events: none; }

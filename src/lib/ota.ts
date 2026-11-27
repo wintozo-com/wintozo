@@ -13,6 +13,7 @@
  */
 import { Capacitor, registerPlugin, type PluginListenerHandle } from "@capacitor/core";
 import { supabase } from "./supabase";
+import { BETA_STATUS_EVENT } from "./beta";
 import {
   APP_VERSION,
   DOWNLOAD_URL,
@@ -100,7 +101,7 @@ function randomId(): string {
   return `dev-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-function getStoredDeviceId(): string {
+export function getStoredDeviceId(): string {
   try {
     const saved = localStorage.getItem(DEVICE_ID_KEY);
     if (saved) return saved;
@@ -200,10 +201,14 @@ export async function reportDeviceStatus(force = false): Promise<DeviceInfo> {
    Поиск и установка OTA
    ============================================================ */
 
+export type OtaChannel = "beta" | "full";
+
 export interface OtaInfo {
   url: string;
   version: string | null;
   target: string;
+  /** Канал обновления: beta — только для принятых тестеров, full — для всех. */
+  channel: OtaChannel;
   /** Когда админ перезалил запись OTA (пересборка APK с той же версией). */
   updatedAt: string | null;
   /** Текст из `--note ...` в команде /set ota. */
@@ -219,6 +224,14 @@ export interface OtaInitResult {
 /** Событие для экрана обновления WinChat 7.x (кнопка «Проверить обновления»). */
 export const OTA7_SHOW_EVENT = "winchat:show-ota7";
 
+/** Открыть центр обновлений 7.0 (лого, красная 7, бета-программа). */
+export const UPDATE_CENTER_EVENT = "winchat:open-update-center";
+
+export function openUpdateCenter(ota: OtaInfo | null = null): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent<OtaInfo | null>(UPDATE_CENTER_EVENT, { detail: ota }));
+}
+
 export function requestOta7Overlay(ota: OtaInfo): void {
   if (typeof window === "undefined") return;
   window.dispatchEvent(new CustomEvent<OtaInfo>(OTA7_SHOW_EVENT, { detail: ota }));
@@ -230,6 +243,7 @@ export function getDemoOta7(): OtaInfo {
     url: DOWNLOAD_URL,
     version: getDemoAvailableVersion(),
     target: "*",
+    channel: "full",
     updatedAt: null,
     description:
       "В версии 7.0 добавлено: новогодний дизайн, OTA-обновления, новые темы и многое другое.",
@@ -262,6 +276,7 @@ export interface ParsedSetOtaArgs {
   url: string | null;
   version: string | null;
   target: string | null;
+  channel: OtaChannel;
   description: string | null;
 }
 
@@ -279,12 +294,26 @@ export function parseSetOtaArgs(raw: string): ParsedSetOtaArgs {
     url: null,
     version: null,
     target: null,
+    channel: "full",
     description: null,
   };
   const trimmed = (raw || "").trim();
   if (!trimmed) return empty;
-  if (/^(off|clear|remove|delete|disable)$/i.test(trimmed)) {
-    return { ...empty, off: true };
+
+  // `/set ota off beta` и `/set ota full off` выключают нужный канал.
+  const offMatch = trimmed.match(
+    /^(?:off|clear|remove|delete|disable)(?:\s+(beta|full))?\s*$/i
+  );
+  if (offMatch) {
+    return { ...empty, off: true, channel: normalizeOtaChannel(offMatch[1]) };
+  }
+  const trailingOff = trimmed.match(/\s+(?:off|clear|remove|delete|disable)\s*$/i);
+  if (trailingOff) {
+    const prefix = trimmed.slice(0, trailingOff.index).trim();
+    const chMatch = prefix.match(/\b(beta|full)\b/i);
+    if (chMatch) {
+      return { ...empty, off: true, channel: normalizeOtaChannel(chMatch[1]) };
+    }
   }
 
   let rest = trimmed;
@@ -320,9 +349,15 @@ export function parseSetOtaArgs(raw: string): ParsedSetOtaArgs {
   });
 
   const tokens = rest.split(/\s+/).filter(Boolean);
-  const versionToken = tokens.find((t) => OTA_VERSION_RE.test(unquoteOtaToken(t)));
+  // Канал — отдельный токен, его нельзя путать с @target/device_id.
+  const channelToken = tokens.find((t) => /^(beta|full)$/i.test(unquoteOtaToken(t)));
+  const channel = normalizeOtaChannel(channelToken);
+  const tokensNoChannel = tokens.filter((t) => t !== channelToken);
+  const versionToken = tokensNoChannel.find((t) =>
+    OTA_VERSION_RE.test(unquoteOtaToken(t))
+  );
   const version = versionToken ? unquoteOtaToken(versionToken) : null;
-  const extras = tokens.filter((t) => t !== versionToken);
+  const extras = tokensNoChannel.filter((t) => t !== versionToken);
   const targetToken =
     extras.find((t) => t.startsWith("@") || t === "*") ?? extras[0] ?? null;
   const leftover = extras
@@ -336,14 +371,23 @@ export function parseSetOtaArgs(raw: string): ParsedSetOtaArgs {
     url,
     version,
     target: targetToken ? unquoteOtaToken(targetToken) : null,
+    channel,
     description: note ?? quoted[0] ?? (leftover || null),
   };
 }
 
-export async function searchOta(deviceId: string): Promise<OtaInfo | null> {
+function normalizeOtaChannel(value?: string): OtaChannel {
+  return value && value.toLowerCase() === "beta" ? "beta" : "full";
+}
+
+export async function searchOta(
+  deviceId: string,
+  channel: OtaChannel = "full"
+): Promise<OtaInfo | null> {
   try {
     const { data, error } = await supabase.rpc("winchat_search_ota", {
       _device_id: deviceId,
+      _channel: channel,
     });
     if (error || !data) return null;
     const res = data as {
@@ -352,6 +396,7 @@ export async function searchOta(deviceId: string): Promise<OtaInfo | null> {
       url?: string | null;
       version?: string | null;
       target?: string | null;
+      channel?: string | null;
       updated_at?: string | null;
       /** Появляется после миграции winchat_update_21_ota7_note.sql. */
       description?: string | null;
@@ -361,6 +406,7 @@ export async function searchOta(deviceId: string): Promise<OtaInfo | null> {
       url: res.url,
       version: res.version ?? null,
       target: res.target ?? "*",
+      channel: normalizeOtaChannel(res.channel ?? undefined) ?? channel,
       updatedAt: res.updated_at ?? null,
       description: res.description ?? null,
     };
@@ -372,13 +418,23 @@ export async function searchOta(deviceId: string): Promise<OtaInfo | null> {
     // с момента прошлой установки): так пересборка APK с той же строкой
     // версии снова предлагает установку.
     // В вебе не фильтруем: там APK просто скачивается по ссылке.
-    if (ota.version && canInstallOta()) {
-      const info = await getDeviceInfo();
-      const installed = info.appVersion || APP_VERSION;
-      if (!isVersionNewer(ota.version, installed)) {
-        // Телефон уже обновлялся до этой версии (короткий id) — не предлагаем снова.
-        if (!shouldOfferOta(ota.version)) return null;
-        if (!ota.updatedAt || ota.updatedAt === getOtaSeenStamp()) return null;
+    // Бета-сборки часто имеют пререлизную строку вида 7.0.0-closed-beta,
+    // которая по semver «старее» открытой беты. Для beta-канала не сравниваем
+    // версии: наличие записи и отметка updated_at важнее строки версии.
+    if (canInstallOta()) {
+      if (ota.channel === "beta") {
+        // Не сравниваем версии: 7.0.0-closed-beta по semver «старее»,
+        // чем 7.0.0-open-beta, но это другая бета-сборка. Повторно не
+        // предлагаем только ту же запись, которую уже начали ставить.
+        if (ota.updatedAt && ota.updatedAt === getOtaSeenStamp("beta")) return null;
+      } else if (ota.version) {
+        const info = await getDeviceInfo();
+        const installed = info.appVersion || APP_VERSION;
+        if (!isVersionNewer(ota.version, installed)) {
+          // Телефон уже обновлялся до этой версии (короткий id) — не предлагаем снова.
+          if (!shouldOfferOta(ota.version)) return null;
+          if (!ota.updatedAt || ota.updatedAt === getOtaSeenStamp(ota.channel)) return null;
+        }
       }
     }
     return ota;
@@ -401,7 +457,7 @@ async function runOtaInit(): Promise<OtaInitResult> {
 
   const [latestVersion, ota] = await Promise.all([
     fetchLatestVersion(),
-    searchOta(device.deviceId),
+    searchOta(device.deviceId, "full"),
   ]);
   return { device, ota, latestVersion };
 }
@@ -428,6 +484,20 @@ export function initDeviceOta(): Promise<OtaInitResult> {
     }));
   }
   return otaInitPromise;
+}
+
+/**
+ * Сбросить кэш инициализации: вызываем после изменения бета-статуса,
+ * иначе пользователь может остаться на старом канале до перезагрузки.
+ */
+export function resetOtaInit(): void {
+  otaInitPromise = null;
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener(BETA_STATUS_EVENT, () => {
+    resetOtaInit();
+  });
 }
 
 /** Скачать APK и открыть системный установщик. */
@@ -473,9 +543,13 @@ export async function onOtaStatus(
 
 const OTA_SEEN_KEY = "winchat_ota_seen_stamp";
 
-function getOtaSeenStamp(): string | null {
+function otaSeenKey(channel: OtaChannel): string {
+  return channel === "full" ? OTA_SEEN_KEY : `${OTA_SEEN_KEY}:${channel}`;
+}
+
+function getOtaSeenStamp(channel: OtaChannel = "full"): string | null {
   try {
-    return localStorage.getItem(OTA_SEEN_KEY);
+    return localStorage.getItem(otaSeenKey(channel));
   } catch {
     return null;
   }
@@ -484,7 +558,7 @@ function getOtaSeenStamp(): string | null {
 /** Запомнить, что пользователь начал установку этой записи OTA. */
 export function markOtaSeen(ota: OtaInfo): void {
   try {
-    if (ota.updatedAt) localStorage.setItem(OTA_SEEN_KEY, ota.updatedAt);
+    if (ota.updatedAt) localStorage.setItem(otaSeenKey(ota.channel), ota.updatedAt);
   } catch {
     /* no-op */
   }
@@ -496,17 +570,21 @@ export function markOtaSeen(ota: OtaInfo): void {
 
 const OTA_DISMISS_KEY = "winchat_ota_dismissed";
 
-export function isOtaDismissed(url: string): boolean {
+function otaDismissKey(channel: OtaChannel): string {
+  return channel === "full" ? OTA_DISMISS_KEY : `${OTA_DISMISS_KEY}:${channel}`;
+}
+
+export function isOtaDismissed(url: string, channel: OtaChannel = "full"): boolean {
   try {
-    return localStorage.getItem(OTA_DISMISS_KEY) === url;
+    return localStorage.getItem(otaDismissKey(channel)) === url;
   } catch {
     return false;
   }
 }
 
-export function dismissOta(url: string): void {
+export function dismissOta(url: string, channel: OtaChannel = "full"): void {
   try {
-    localStorage.setItem(OTA_DISMISS_KEY, url);
+    localStorage.setItem(otaDismissKey(channel), url);
   } catch {
     /* no-op */
   }

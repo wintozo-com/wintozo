@@ -170,14 +170,75 @@ const GUI_ACTIONS: GuiAction[] = [
     fields: [],
     build: () => "/get devices",
   },
+  {
+    id: "beta_requests",
+    label: "Заявки на бету",
+    desc: "Входящие заявки (in-app бот)",
+    icon: Shield,
+    fields: [],
+    build: () => "/get beta requests",
+  },
+  {
+    id: "beta_accept",
+    label: "Принять в бету",
+    desc: "Одобрить заявку по id",
+    icon: UserCheck,
+    fields: [{ key: "id", label: "ID заявки", placeholder: "uuid из списка" }],
+    build: (v) => `/beta accept ${v.id.trim()}`,
+  },
+  {
+    id: "beta_reject",
+    label: "Отклонить бету",
+    desc: "Отклонить заявку по id",
+    icon: UserX,
+    fields: [
+      { key: "id", label: "ID заявки", placeholder: "uuid из списка" },
+      { key: "reason", label: "Причина", placeholder: "Не подходит", optional: true },
+    ],
+    build: (v) => `/beta reject ${v.id.trim()} ${v.reason.trim()}`.trim(),
+  },
+  {
+    id: "ota_beta",
+    label: "OTA: beta",
+    desc: "Обновление для тестеров",
+    icon: Zap,
+    fields: [
+      { key: "url", label: "Ссылка на APK", placeholder: "https://update.com/winchat.apk" },
+      { key: "version", label: "Версия", placeholder: "7.0.0-closed-beta" },
+    ],
+    build: (v) => `/set ota ${v.url.trim()} beta ${v.version.trim()}`,
+  },
+  {
+    id: "ota_full",
+    label: "OTA: full",
+    desc: "Обновление для всех",
+    icon: Zap,
+    fields: [
+      { key: "url", label: "Ссылка на APK", placeholder: "https://update.com/winchat.apk" },
+      { key: "version", label: "Версия", placeholder: "7.0.0-closed-beta" },
+    ],
+    build: (v) => `/set ota ${v.url.trim()} full ${v.version.trim()}`,
+  },
 ];
 
-export default function AdminTerminalGui({ onRun }: { onRun: (command: string) => void }) {
+export default function AdminTerminalGui({
+  onRun,
+  betaRequestIds = [],
+}: {
+  onRun: (command: string) => void;
+  betaRequestIds?: string[];
+}) {
   const [active, setActive] = useState<GuiAction | null>(null);
   const [step, setStep] = useState(0);
   const [values, setValues] = useState<Record<string, string>>({});
 
   const field = active?.fields[step];
+
+  function requestId(value: string): string {
+    const v = value.trim();
+    if (v) return v;
+    return betaRequestIds[0] ?? "";
+  }
 
   function start(action: GuiAction) {
     if (action.fields.length === 0) {
@@ -191,7 +252,12 @@ export default function AdminTerminalGui({ onRun }: { onRun: (command: string) =
 
   function next() {
     if (!active || !field) return;
-    const value = (values[field.key] || "").trim();
+    const rawValue = (values[field.key] || "").trim();
+    const value =
+      (active?.id === "beta_accept" || active?.id === "beta_reject") &&
+      field.key === "id"
+        ? requestId(rawValue)
+        : rawValue;
     if (!field.optional && !value) return;
     const nextValues = { ...values, [field.key]: value };
     if (step < active.fields.length - 1) {

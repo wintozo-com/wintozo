@@ -13,7 +13,7 @@ import {
   LogOut,
   Palette,
   Pencil,
-  RefreshCw,
+  Download,
   ShieldCheck,
   Sparkles,
   X,
@@ -57,24 +57,19 @@ import BootStylePicker from "../../../BootStylePicker";
 import YouShapePicker from "../../../YouShapePicker";
 import {
   APP_VERSION,
-  DOWNLOAD_URL,
   fetchLatestVersion,
   getCachedServerVersion,
   isVersionNewer,
 } from "../../../../lib/checkVersion";
 import {
   getDeviceInfo,
-  installOta,
-  markOtaSeen,
-  onOtaStatus,
   reportDeviceStatus,
   searchOta,
-  showOta7IfAvailable,
+  openUpdateCenter,
   type DeviceInfo,
-  type OtaInfo,
-  type OtaState,
 } from "../../../../lib/ota";
 import DevModePanel from "../../../DevModePanel";
+import UpdateCenterHost from "../../../UpdateCenterHost";
 import {
   isDevMode,
   registerVersionTap,
@@ -83,7 +78,7 @@ import {
 } from "../../../../lib/devMode";
 import { devLog } from "../../../../lib/devLogs";
 
-type View = "menu" | "winpro" | "about" | "customization" | "security" | "dev";
+type View = "menu" | "winpro" | "updates" | "about" | "customization" | "security" | "dev";
 
 interface Props {
   me: Profile;
@@ -147,10 +142,7 @@ export default function AndroidSettings({
   const [device, setDevice] = useState<DeviceInfo | null>(null);
   const [serverVersion, setServerVersion] = useState<string | null>(() => getCachedServerVersion());
   const [latestVersion, setLatestVersion] = useState<string | null>(null);
-  const [aboutOta, setAboutOta] = useState<OtaInfo | null>(null);
   const [checking, setChecking] = useState(false);
-  const [otaBusy, setOtaBusy] = useState(false);
-  const [otaState, setOtaState] = useState<OtaState | null>(null);
 
   /* --- Безопасность --- */
   const [newPw, setNewPw] = useState("");
@@ -175,22 +167,6 @@ export default function AndroidSettings({
   useEffect(() => {
     if (!devMode && view === "dev") setView("menu");
   }, [devMode, view]);
-
-  /* Прогресс нативного установщика APK. */
-  useEffect(() => {
-    let dispose: (() => void) | undefined;
-    void onOtaStatus((event) => {
-      setOtaState(event.state);
-      if (event.state === "downloading" || event.state === "permission") {
-        setOtaBusy(true);
-      } else {
-        setOtaBusy(false);
-      }
-    }).then((fn) => {
-      dispose = fn;
-    });
-    return () => dispose?.();
-  }, []);
 
   /* ===== Профиль: загрузка аватара и сохранение ===== */
   async function uploadAvatar(file: File) {
@@ -248,8 +224,7 @@ export default function AndroidSettings({
         d.isAndroid && !d.isWintozoWeb ? searchOta(d.deviceId) : Promise.resolve(null),
       ]);
       setServerVersion(server);
-      setAboutOta(otaRes);
-      showOta7IfAvailable(otaRes);
+      openUpdateCenter(otaRes);
       const latest =
         otaRes?.version && server && isVersionNewer(otaRes.version, server)
           ? otaRes.version
@@ -259,25 +234,6 @@ export default function AndroidSettings({
       /* нет сети — просто ничего не обновляем */
     } finally {
       setChecking(false);
-    }
-  }
-
-  async function startAboutOta() {
-    if (!aboutOta || otaBusy) return;
-    setOtaBusy(true);
-    setOtaState("downloading");
-    // Запоминаем запись OTA как установленную: пересборка с той же
-    // версией предложится снова только после следующей перезаливки.
-    markOtaSeen(aboutOta);
-    try {
-      const res = await installOta(aboutOta.url);
-      if (res.fallback) {
-        setOtaBusy(false);
-        setOtaState(null);
-      }
-    } catch {
-      setOtaBusy(false);
-      setOtaState("error");
     }
   }
 
@@ -294,31 +250,6 @@ export default function AndroidSettings({
     if (!device.isWintozoWeb) return device.osVersion || "—";
     const m = /Android\s+([\d.]+)/i.exec(typeof navigator !== "undefined" ? navigator.userAgent : "");
     return m ? `Android ${m[1]}` : "Android";
-  }
-
-  function aboutStatus(): { kind: "idle" | "ok" | "update"; text: string } {
-    if (aboutOta) {
-      if (otaState === "permission") {
-        return { kind: "update", text: "Разрешите установку из этого источника и вернитесь в приложение" };
-      }
-      if (otaState === "error") {
-        return { kind: "update", text: "Не удалось скачать обновление. Попробуйте ещё раз" };
-      }
-      if (otaState === "installing") {
-        return { kind: "update", text: "Открываем системный установщик…" };
-      }
-      if (otaBusy || otaState === "downloading") {
-        return { kind: "update", text: "Загрузка обновления…" };
-      }
-      return { kind: "update", text: `Доступно обновление${aboutOta.version ? ` ${aboutOta.version}` : ""}` };
-    }
-    if (latestVersion && isVersionNewer(latestVersion, APP_VERSION)) {
-      return { kind: "update", text: `Доступна версия ${latestVersion}` };
-    }
-    if (latestVersion) {
-      return { kind: "ok", text: "У вас последняя версия WinChat" };
-    }
-    return { kind: "idle", text: "Нажмите «Проверить обновления»" };
   }
 
   /* ===== Безопасность ===== */
@@ -395,6 +326,12 @@ export default function AndroidSettings({
       sub: winPro ? `активен · ${winproDaysLeft(me)} дн.` : "не активен",
       icon: Crown,
     },
+    {
+      id: "updates",
+      label: "Обновления",
+      sub: "WinChat 7.0 · бета-программа",
+      icon: Download,
+    },
     { id: "about", label: "О приложении", sub: device?.appVersion || APP_VERSION, icon: Info },
     { id: "customization", label: "Кастомизация", sub: "темы и палитры", icon: Palette },
     { id: "security", label: "Безопасность", sub: "пароль и WinPass", icon: ShieldCheck },
@@ -415,6 +352,7 @@ export default function AndroidSettings({
 
   const TITLES: Record<Exclude<View, "menu">, string> = {
     winpro: "Статус WinPro",
+    updates: "Обновления",
     about: "О приложении",
     customization: "Кастомизация",
     security: "Безопасность",
@@ -432,6 +370,7 @@ export default function AndroidSettings({
 
   return (
     <div className="ny-settings-surface modern-phone-settings fixed inset-0 z-[80] flex flex-col animate-fade-in">
+      <UpdateCenterHost />
       <HappyYearGarland className="hy-modal-garland" bulbs={16} />
       {/* ================= ШАПКА ================= */}
       <div className="hy-phone-settings-head relative z-10 shrink-0 border-b border-black/6 bg-white/75 px-4 pb-3 pt-[max(1rem,env(safe-area-inset-top,0px))] backdrop-blur-xl">
@@ -594,7 +533,13 @@ export default function AndroidSettings({
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => setView(item.id)}
+                    onClick={() => {
+                      if (item.id === "updates") {
+                        void checkUpdates();
+                        return;
+                      }
+                      setView(item.id);
+                    }}
                     className={cn(
                       "flex w-full items-center gap-3 px-4 py-4 text-left transition hover:bg-black/[0.03] active:scale-[0.99]",
                       i > 0 && "border-t border-black/5"
@@ -772,59 +717,6 @@ export default function AndroidSettings({
                 })}
               </div>
 
-              <button
-                type="button"
-                onClick={checkUpdates}
-                disabled={checking}
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-ink py-3 text-sm font-bold text-white transition hover:bg-black active:scale-[0.99] disabled:opacity-40"
-              >
-                {checking ? <Loader2 className="h-4.5 w-4.5 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-                Проверить обновления
-              </button>
-
-              {(() => {
-                const st = aboutStatus();
-                if (st.kind === "idle") return null;
-                return (
-                  <div
-                    className={cn(
-                      "mt-2.5 flex items-center gap-2 rounded-2xl border px-4 py-3",
-                      st.kind === "update"
-                        ? "border-amber-500/35 bg-gradient-to-r from-amber-50 to-orange-50"
-                        : "border-emerald-500/30 bg-emerald-500/5"
-                    )}
-                  >
-                    <p
-                      className={cn(
-                        "min-w-0 flex-1 text-[12px] leading-snug font-bold",
-                        st.kind === "update" ? "text-amber-700" : "text-emerald-600"
-                      )}
-                    >
-                      {st.text}
-                    </p>
-                    {aboutOta ? (
-                      <button
-                        type="button"
-                        onClick={startAboutOta}
-                        disabled={otaBusy}
-                        className="shrink-0 rounded-lg bg-white/70 px-3 py-1.5 text-[11px] font-bold text-ink transition hover:bg-white disabled:opacity-60"
-                      >
-                        {otaBusy ? "Загрузка…" : "Установить"}
-                      </button>
-                    ) : (
-                      st.kind === "update" && (
-                        <button
-                          type="button"
-                          onClick={() => window.open(DOWNLOAD_URL, "_blank", "noopener,noreferrer")}
-                          className="shrink-0 rounded-lg bg-white/70 px-3 py-1.5 text-[11px] font-bold text-ink transition hover:bg-white"
-                        >
-                          Скачать
-                        </button>
-                      )
-                    )}
-                  </div>
-                );
-              })()}
             </div>
           )}
 

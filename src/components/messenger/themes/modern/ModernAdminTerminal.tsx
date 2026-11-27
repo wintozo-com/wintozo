@@ -16,7 +16,12 @@ import {
   X,
 } from "lucide-react";
 import { supabase, type Profile } from "../../../../lib/supabase";
-import { parseSetOtaArgs } from "../../../../lib/ota";
+import { parseSetOtaArgs, type OtaChannel } from "../../../../lib/ota";
+import {
+  adminListBetaRequests,
+  adminReviewBetaRequest,
+  type BetaRequest,
+} from "../../../../lib/beta";
 import { cn } from "../../../../utils/cn";
 
 interface Props {
@@ -41,6 +46,9 @@ interface OtaDeviceRow {
   manufacturer: string | null;
   os_version: string | null;
   username: string | null;
+  nickname?: string | null;
+  days_in_winchat?: number | null;
+  beta_accepted?: boolean;
 }
 
 type Field = {
@@ -200,7 +208,57 @@ const GUI_ACTIONS: GuiAction[] = [
     fields: [],
     build: () => `/get devices`,
   },
+  {
+    id: "beta_requests",
+    label: "Заявки на бету",
+    desc: "Входящие заявки (in-app бот)",
+    icon: Shield,
+    fields: [],
+    build: () => "/get beta requests",
+  },
+  {
+    id: "beta_accept",
+    label: "Принять в бету",
+    desc: "Одобрить заявку по id",
+    icon: UserCheck,
+    fields: [{ key: "id", label: "ID заявки", placeholder: "uuid из списка" }],
+    build: (v) => `/beta accept ${v.id.trim()}`.trim(),
+  },
+  {
+    id: "beta_reject",
+    label: "Отклонить бету",
+    desc: "Отклонить заявку по id",
+    icon: UserX,
+    fields: [
+      { key: "id", label: "ID заявки", placeholder: "uuid из списка" },
+      { key: "reason", label: "Причина", placeholder: "Не подходит", optional: true },
+    ],
+    build: (v) => `/beta reject ${v.id.trim()} ${v.reason.trim()}`.trim(),
+  },
+  {
+    id: "ota_beta",
+    label: "OTA: beta",
+    desc: "Обновление для тестеров",
+    icon: Terminal,
+    fields: [
+      { key: "url", label: "Ссылка на APK", placeholder: "https://update.com/winchat.apk" },
+      { key: "version", label: "Версия", placeholder: "7.0.0-closed-beta" },
+    ],
+    build: (v) => `/set ota ${v.url.trim()} beta ${v.version.trim()}`,
+  },
+  {
+    id: "ota_full",
+    label: "OTA: full",
+    desc: "Обновление для всех",
+    icon: Terminal,
+    fields: [
+      { key: "url", label: "Ссылка на APK", placeholder: "https://update.com/winchat.apk" },
+      { key: "version", label: "Версия", placeholder: "7.0.0-closed-beta" },
+    ],
+    build: (v) => `/set ota ${v.url.trim()} full ${v.version.trim()}`,
+  },
 ];
+
 
 export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdated }: Props) {
   const [history, setHistory] = useState<LogEntry[]>([
@@ -213,10 +271,12 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
     url: string;
     version: string | null;
     target: string;
+    channel: OtaChannel;
     description: string | null;
   } | null>(null);
   const [otaPickerDevices, setOtaPickerDevices] = useState<OtaDeviceRow[]>([]);
   const [otaPickerBusy, setOtaPickerBusy] = useState(false);
+  const [betaRequests, setBetaRequests] = useState<BetaRequest[]>([]);
   const [guiOpen, setGuiOpen] = useState(false);
   const [activeAction, setActiveAction] = useState<GuiAction | null>(null);
   const [step, setStep] = useState(0);
@@ -241,9 +301,10 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
     target: string,
     url: string,
     version: string | null,
-    description: string | null = null
+    description: string | null = null,
+    channel: OtaChannel = "full"
   ) {
-    setOtaPicker({ url, version, target, description });
+    setOtaPicker({ url, version, target, channel, description });
     setOtaPickerBusy(false);
     const { data, error } = await supabase.rpc("get_winchat_ota_devices", {
       _admin_id: me.id,
@@ -261,7 +322,7 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
     }
     setOtaPickerDevices(list);
     if (list.length === 1) {
-      void selectOtaDevice(list[0].device_id, url, version, description);
+      void selectOtaDevice(list[0].device_id, url, version, description, channel);
     }
   }
 
@@ -269,7 +330,8 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
     deviceId: string,
     url: string,
     version: string | null,
-    description: string | null = null
+    description: string | null = null,
+    channel: OtaChannel = "full"
   ) {
     setOtaPickerBusy(true);
     const { data } = await supabase.rpc("set_winchat_ota", {
@@ -278,6 +340,7 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
       _version: version,
       _target: deviceId,
       _desc: description,
+      _channel: channel,
     });
     setOtaPickerBusy(false);
     const res = data as { ok: boolean; message?: string; error?: string };
@@ -311,7 +374,8 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
           { type: "info", text: "/set legacy @user · /del legacy @user  (базовый/новый интерфейс)" },
           { type: "info", text: "/give badge @user <1|2|3> · /get badges @user" },
           { type: "info", text: "/get winpass @user · /get devices · /get version · /set version <X.Y.Z>" },
-          { type: "info", text: '/set ota [@user] "<url>" [версия] --note "что нового" · /set ota off · /get ota' },
+          { type: "info", text: "/set ota <url> beta|full <версия> --note \"что нового\" · /set ota off [beta|full] · /get ota [beta|full]" },
+          { type: "info", text: "/get beta requests · /beta accept <id> · /beta reject <id> [причина]" },
           { type: "info", text: '/set oobe @user "<5.0|6.0>" · /set oobe @user off' },
           { type: "info", text: "/channel list|verify|unverify|official|unofficial|delete ..." },
         ]);
@@ -437,7 +501,32 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
         const res = data as any;
         const list = (res.devices ?? []) as OtaDeviceRow[];
         if (!list.length) append({ type: "info", text: "Устройств нет" });
-        else append([{ type: "info", text: `═══ Устройства (${list.length}) ═══` }, ...list.map((d, i) => ({ type: "info" as const, text: `${i + 1}. ${d.username ? "@" + d.username : "—"} · ${[d.manufacturer, d.model].filter(Boolean).join(" ") || d.platform || "устройство"} · ${d.status ?? ""} · v${d.app_version ?? "?"}` }))]);
+        else append([{ type: "info", text: `═══ Устройства (${list.length}) ═══` }, ...list.map((d, i) => ({ type: "info" as const, text: `${i + 1}. ${d.nickname || (d.username ? "@" + d.username : "—")} · ${[d.manufacturer, d.model].filter(Boolean).join(" ") || d.platform || "устройство"} · ${d.status ?? ""} · v${d.app_version ?? "?"} · в WinChat ${d.days_in_winchat ?? "?"} дн.${d.beta_accepted ? " · бета" : ""}` }))]);
+        return;
+      }
+      if (cmd === "/get" && parts[1] === "beta" && parts[2] === "requests") {
+        const res = await adminListBetaRequests(me.id, "pending");
+        if (!res.ok) return append({ type: "error", text: `✗ ${res.error ?? "Ошибка"}` });
+        setBetaRequests(res.requests);
+        if (!res.requests.length) return append({ type: "info", text: "Новых заявок на бета-тест нет" });
+        append([
+          { type: "info", text: `═══ Заявки на бета-тест (${res.requests.length}) ═══` },
+          ...res.requests.map((r) => ({ type: "info" as const, text: `${r.nickname || `@${r.username || "?"}`} · ${[r.manufacturer, r.model].filter(Boolean).join(" ") || r.platform || "устройство"} · ${r.app_version ? `v${r.app_version}` : "версия ?"} · в WinChat ${r.days_in_winchat ?? "?"} дн. · ${new Date(r.created_at).toLocaleString("ru-RU")} · id ${r.id}` })),
+          { type: "info", text: "Принять: /beta accept <id> · Отклонить: /beta reject <id> [причина]" },
+        ]);
+        return;
+      }
+      if (cmd === "/beta") {
+        const action = parts[1];
+        if (action !== "accept" && action !== "reject") {
+          return append({ type: "error", text: "Использование: /beta accept <id> | /beta reject <id> [причина]" });
+        }
+        const requestId = parts[2] || betaRequests[0]?.id;
+        if (!requestId) return append({ type: "error", text: "Укажите id заявки из /get beta requests" });
+        const note = action === "reject" ? parts.slice(3).join(" ") || null : null;
+        const res = await adminReviewBetaRequest(me.id, requestId, action === "accept", note);
+        append({ type: res.ok ? "success" : "error", text: `${res.ok ? "✓" : "✗"} ${res.message}` });
+        if (res.ok) setBetaRequests((prev) => prev.filter((r) => r.id !== requestId));
         return;
       }
       if (cmd === "/give" && parts[1] === "wintozopro") {
@@ -510,12 +599,16 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
         return;
       }
       if (cmd === "/get" && parts[1] === "ota") {
-        const { data, error } = await supabase.rpc("get_winchat_ota");
+        const channel: OtaChannel = parts[2] === "beta" ? "beta" : "full";
+        const { data, error } = await supabase.rpc("get_winchat_ota", {
+          _admin_id: me.id,
+          _channel: channel,
+        });
         if (error) return append({ type: "error", text: `Ошибка: ${error.message}` });
         const res = data as any;
         if (!res?.ok) return append({ type: "error", text: `✗ ${res?.error ?? "Не удалось получить OTA"}` });
         append([
-          { type: "info", text: `OTA URL: ${res.url || "— (выключено)"}` },
+          { type: "info", text: `OTA (${channel}) URL: ${res.url || "— (выключено)"}` },
           { type: "info", text: `Версия: ${res.version ?? "—"} · Цель: ${res.target ?? "*"}` },
           ...(res.description ? [{ type: "info" as const, text: `Описание: ${res.description}` }] : []),
         ]);
@@ -528,7 +621,7 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
         if (!after || (!parsed.off && !parsed.url)) {
           append({
             type: "error",
-            text: 'Использование: /set ota [@username] "<ссылка>" [версия] [@target|*] --note "описание обновления"',
+            text: 'Использование: /set ota <ссылка> beta|full <версия> [@target|*] --note "описание обновления"',
           });
           return;
         }
@@ -539,6 +632,8 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
             _url: "",
             _version: null,
             _target: null,
+            _desc: null,
+            _channel: parsed.channel,
           });
           if (error) return append({ type: "error", text: `Ошибка: ${error.message}` });
           const res = data as any;
@@ -557,6 +652,7 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
           _version: parsed.version,
           _target: parsed.target,
           _desc: parsed.description,
+          _channel: parsed.channel,
         });
         if (error) return append({ type: "error", text: `Ошибка: ${error.message}` });
         const res = data as any;
@@ -565,6 +661,7 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
           return;
         }
         append({ type: "success", text: `✓ ${res.message ?? "OTA установлена"}` });
+        append({ type: "info", text: `Канал: ${parsed.channel === "beta" ? "beta (только принятые тестеры)" : "full (все пользователи)"}` });
         append({ type: "info", text: `URL: ${res.url ?? parsed.url}` });
         append({
           type: "info",
@@ -578,7 +675,8 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
             parsed.target,
             res.url ?? parsed.url,
             res.version ?? parsed.version ?? null,
-            res.description ?? parsed.description ?? null
+            res.description ?? parsed.description ?? null,
+            parsed.channel
           );
         }
         return;
@@ -604,7 +702,14 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
 
   function submitWizardStep() {
     if (!activeAction || !wizardField) return;
-    const v = (values[wizardField.key] || "").trim();
+    let v = (values[wizardField.key] || "").trim();
+    if (
+      (activeAction?.id === "beta_accept" || activeAction?.id === "beta_reject") &&
+      wizardField.key === "id" &&
+      !v
+    ) {
+      v = betaRequests[0]?.id ?? "";
+    }
     if (!wizardField.optional && !v) return;
     if (step < activeAction.fields.length - 1) {
       setStep((s) => s + 1);
@@ -637,7 +742,8 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
                     d.device_id,
                     otaPicker.url,
                     otaPicker.version,
-                    otaPicker.description
+                    otaPicker.description,
+                    otaPicker.channel
                   )
                 }
                 className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-left transition hover:bg-white/10"

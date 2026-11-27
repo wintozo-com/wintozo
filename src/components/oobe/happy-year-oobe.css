@@ -24,7 +24,7 @@
     radial-gradient(circle at 93% 8%, rgba(46, 125, 50, 0.13), transparent 32%),
     radial-gradient(circle at 50% 108%, rgba(217, 154, 23, 0.16), transparent 52%),
     linear-gradient(180deg, #ffffff 0%, #fffdf8 52%, #fff6e6 100%);
-  font-family: "Outfit", "Google Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
+  font-family: "WinChat Zusker", "Outfit", "Google Sans", "Roboto", ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }

@@ -130,6 +130,7 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
       url,
       version,
       target: ota?.target ?? "*",
+      channel: ota?.channel ?? "full",
       updatedAt: ota?.updatedAt ?? null,
       description: ota?.description ?? null,
     });

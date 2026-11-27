@@ -194,7 +194,7 @@ export default function CheckVersion() {
           />
           <div
             className="animate-scale-in relative w-full max-w-2xl overflow-hidden rounded-[32px] border border-[#d9c28a]/45 bg-[linear-gradient(180deg,#fffdf8_0%,#fff7ec_100%)] p-6 shadow-[0_40px_90px_-40px_rgba(80,50,10,.55)] sm:p-8"
-            style={{ fontFamily: '"Manrope","Segoe UI",ui-sans-serif,system-ui,sans-serif' }}
+            style={{ fontFamily: '"WinChat Zusker","Manrope","Segoe UI",ui-sans-serif,system-ui,sans-serif' }}
           >
             <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top,rgba(217,154,23,.16),transparent_70%)]" />
             <button
