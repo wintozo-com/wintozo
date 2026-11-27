@@ -135,7 +135,7 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
       description: ota?.description ?? null,
     });
 
-    void installOta(url)
+    void installOta(url, version)
       .then((res) => {
         if (!res.fallback) return; // нативный плагин продолжит слать otaStatus
         setFallback(true);

@@ -424,7 +424,7 @@ export async function searchOta(
     if (canInstallOta()) {
       if (ota.channel === "beta") {
         // Не сравниваем версии: 7.0.0-closed-beta по semver «старее»,
-        // чем 7.0.0-open-beta, но это другая бета-сборка. Повторно не
+        // чем 7.0.0, но это другая бета-сборка. Повторно не
         // предлагаем только ту же запись, которую уже начали ставить.
         if (ota.updatedAt && ota.updatedAt === getOtaSeenStamp("beta")) return null;
       } else if (ota.version) {

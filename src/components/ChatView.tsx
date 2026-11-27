@@ -103,6 +103,8 @@ export default function ChatView({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
   const [editBusy, setEditBusy] = useState(false);
+  /** На телефоне действия показываем только по тапу на своё сообщение. */
+  const [actionsFor, setActionsFor] = useState<string | null>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
   const uncontrolledText = useRef("");
   /** Актуальный список сообщений — для синхронного сохранения локальных заметок. */
@@ -822,10 +824,20 @@ export default function ChatView({
           ))}
 
         {own && (
-          <div className="mb-2 flex items-center gap-0.5 opacity-100 transition md:opacity-0 md:group-hover:opacity-100">
+          <div
+            className={cn(
+              "mb-2 flex items-center gap-0.5 transition",
+              actionsFor === m.id ? "opacity-100" : "pointer-events-none opacity-0",
+              "md:pointer-events-auto md:opacity-0 md:group-hover:opacity-100"
+            )}
+          >
             {m.content && (
               <button
-                onClick={() => startEdit(m)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  startEdit(m);
+                  setActionsFor(null);
+                }}
                 className={cn(
                   "rounded-full p-1.5 transition",
                   youMode
@@ -838,7 +850,11 @@ export default function ChatView({
               </button>
             )}
             <button
-              onClick={() => removeMessage(m.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActionsFor(null);
+                removeMessage(m.id);
+              }}
               className={cn(
                 "rounded-full p-1.5 transition",
                 youMode
@@ -852,7 +868,14 @@ export default function ChatView({
           </div>
         )}
 
-        <div className="animate-msg-in max-w-[78%] sm:max-w-[65%]">
+        <div
+          className={cn("animate-msg-in max-w-[78%] sm:max-w-[65%]", own && "cursor-pointer")}
+          onClick={
+            own
+              ? () => setActionsFor((current) => (current === m.id ? null : m.id))
+              : undefined
+          }
+        >
           <div
             className={cn(
               "overflow-hidden text-[15px] leading-relaxed font-medium",

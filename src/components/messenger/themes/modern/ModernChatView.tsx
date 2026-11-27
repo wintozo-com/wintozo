@@ -110,6 +110,8 @@ export default function ChatView({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
   const [editBusy, setEditBusy] = useState(false);
+  /** На телефоне действия показываем только по тапу на своё сообщение. */
+  const [actionsFor, setActionsFor] = useState<string | null>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
   const uncontrolledText = useRef("");
   /** Актуальный список сообщений — для синхронного сохранения локальных заметок. */
@@ -832,15 +834,21 @@ export default function ChatView({
         {own && (
           <div
             className={cn(
-              "mb-1 flex items-center gap-1 transition md:opacity-0 md:group-hover:opacity-100",
+              "mb-1 flex items-center gap-1 transition md:pointer-events-auto md:opacity-0 md:group-hover:opacity-100",
               youMode
-                ? "opacity-100"
+                ? actionsFor === m.id
+                  ? "opacity-100"
+                  : "pointer-events-none opacity-0"
                 : "rounded-2xl border border-black/8 bg-white/85 p-1 shadow-sm backdrop-blur-sm"
             )}
           >
             {m.content && (
               <button
-                onClick={() => startEdit(m)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  startEdit(m);
+                  setActionsFor(null);
+                }}
                 className={cn(
                   "transition",
                   youMode
@@ -854,7 +862,11 @@ export default function ChatView({
               </button>
             )}
             <button
-              onClick={() => removeMessage(m.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setActionsFor(null);
+                removeMessage(m.id);
+              }}
               className={cn(
                 "transition",
                 youMode
@@ -869,7 +881,17 @@ export default function ChatView({
           </div>
         )}
 
-        <div className="modern-pop max-w-[84%] sm:max-w-[68%] md:max-w-[62%]">
+        <div
+          className={cn(
+            "modern-pop max-w-[84%] sm:max-w-[68%] md:max-w-[62%]",
+            own && "cursor-pointer"
+          )}
+          onClick={
+            own
+              ? () => setActionsFor((current) => (current === m.id ? null : m.id))
+              : undefined
+          }
+        >
           <div
             className={cn(
               "overflow-hidden text-[15px] leading-relaxed font-medium transition-shadow",
@@ -1485,7 +1507,7 @@ export default function ChatView({
                       onCompositionEnd={(e) => { const target = e.target as HTMLTextAreaElement; uncontrolledText.current = target.value; setHasText(target.value.trim().length > 0); }}
                       onFocus={() => { if (textRef.current) { uncontrolledText.current = textRef.current.value; setHasText(textRef.current.value.trim().length > 0); } }}
                       onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); send(); } }}
-                      placeholder={chat.isSaved ? "Заметка" : "Сообщение"}
+                      placeholder={chat.isSaved ? "Заметка…" : "Сообщение…"}
                       className="yc-composer-input max-h-32 min-w-0 flex-1 resize-none bg-transparent px-1.5 py-2 text-[15px] font-medium outline-none sm:px-2"
                     />
                     <input ref={fileRef} type="file" accept="image/*,video/*" hidden onChange={(e) => { const f = e.target.files?.[0]; if (f) { if (f.type.startsWith("video/")) sendVideoFile(f); else send({ image: f }); } e.target.value = ""; }} />

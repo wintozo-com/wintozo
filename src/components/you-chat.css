@@ -993,6 +993,10 @@
   border: 0 !important;
   color: var(--you-on-surface) !important;
   caret-color: var(--you-primary);
+  scrollbar-width: none;
+}
+.yc-composer textarea::-webkit-scrollbar {
+  display: none;
 }
 .yc-composer textarea::placeholder {
   color: var(--you-on-surface-variant) !important;

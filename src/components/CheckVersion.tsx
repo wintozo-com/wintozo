@@ -6,7 +6,6 @@ import {
   dismissOta7,
   isOta7Dismissed,
   isUpdate7DemoActive,
-  isVersion7,
   isVersionNewer,
   shouldShowUpdateBanner,
   dismissUpdateBanner,
@@ -31,7 +30,26 @@ interface Ota7Prompt {
 }
 
 function ota7Key(version: string, ota: OtaInfo | null): string {
+  // Идентификатор записи OTA, а не только версия: после установки версия
+  // в APK меняется, и старый ключ больше не совпадал — экран открывался
+  // заново. Для веб-баннера без OTA используем версию.
+  return ota ? `${ota.url}|${ota.updatedAt ?? ""}` : `version:${version}`;
+}
+
+function legacyOta7Key(version: string, ota: OtaInfo | null): string {
   return `${version}|${ota?.updatedAt ?? ""}`;
+}
+
+function isOta7PromptDismissed(version: string, ota: OtaInfo | null): boolean {
+  return (
+    isOta7Dismissed(ota7Key(version, ota)) ||
+    isOta7Dismissed(legacyOta7Key(version, ota))
+  );
+}
+
+function dismissOta7Prompt(version: string, ota: OtaInfo | null): void {
+  dismissOta7(ota7Key(version, ota));
+  dismissOta7(legacyOta7Key(version, ota));
 }
 
 /**
@@ -72,17 +90,12 @@ export default function CheckVersion() {
           return;
         }
 
-        /* Новогодний экран для любой реальной версии, начинающейся с 7. */
-        const version7 =
-          res.ota?.version ?? (isVersion7(res.latestVersion) ? res.latestVersion : null);
-        if (version7) {
-          const key = ota7Key(version7, res.ota);
-          if (!isOta7Dismissed(key)) {
-            setOta7({
-              version: version7,
-              ota: res.ota,
-              url: res.ota?.url ?? DOWNLOAD_URL,
-            });
+        /* Экран установки — только для реальной записи OTA. Одна версия
+           сервера не должна открывать его заново после обновления. */
+        if (res.ota) {
+          const version7 = res.ota.version ?? APP_VERSION;
+          if (!isOta7PromptDismissed(version7, res.ota)) {
+            setOta7({ version: version7, ota: res.ota, url: res.ota.url });
             return;
           }
         }
@@ -106,14 +119,14 @@ export default function CheckVersion() {
     };
   }, []);
 
-  /* Кнопка «Проверить обновления» в настройках и демо-роут тоже открывают экран. */
+  /* Кнопка «Проверить обновления» в настройках и демо-роут тоже открывают экран.
+     Это явное действие пользователя: Previously dismissed OTA и версия без
+     номера не должны «выкидывать» его обратно в настройки. */
   useEffect(() => {
     const handler = (event: Event) => {
       const ota = (event as CustomEvent<OtaInfo>).detail;
-      const version = ota?.version;
-      if (!version || !isVersion7(version)) return;
-      if (!isUpdate7DemoActive() && isOta7Dismissed(ota7Key(version, ota))) return;
-      setOta7({ version, ota, url: ota.url });
+      const version = ota?.version ?? APP_VERSION;
+      setOta7({ version, ota, url: ota?.url ?? DOWNLOAD_URL });
     };
     window.addEventListener(OTA7_SHOW_EVENT, handler);
     return () => window.removeEventListener(OTA7_SHOW_EVENT, handler);
@@ -132,7 +145,7 @@ export default function CheckVersion() {
     // Демо не портит ключ просмотра реальной OTA и остаётся доступным
     // через кнопку «Проверить обновления» до перезагрузки страницы.
     if (!isUpdate7DemoActive() && ota7) {
-      dismissOta7(ota7Key(ota7.version, ota7.ota));
+      dismissOta7Prompt(ota7.version, ota7.ota);
     }
     setOta7(null);
   }

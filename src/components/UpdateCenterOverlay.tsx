@@ -131,8 +131,10 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
       const result = await searchOta(device.deviceId, "full");
       if (result) {
         setFound(result);
-        onClose();
+        // Сначала поднимаем экран установки, затем закрываем центр обновлений,
+        // иначе пользователь остаётся в настройках без видимого результата.
         requestOta7Overlay(result);
+        onClose();
       } else {
         setNotice("Обновлений пока нет — у вас актуальная версия");
       }

@@ -204,7 +204,7 @@ const GUI_ACTIONS: GuiAction[] = [
     icon: Zap,
     fields: [
       { key: "url", label: "Ссылка на APK", placeholder: "https://update.com/winchat.apk" },
-      { key: "version", label: "Версия", placeholder: "7.0.0-closed-beta" },
+      { key: "version", label: "Версия", placeholder: "7.0.0" },
     ],
     build: (v) => `/set ota ${v.url.trim()} beta ${v.version.trim()}`,
   },
@@ -215,7 +215,7 @@ const GUI_ACTIONS: GuiAction[] = [
     icon: Zap,
     fields: [
       { key: "url", label: "Ссылка на APK", placeholder: "https://update.com/winchat.apk" },
-      { key: "version", label: "Версия", placeholder: "7.0.0-closed-beta" },
+      { key: "version", label: "Версия", placeholder: "7.0.0" },
     ],
     build: (v) => `/set ota ${v.url.trim()} full ${v.version.trim()}`,
   },
