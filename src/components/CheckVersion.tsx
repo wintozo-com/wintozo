@@ -4,6 +4,7 @@ import {
   APP_VERSION,
   DOWNLOAD_URL,
   dismissOta7,
+  getDemoAvailableVersion,
   isOta7Dismissed,
   isUpdate7DemoActive,
   isVersionNewer,
@@ -83,7 +84,7 @@ export default function CheckVersion() {
         if (isUpdate7DemoActive()) {
           const demo = getDemoOta7();
           setOta7({
-            version: demo.version ?? "7.0.1",
+            version: demo.version ?? getDemoAvailableVersion(),
             ota: demo,
             url: demo.url,
           });

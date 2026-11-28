@@ -1,7 +1,7 @@
 /* ============================================================
    WinChat — экран обновления внутри настроек
-   Тёмная зимняя сцена, SVG-ёлочки, большая красная 7,
-   логотип WinChat, три точки сверху, зелёная кнопка снизу.
+   Тёмная сцена с плавным переливающимся градиентом, большая
+   цифра, название под ней, три точки сверху, зелёная кнопка.
    ============================================================ */
 
 .uc-root {
@@ -15,10 +15,23 @@
   overflow: hidden;
   color: #f2fff9;
   background:
-    radial-gradient(circle at 50% 12%, rgba(255, 255, 255, 0.1), transparent 45%),
-    linear-gradient(180deg, rgba(3, 19, 28, 0.94), rgba(2, 12, 19, 0.97));
+    radial-gradient(circle at 18% 22%, rgba(255, 72, 92, 0.32), transparent 42%),
+    radial-gradient(circle at 82% 76%, rgba(255, 200, 92, 0.28), transparent 46%),
+    radial-gradient(circle at 50% 50%, rgba(42, 202, 150, 0.22), transparent 55%),
+    linear-gradient(135deg, #061a27 0%, #0a2a35 48%, #120f2c 100%);
+  background-size: 180% 180%, 200% 200%, 190% 190%, 180% 180%;
+  animation: uc-gradient-flow 16s ease-in-out infinite;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+}
+@keyframes uc-gradient-flow {
+  0%,
+  100% {
+    background-position: 0% 50%, 100% 50%, 50% 50%, 0% 50%;
+  }
+  50% {
+    background-position: 100% 30%, 0% 70%, 60% 40%, 100% 50%;
+  }
 }
 
 /* Внутри карточки настроек: оверлей не выходит за пределы настроек. */
@@ -54,9 +67,9 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 28px;
   background:
-    radial-gradient(ellipse 70% 42% at 50% 4%, rgba(36, 178, 137, 0.26), transparent 70%),
-    radial-gradient(ellipse 80% 45% at 50% 100%, rgba(13, 92, 110, 0.55), transparent 76%),
-    linear-gradient(180deg, #0b2b39 0%, #071d29 52%, #04131c 100%);
+    radial-gradient(ellipse 80% 55% at 50% 0%, rgba(255, 90, 90, 0.18), transparent 70%),
+    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(255, 200, 90, 0.16), transparent 75%),
+    linear-gradient(160deg, rgba(10, 38, 52, 0.94) 0%, rgba(11, 24, 46, 0.96) 55%, rgba(24, 12, 38, 0.97) 100%);
   box-shadow:
     0 32px 90px rgba(0, 0, 0, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
@@ -82,24 +95,58 @@
   }
 }
 
-/* Мягкий свет снизу, как от ёлочной гирлянды */
+/* Мягкое сияние, переливающееся по фону карточки. */
+.uc-stage::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  inset: -60%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 180deg,
+    rgba(255, 70, 90, 0.22),
+    rgba(255, 205, 95, 0.26),
+    rgba(65, 220, 160, 0.24),
+    rgba(110, 150, 255, 0.2),
+    rgba(255, 70, 90, 0.22)
+  );
+  filter: blur(70px);
+  animation: uc-aurora-spin 22s linear infinite;
+}
 .uc-stage::after {
   content: "";
   position: absolute;
-  inset: auto 0 0;
-  height: 40%;
+  z-index: 1;
+  inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 120%, rgba(66, 209, 122, 0.3), transparent 70%);
+  background: linear-gradient(180deg, rgba(4, 14, 24, 0.12), rgba(4, 10, 20, 0.5));
+}
+@keyframes uc-aurora-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* ---------- снег (два слоя, только CSS) ---------- */
-.uc-snow {
+/* ---------- декор только для WinChat 7 ---------- */
+.uc-snow-wrap {
   position: absolute;
   inset: 0;
   z-index: 1;
   overflow: hidden;
   pointer-events: none;
-  opacity: 0.8;
+  transition:
+    opacity 1.1s ease,
+    filter 1.1s ease;
+}
+.uc-snow-wrap--hidden {
+  opacity: 0;
+  filter: blur(8px);
+}
+.uc-snow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.65;
 }
 .uc-snow::before,
 .uc-snow::after {
@@ -118,13 +165,84 @@
   background-size: 290px 260px;
   background-position: 60px 40px;
   animation-duration: 19s;
-  animation-direction: normal;
-  opacity: 0.55;
+  opacity: 0.5;
   filter: blur(0.4px);
 }
 @keyframes uc-snow-fall {
   to {
     transform: translateY(200px);
+  }
+}
+.uc-forest-wrap {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  width: 100%;
+  height: 62px;
+  flex: none;
+  pointer-events: none;
+  transition:
+    opacity 1.1s ease,
+    transform 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1.1s ease;
+}
+.uc-forest-wrap--hidden {
+  opacity: 0;
+  transform: translateY(-18px) scale(0.82);
+  filter: blur(8px);
+}
+.uc-forest {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 7px;
+  height: 46px;
+}
+.uc-tree {
+  transform-origin: bottom center;
+  animation: uc-sway 3.4s ease-in-out infinite;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.35));
+}
+.uc-tree-big {
+  width: 40px;
+  height: 40px;
+  color: #3edb8d;
+  filter: drop-shadow(0 0 12px rgba(62, 219, 141, 0.5));
+}
+.uc-tree-small {
+  width: 28px;
+  height: 28px;
+  color: #2db878;
+  opacity: 0.9;
+  transform: translateY(5px);
+  animation-duration: 4.1s;
+  animation-delay: 0.4s;
+}
+.uc-star {
+  width: 14px;
+  height: 14px;
+  margin-bottom: 20px;
+  color: #ffdf8a;
+  filter: drop-shadow(0 0 8px rgba(255, 220, 130, 0.85));
+  animation: uc-twinkle 2.6s ease-in-out infinite;
+}
+.uc-star-right {
+  animation-delay: 1.1s;
+}
+@keyframes uc-sway {
+  50% {
+    transform: rotate(3deg) translateY(-2px);
+  }
+}
+@keyframes uc-twinkle {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.85) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(20deg);
   }
 }
 
@@ -241,134 +359,122 @@
   }
 }
 
-/* ---------- ёлочки и звёзды ---------- */
-.uc-forest {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  gap: 7px;
-  height: 46px;
-  margin-bottom: 4px;
-}
-.uc-tree {
-  transform-origin: bottom center;
-  animation: uc-sway 3.4s ease-in-out infinite;
-  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.35));
-}
-.uc-tree-big {
-  width: 40px;
-  height: 40px;
-  color: #2db878;
-}
-.uc-tree-small {
-  width: 28px;
-  height: 28px;
-  color: #249b69;
-  opacity: 0.9;
-  transform: translateY(5px);
-  animation-duration: 4.1s;
-  animation-delay: 0.4s;
-}
-.uc-star {
-  width: 14px;
-  height: 14px;
-  margin-bottom: 20px;
-  color: #ffdf8a;
-  filter: drop-shadow(0 0 8px rgba(255, 220, 130, 0.85));
-  animation: uc-twinkle 2.6s ease-in-out infinite;
-}
-.uc-star-right {
-  animation-delay: 1.1s;
-}
-@keyframes uc-sway {
-  50% {
-    transform: rotate(3deg) translateY(-2px);
-  }
-}
-@keyframes uc-twinkle {
-  0%, 100% {
-    opacity: 0.55;
-    transform: scale(0.85) rotate(0deg);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.15) rotate(20deg);
-  }
-}
-
-/* ---------- логотип в медальоне ---------- */
-.uc-logo-wrap {
-  position: relative;
-  display: grid;
-  width: 108px;
-  height: 108px;
-  flex-shrink: 0;
-  place-items: center;
-  margin: 2px 0 6px;
-}
-.uc-logo-wrap img {
-  position: relative;
-  z-index: 2;
-  width: 76px;
-  height: 76px;
-  border-radius: 23px;
-  box-shadow:
-    0 14px 30px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  animation: uc-float 4.4s ease-in-out infinite;
-}
-.uc-halo {
-  position: absolute;
-  inset: -12px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.28), rgba(70, 220, 160, 0.16) 46%, transparent 72%);
-  animation: uc-halo 3.6s ease-in-out infinite;
-}
-.uc-orbit {
-  position: absolute;
-  inset: -4px;
-  border: 1px dashed rgba(255, 255, 255, 0.32);
-  border-radius: 50%;
-  animation: uc-orbit 22s linear infinite;
-}
-@keyframes uc-float {
-  50% {
-    transform: translateY(-5px);
-  }
-}
 @keyframes uc-halo {
   50% {
     opacity: 0.6;
     transform: scale(1.14);
   }
 }
-@keyframes uc-orbit {
-  to {
-    transform: rotate(360deg);
-  }
-}
 
-/* ---------- большая красная семёрка ---------- */
-.uc-seven-wrap {
+/* ---------- герой экрана: цифра и название ---------- */
+.uc-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.uc-hero-stage {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin: 8px 0 0;
+  gap: 14px;
+  width: 100%;
+  min-height: clamp(126px, 34vw, 168px);
+  margin-top: 6px;
+  isolation: isolate;
 }
-.uc-seven {
-  font-family: "WinChat Zusker", "Inter", system-ui, sans-serif;
-  font-size: clamp(96px, 26vw, 142px);
+.uc-hero-digit-wrap {
+  position: relative;
+  display: grid;
+  width: 150px;
+  height: 150px;
+  flex: none;
+  place-items: center;
+  perspective: 700px;
+}
+.uc-hero-glow {
+  position: absolute;
+  inset: -70px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  opacity: 0;
+  background: radial-gradient(
+    circle,
+    rgba(255, 226, 140, 0.55) 0%,
+    rgba(255, 190, 70, 0.28) 38%,
+    transparent 70%
+  );
+  filter: blur(24px);
+  transition: opacity 1.3s ease;
+}
+.uc-hero--cordy .uc-hero-glow {
+  opacity: 1;
+  animation: uc-hero-breathe 3.2s ease-in-out infinite;
+}
+@keyframes uc-hero-breathe {
+  0%,
+  100% {
+    transform: scale(0.94);
+    opacity: 0.75;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+.uc-hero-morph {
+  position: absolute;
+  inset: -54px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0;
+  background-image:
+    radial-gradient(3px 3px at 50% 2%, #fff8da, transparent 60%),
+    radial-gradient(2.5px 2.5px at 82% 14%, #ffe9a8, transparent 60%),
+    radial-gradient(3px 3px at 98% 50%, #fff8da, transparent 60%),
+    radial-gradient(2.5px 2.5px at 82% 86%, #ffe9a8, transparent 60%),
+    radial-gradient(3px 3px at 50% 98%, #fff8da, transparent 60%),
+    radial-gradient(2.5px 2.5px at 18% 86%, #ffe9a8, transparent 60%),
+    radial-gradient(3px 3px at 2% 50%, #fff8da, transparent 60%),
+    radial-gradient(2.5px 2.5px at 18% 14%, #ffe9a8, transparent 60%);
+}
+.uc-hero--cordy .uc-hero-morph {
+  animation: uc-hero-morph 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes uc-hero-morph {
+  0% {
+    opacity: 0;
+    transform: scale(0.35) rotate(-20deg);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.25) rotate(25deg);
+  }
+}
+.uc-hero-digit {
+  grid-area: 1 / 1;
+  margin: 0;
+  padding: 0.1em 0.02em 0.14em;
+  font-family: "Inter", "WinChat Zusker", system-ui, sans-serif;
+  font-size: clamp(110px, 30vw, 148px);
   font-weight: 900;
-  line-height: 0.92;
-  letter-spacing: -0.09em;
-  /* Фон с background-clip: text рисуется только внутри box элемента.
-     Добавляем запас по краям и компенсируем его отрицательным margin,
-     иначе нижние/верхние края цифры обрезаются. */
-  padding: 0.24em 0.07em;
-  margin: -0.24em -0.07em;
+  line-height: 1;
+  font-variant-numeric: lining-nums;
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  will-change: opacity, transform, filter;
+}
+.uc-hero-digit--seven {
+  z-index: 2;
   color: #ff4148;
-  background: linear-gradient(
+  background-image: linear-gradient(
     110deg,
     #ff243f 0%,
     #ff5b4a 20%,
@@ -378,80 +484,276 @@
     #ffb56a 84%,
     #ff243f 100%
   );
-  background-size: 260% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
   filter:
     drop-shadow(0 2px 0 #a41322)
     drop-shadow(0 7px 0 #750817)
-    drop-shadow(0 14px 24px rgba(0, 0, 0, 0.45))
-    drop-shadow(0 0 8px rgba(255, 58, 66, 0));
+    drop-shadow(0 16px 28px rgba(0, 0, 0, 0.45));
+  animation: uc-hero-red-shimmer 5.8s ease-in-out infinite;
+  transition:
+    opacity 1s ease,
+    transform 1.2s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 1s ease;
+}
+.uc-hero-digit--eight {
+  z-index: 3;
+  color: #ffd45e;
+  background-image: linear-gradient(
+    110deg,
+    #fff3b0 0%,
+    #ffd45e 18%,
+    #fff8d6 36%,
+    #ffb43d 54%,
+    #ffe98a 72%,
+    #ffd45e 88%,
+    #fff3b0 100%
+  );
+  filter:
+    drop-shadow(0 2px 0 #8c5a00)
+    drop-shadow(0 8px 0 #5a3600)
+    drop-shadow(0 16px 28px rgba(0, 0, 0, 0.45));
+  opacity: 0;
+  transform: translateY(24px) scale(0.74) rotate(-8deg);
+  animation: uc-hero-gold-shimmer 2.8s ease-in-out infinite;
+  transition:
+    opacity 1.05s ease 0.12s,
+    transform 1.25s cubic-bezier(0.16, 1, 0.3, 1) 0.12s,
+    filter 1.05s ease 0.12s;
+}
+.uc-hero--cordy .uc-hero-digit--seven {
+  opacity: 0;
+  transform: translateY(-18px) scale(1.3) rotate(8deg);
+  filter: blur(12px) drop-shadow(0 0 24px rgba(255, 70, 70, 0.8));
+}
+.uc-hero--cordy .uc-hero-digit--eight {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotate(0deg);
   animation:
-    uc-seven-shimmer 5.8s ease-in-out infinite,
-    uc-seven-glow 3s ease-in-out infinite;
+    uc-hero-gold-shimmer 2.8s ease-in-out infinite,
+    uc-hero-eight-in 1.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  filter:
+    drop-shadow(0 2px 0 #8c5a00)
+    drop-shadow(0 8px 0 #5a3600)
+    drop-shadow(0 18px 28px rgba(0, 0, 0, 0.45))
+    drop-shadow(0 0 28px rgba(255, 212, 94, 0.85));
+}
+.uc-hero-flash {
+  position: absolute;
+  inset: -30px;
+  border: 2px solid rgba(255, 222, 130, 0.9);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  box-shadow:
+    0 0 30px rgba(255, 212, 94, 0.7),
+    inset 0 0 30px rgba(255, 212, 94, 0.5);
+}
+.uc-hero--cordy .uc-hero-flash {
+  animation: uc-hero-flash 1.2s ease-out both;
+}
+@keyframes uc-hero-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
 }
 .uc-spark {
-  width: 19px;
-  height: 19px;
+  width: 20px;
+  height: 20px;
   color: #ffe3a0;
-  filter: drop-shadow(0 0 10px rgba(255, 214, 120, 0.8));
-  animation: uc-twinkle 2.9s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 214, 120, 0.85));
+  animation:
+    uc-twinkle 2.9s ease-in-out infinite,
+    uc-spark-float 4s ease-in-out infinite;
+}
+.uc-spark-left {
+  animation-delay: 0.1s;
 }
 .uc-spark-right {
   animation-delay: 1.3s;
 }
-@keyframes uc-seven-shimmer {
-  0% {
+@keyframes uc-spark-float {
+  50% {
+    transform: translateY(-7px);
+  }
+}
+.uc-hero-names {
+  position: relative;
+  min-height: 34px;
+  margin-top: 8px;
+  font-family: "WinChat Zusker", "Inter", system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+}
+.uc-hero-name {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  transition:
+    opacity 0.9s ease,
+    transform 1.1s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.9s ease;
+}
+.uc-hero-name--winchat {
+  opacity: 1;
+  color: #ffffff;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
+}
+.uc-hero-ch {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+}
+/* Распад WinChat на осколки: каждая буква улетает в свою сторону. */
+.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch {
+  transition:
+    transform 1s cubic-bezier(0.3, 0.9, 0.25, 1),
+    opacity 0.75s ease,
+    filter 0.75s ease;
+}
+.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(1) {
+  transform: translate(-58px, -44px) rotate(-42deg) scale(0.65);
+  transition-delay: 0s;
+}
+.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(2) {
+  transform: translate(-14px, -76px) rotate(26deg) scale(0.7);
+  transition-delay: 0.06s;
+}
+.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(3) {
+  transform: translate(18px, 58px) rotate(-30deg) scale(0.6);
+  transition-delay: 0.12s;
+}
+.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(4) {
+  transform: translate(-30px, 70px) rotate(38deg) scale(0.72);
+  transition-delay: 0.03s;
+}
+.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(5) {
+  transform: translate(56px, -54px) rotate(46deg) scale(0.66);
+  transition-delay: 0.1s;
+}
+.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(6) {
+  transform: translate(48px, 66px) rotate(-36deg) scale(0.62);
+  transition-delay: 0.16s;
+}
+.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(7) {
+  transform: translate(74px, 22px) rotate(52deg) scale(0.7);
+  transition-delay: 0.2s;
+}
+.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch {
+  opacity: 0;
+  filter: blur(6px);
+}
+.uc-hero-name--cordy {
+  opacity: 0;
+  color: #ffd45e;
+  filter: drop-shadow(0 0 14px rgba(255, 212, 94, 0.6));
+  transform: translateX(-50%) translateY(14px);
+}
+/* Cordy влетает снизу по буквам, каждая чуть позже предыдущей. */
+.uc-hero-ch--in {
+  opacity: 0;
+  background-image: linear-gradient(
+    110deg,
+    #fff4c4 0%,
+    #ffd45e 30%,
+    #fff8d6 50%,
+    #ffb43d 72%,
+    #ffdf91 100%
+  );
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: translateY(66px) scale(0.62);
+  filter: blur(5px);
+}
+.uc-hero--cordy .uc-hero-name--cordy .uc-hero-ch--in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+  transition:
+    transform 1.05s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.7s ease,
+    filter 0.7s ease;
+}
+.uc-hero--cordy .uc-hero-name--cordy .uc-hero-ch--in:nth-child(1) {
+  transition-delay: 0.5s;
+  animation: uc-hero-gold-shimmer 3.2s ease-in-out 1.6s infinite;
+}
+.uc-hero--cordy .uc-hero-name--cordy .uc-hero-ch--in:nth-child(2) {
+  transition-delay: 0.58s;
+  animation: uc-hero-gold-shimmer 3.2s ease-in-out 1.68s infinite;
+}
+.uc-hero--cordy .uc-hero-name--cordy .uc-hero-ch--in:nth-child(3) {
+  transition-delay: 0.66s;
+  animation: uc-hero-gold-shimmer 3.2s ease-in-out 1.76s infinite;
+}
+.uc-hero--cordy .uc-hero-name--cordy .uc-hero-ch--in:nth-child(4) {
+  transition-delay: 0.74s;
+  animation: uc-hero-gold-shimmer 3.2s ease-in-out 1.84s infinite;
+}
+.uc-hero--cordy .uc-hero-name--cordy .uc-hero-ch--in:nth-child(5) {
+  transition-delay: 0.82s;
+  animation: uc-hero-gold-shimmer 3.2s ease-in-out 1.92s infinite;
+}
+.uc-hero--cordy .uc-hero-name--cordy {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.uc-hero .uc-version {
+  margin-top: 8px;
+  transition: opacity 0.5s ease;
+}
+@keyframes uc-hero-red-shimmer {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
     background-position: 100% 50%;
   }
+}
+@keyframes uc-hero-gold-shimmer {
+  0%,
   100% {
     background-position: 0% 50%;
   }
-}
-@keyframes uc-seven-glow {
   50% {
-    filter:
-      drop-shadow(0 2px 0 #a41322)
-      drop-shadow(0 7px 0 #750817)
-      drop-shadow(0 14px 30px rgba(0, 0, 0, 0.45))
-      drop-shadow(0 0 26px rgba(255, 82, 88, 0.8));
+    background-position: 100% 50%;
+  }
+}
+@keyframes uc-hero-eight-in {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.66) rotate(-12deg);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-6px) scale(1.07) rotate(3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0deg);
   }
 }
 
-/* ---------- подпись WinChat ---------- */
-.uc-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  padding: 5px 14px 5px 6px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  font-family: "WinChat Zusker", "Inter", system-ui, sans-serif;
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  color: #ffffff;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.2);
-}
-.uc-brand img {
-  width: 25px;
-  height: 25px;
-  border-radius: 8px;
-}
+/* ---------- версия прямо под семёркой ---------- */
 .uc-version {
-  margin: 14px 0 0;
+  margin: 6px 0 0;
+  font-family: "WinChat Zusker", "Inter", system-ui, sans-serif;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  color: rgba(255, 255, 255, 0.68);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.72);
 }
 .uc-current-version {
   margin: 0 0 9px;
@@ -698,17 +1000,13 @@
   background: rgba(39, 173, 99, 0.1);
   text-align: center;
 }
-.uc-beta-found-title {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 800;
-  color: #a8f2c8;
-}
-.uc-beta-found-desc {
-  margin: 7px 0 0;
+.uc-beta-found-version {
+  margin: 0 0 10px;
+  font-family: "WinChat Zusker", "Inter", system-ui, sans-serif;
   font-size: 11px;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.62);
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  color: #a8f2c8;
 }
 .uc-beta-install {
   display: flex;
@@ -737,46 +1035,11 @@
   opacity: 0.7;
   cursor: default;
 }
-.uc-beta-progress {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-}
-.uc-beta-progress-track {
-  position: relative;
-  height: 8px;
-  flex: 1;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.14);
-}
-.uc-beta-progress-fill {
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #55dd90, #b6ffd2);
-  box-shadow: 0 0 12px rgba(85, 221, 144, 0.65);
-  transition: width 0.28s ease-out;
-}
-.uc-beta-progress span {
-  min-width: 38px;
-  font-family: "WinChat Zusker", "Inter", system-ui, sans-serif;
-  font-size: 12px;
-  font-weight: 800;
-  color: #d7ffe8;
-  text-align: right;
-}
 .uc-beta-empty {
   margin: 14px 0 0;
   font-size: 12px;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.55);
-}
-.uc-beta-note {
-  margin: 10px 0 0;
-  font-size: 11px;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.7);
 }
 .uc-spin {
   animation: uc-spin 0.9s linear infinite;
@@ -789,6 +1052,9 @@
 
 /* ---------- компактные экраны ---------- */
 @media (max-height: 620px) {
+  .uc-forest-wrap {
+    height: 48px;
+  }
   .uc-forest {
     height: 34px;
   }
@@ -800,16 +1066,8 @@
     width: 22px;
     height: 22px;
   }
-  .uc-logo-wrap {
-    width: 88px;
-    height: 88px;
-  }
-  .uc-logo-wrap img {
-    width: 62px;
-    height: 62px;
-  }
-  .uc-seven {
-    font-size: 104px;
+  .uc-hero-digit {
+    font-size: 108px;
   }
   .uc-content {
     padding-bottom: 18px;

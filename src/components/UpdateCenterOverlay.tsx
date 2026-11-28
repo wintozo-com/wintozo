@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import {
   ArrowLeft,
   Check,
@@ -19,17 +19,13 @@ import {
   subscribeBeta,
   type BetaInfo,
 } from "../lib/beta";
-import { APP_VERSION } from "../lib/checkVersion";
+import { APP_VERSION, isVersion8 } from "../lib/checkVersion";
 import {
   getDeviceInfo,
-  installOta,
-  markOtaSeen,
-  onOtaStatus,
   reportDeviceStatus,
   requestOta7Overlay,
   searchOta,
   type OtaInfo,
-  type OtaStatusEvent,
 } from "../lib/ota";
 import "./update-center.css";
 
@@ -49,12 +45,12 @@ const BETA_LABELS: Record<BetaInfo["status"], string> = {
   rejected: "Заявка отклонена — попробуйте позже",
 };
 
-/** Декоративный слой снега: только CSS, без картинок и эмодзи. */
+/** Снег — только CSS, без картинок и эмодзи. */
 function Snow() {
   return <div className="uc-snow" aria-hidden />;
 }
 
-/** Ёлочки и звёзды — SVG-иконки. */
+/** Ёлочки и звёзды — SVG-иконки, видны только в состоянии WinChat 7. */
 function Forest() {
   return (
     <div className="uc-forest" aria-hidden>
@@ -63,6 +59,62 @@ function Forest() {
       <TreePine className="uc-tree uc-tree-big" />
       <TreePine className="uc-tree uc-tree-small" />
       <Sparkles className="uc-star uc-star-right" />
+    </div>
+  );
+}
+
+/** Искры-частицы взрыва при переходе: угол полёта — через `--i`. */
+const BURST_BITS = Array.from({ length: 14 }, (_, i) => i);
+
+/**
+ * Герой экрана: одна и та же разметка для 7 и для Cordy 8.
+ * Меняются только цифра и подпись — сам интерфейс не перескакивает.
+ */
+function HeroBlock({ label, revealed }: { label: string; revealed: boolean }) {
+  return (
+    <div className={revealed ? "uc-hero uc-hero--cordy" : "uc-hero"}>
+      <div className="uc-hero-stage" aria-hidden>
+        <div className="uc-hero-digit-wrap">
+          <span className="uc-hero-glow" />
+          <span className="uc-hero-morph" />
+          <span className="uc-hero-halo" />
+          <span className="uc-hero-ring" />
+          <span className="uc-hero-ring uc-hero-ring--late" />
+          <span className="uc-hero-digit uc-hero-digit--seven">7</span>
+          <span className="uc-hero-digit uc-hero-digit--eight">8</span>
+          <span className="uc-hero-sweep" />
+          <span className="uc-hero-burst">
+            {BURST_BITS.map((i) => (
+              <span
+                key={i}
+                className="uc-hero-bit"
+                style={{ "--i": i } as CSSProperties}
+              />
+            ))}
+          </span>
+        </div>
+      </div>
+
+      <div className="uc-hero-names" aria-live="polite">
+        {/* WinChat разваливается на буквы-осколки при переходе к Cordy. */}
+        <span className="uc-hero-name uc-hero-name--winchat" aria-hidden>
+          {"WinChat".split("").map((ch, i) => (
+            <span key={i} className="uc-hero-ch">
+              {ch}
+            </span>
+          ))}
+        </span>
+        {/* Cordy собирается снизу по буквам. */}
+        <span className="uc-hero-name uc-hero-name--cordy">
+          {"Cordy".split("").map((ch, i) => (
+            <span key={i} className="uc-hero-ch uc-hero-ch--in">
+              {ch}
+            </span>
+          ))}
+        </span>
+        <span className="uc-hero-underline" aria-hidden />
+      </div>
+      <p className="uc-version">{label}</p>
     </div>
   );
 }
@@ -81,9 +133,21 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
   const [betaFound, setBetaFound] = useState<OtaInfo | null>(null);
   const [betaNotFound, setBetaNotFound] = useState(false);
   const [betaNotice, setBetaNotice] = useState<string | null>(null);
-  const [betaInstalling, setBetaInstalling] = useState(false);
-  const [betaProgress, setBetaProgress] = useState<number | null>(null);
-  const [betaInstallNote, setBetaInstallNote] = useState<string | null>(null);
+
+  /* Обновление до 8.x запускает плавный переход WinChat 7 → Cordy 8. */
+  const targetVersion = found?.version ?? ota?.version ?? null;
+  const cordyMode = isVersion8(targetVersion);
+  const [cordyRevealed, setCordyRevealed] = useState(false);
+
+  useEffect(() => {
+    if (!cordyMode) {
+      setCordyRevealed(false);
+      return;
+    }
+    setCordyRevealed(false);
+    const timer = window.setTimeout(() => setCordyRevealed(true), 2000);
+    return () => window.clearTimeout(timer);
+  }, [cordyMode, targetVersion]);
 
   useEffect(() => {
     const off = subscribeBeta(setBeta);
@@ -95,32 +159,6 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
     if (ota) setFound(ota);
   }, [ota]);
 
-  /* Прогресс загрузки бета-APK приходит от нативного плагина. */
-  useEffect(() => {
-    let alive = true;
-    let dispose: (() => void) | undefined;
-    void onOtaStatus((event: OtaStatusEvent) => {
-      if (!alive) return;
-      if (event.state === "downloading") {
-        setBetaProgress(typeof event.progress === "number" ? event.progress : null);
-        setBetaInstallNote(null);
-      } else if (event.state === "permission") {
-        setBetaInstallNote("Разрешите установку из этого источника и вернитесь в приложение");
-      } else if (event.state === "installing") {
-        setBetaInstallNote("Открываем системный установщик…");
-      } else if (event.state === "error") {
-        setBetaInstalling(false);
-        setBetaInstallNote(event.message ?? "Не удалось установить обновление");
-      }
-    }).then((fn) => {
-      dispose = fn;
-    });
-    return () => {
-      alive = false;
-      dispose?.();
-    };
-  }, []);
-
   async function checkForUpdates() {
     if (checking) return;
     setChecking(true);
@@ -131,10 +169,14 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
       const result = await searchOta(device.deviceId, "full");
       if (result) {
         setFound(result);
-        // Сначала поднимаем экран установки, затем закрываем центр обновлений,
-        // иначе пользователь остаётся в настройках без видимого результата.
-        requestOta7Overlay(result);
-        onClose();
+        // Обновление до 8.x сначала показывает переход 7 → Cordy 8 здесь,
+        // а экран установки открывается по нажатию кнопки.
+        if (!isVersion8(result.version)) {
+          // Сначала поднимаем экран установки, затем закрываем центр обновлений,
+          // иначе пользователь остаётся в настройках без видимого результата.
+          requestOta7Overlay(result);
+          onClose();
+        }
       } else {
         setNotice("Обновлений пока нет — у вас актуальная версия");
       }
@@ -156,13 +198,11 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
 
   /** Проверка бета-канала доступна только принятым тестерам. */
   async function checkBetaUpdates() {
-    if (betaChecking || betaInstalling || beta.status !== "accepted") return;
+    if (betaChecking || beta.status !== "accepted") return;
     setBetaChecking(true);
     setBetaFound(null);
     setBetaNotFound(false);
     setBetaNotice(null);
-    setBetaInstallNote(null);
-    setBetaProgress(null);
     try {
       // Привязываем устройство к аккаунту: доступ к бете проверяется
       // сервером по user_id из winchat_devices.
@@ -180,23 +220,21 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
     }
   }
 
-  /** Установка найденного бета-APK с показом прогресса. */
-  async function installBetaUpdate() {
-    if (!betaFound || betaInstalling) return;
-    setBetaInstalling(true);
-    setBetaProgress(0);
-    setBetaInstallNote(null);
-    markOtaSeen(betaFound);
-    try {
-      const res = await installOta(betaFound.url, betaFound.version);
-      if (res.fallback) {
-        setBetaInstalling(false);
-        setBetaInstallNote("Ссылка открыта в браузере — завершите установку вручную");
-      }
-    } catch {
-      setBetaInstalling(false);
-      setBetaInstallNote("Не удалось скачать обновление. Попробуйте ещё раз.");
+  /** Переход в отдельный экран обновления, где показывается анимированная 7. */
+  function openBetaUpdate() {
+    if (!betaFound) return;
+    requestOta7Overlay(betaFound);
+    onClose();
+  }
+
+  /** Найденное обновление 8.x открывает отдельный экран установки. */
+  function handlePrimary() {
+    if (cordyMode && found) {
+      requestOta7Overlay(found);
+      onClose();
+      return;
     }
+    void checkForUpdates();
   }
 
   return (
@@ -209,7 +247,10 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
       <button className="uc-backdrop" onClick={onClose} aria-label="Закрыть" />
 
       <div className="uc-stage">
-        <Snow />
+        {/* Снег остаётся только у WinChat 7 и плавно уходит у Cordy 8. */}
+        <div className={cordyRevealed ? "uc-snow-wrap uc-snow-wrap--hidden" : "uc-snow-wrap"}>
+          <Snow />
+        </div>
 
         {/* Три точки сверху */}
         <div className="uc-topbar">
@@ -245,31 +286,26 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
 
         {screen === "update" ? (
           <div className="uc-content" key="update">
-            <Forest />
-
-            {/* Логотип в светящемся медальоне */}
-            <div className="uc-logo-wrap" aria-hidden>
-              <div className="uc-halo" />
-              <div className="uc-orbit" />
-              <img src="/logo.jpg" alt="" draggable={false} />
+            {/* Ёлочки сверху, только у WinChat 7; у Cordy 8 плавно исчезают. */}
+            <div
+              className={
+                cordyRevealed
+                  ? "uc-forest-wrap uc-forest-wrap--hidden"
+                  : "uc-forest-wrap"
+              }
+            >
+              <Forest />
             </div>
 
-            {/* Большая красная семёрка */}
-            <div className="uc-seven-wrap">
-              <Sparkles className="uc-spark uc-spark-left" />
-              <span className="uc-seven">7</span>
-              <Sparkles className="uc-spark uc-spark-right" />
-            </div>
-
-            {/* Маленький логотип и подпись WinChat */}
-            <div className="uc-brand">
-              <img src="/logo.jpg" alt="" draggable={false} />
-              <span>WinChat</span>
-            </div>
-
-            {found?.version && (
-              <p className="uc-version">Доступна версия {found.version}</p>
-            )}
+            {/* Короткий экран: цифра, название и версия под ним. */}
+            <HeroBlock
+              revealed={cordyRevealed}
+              label={
+                found?.version
+                  ? `Доступна версия ${found.version}`
+                  : `WinChat ${APP_VERSION}`
+              }
+            />
 
             {notice && <p className="uc-notice">{notice}</p>}
 
@@ -278,7 +314,7 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
               <p className="uc-current-version">Текущая версия {APP_VERSION}</p>
               <button
                 className="uc-primary"
-                onClick={() => void checkForUpdates()}
+                onClick={handlePrimary}
                 disabled={checking}
               >
                 <span className="uc-primary-glow" aria-hidden />
@@ -287,7 +323,11 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
                 ) : (
                   <Check size={19} />
                 )}
-                <span>Проверить обновления</span>
+                <span>
+                  {cordyMode && found
+                    ? "Доступно обновление"
+                    : "Проверить обновления"}
+                </span>
               </button>
             </div>
           </div>
@@ -345,7 +385,7 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
                     <button
                       className="uc-beta-btn"
                       onClick={() => void checkBetaUpdates()}
-                      disabled={betaChecking || betaInstalling}
+                      disabled={betaChecking}
                     >
                       {betaChecking ? (
                         <Loader2 className="uc-spin" size={16} />
@@ -357,35 +397,12 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
 
                     {betaFound && (
                       <div className="uc-beta-found">
-                        <p className="uc-beta-found-title">
-                          {betaFound.version
-                            ? `Найдена версия ${betaFound.version}`
-                            : "Бета-обновление найдено"}
-                        </p>
-                        {betaFound.description && (
-                          <p className="uc-beta-found-desc">{betaFound.description}</p>
+                        {betaFound.version && (
+                          <p className="uc-beta-found-version">{betaFound.version}</p>
                         )}
-                        <button
-                          className="uc-beta-install"
-                          onClick={() => void installBetaUpdate()}
-                          disabled={betaInstalling}
-                        >
-                          <Download size={16} />
-                          {betaInstalling ? "Устанавливаем…" : "Обновить"}
+                        <button className="uc-beta-install" onClick={openBetaUpdate}>
+                          <Download size={16} /> Доступно обновление
                         </button>
-                        {(betaInstalling || betaProgress !== null) && (
-                          <div className="uc-beta-progress" aria-live="polite">
-                            <div className="uc-beta-progress-track">
-                              <div
-                                className="uc-beta-progress-fill"
-                                style={{
-                                  width: `${Math.min(100, Math.max(0, betaProgress ?? 0))}%`,
-                                }}
-                              />
-                            </div>
-                            <span>{Math.round(betaProgress ?? 0)}%</span>
-                          </div>
-                        )}
                       </div>
                     )}
 
@@ -393,7 +410,6 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
                       <p className="uc-beta-empty">Бета-обновления не найдены</p>
                     )}
                     {betaNotice && <p className="uc-notice">{betaNotice}</p>}
-                    {betaInstallNote && <p className="uc-beta-note">{betaInstallNote}</p>}
                   </div>
                 )}
               </div>

@@ -25,15 +25,18 @@ import { initSecureAccountStore, rememberAccount } from "./lib/secureAccountStor
 import {
   APP_VERSION,
   UPDATE7_ROUTE,
+  UPDATE8_ROUTE,
   applyLegacyGate,
   declineLegacyUi,
   isLegacyUi,
   resetLegacyChoice,
   clearOta7Dismissed,
   setUpdate7DemoActive,
+  setUpdate8DemoActive,
 } from "./lib/checkVersion";
-import { OTA7_SHOW_EVENT, getDemoOta7, reportDeviceStatus } from "./lib/ota";
+import { OTA7_SHOW_EVENT, getDemoOta7, getDemoOta8, reportDeviceStatus } from "./lib/ota";
 import OtaUpdate7Overlay from "./components/OtaUpdate7Overlay";
+import UpdateCenterOverlay from "./components/UpdateCenterOverlay";
 import {
   getOobeUpdateExpectedKey,
   isPhoneDevice,
@@ -208,6 +211,13 @@ export default function App() {
       new CustomEvent(OTA7_SHOW_EVENT, { detail: getDemoOta7() })
     );
   }, [update7Route]);
+
+  /* Демо-роут /update_8_active/: флаг живёт только в памяти, как и у демо 7. */
+  const update8Route =
+    path === UPDATE8_ROUTE || path === "/update_8_active";
+  useEffect(() => {
+    setUpdate8DemoActive(update8Route);
+  }, [update8Route]);
 
   useEffect(() => {
     if (!inviteChatId || !session || !profile) return;
@@ -675,6 +685,17 @@ export default function App() {
     applyTheme(getThemeById(prev) ?? THEMES[0]);
     if (!themedMode) document.title = "WinChat";
   }, [profile, glassMode, path, youMode, themedMode]);
+
+  /* Демо /update_8_active/: показываем переход WinChat 7 → Cordy 8
+     в центре обновлений сразу, без авторизации и без OOBE. */
+  if (update8Route) {
+    return (
+      <UpdateCenterOverlay
+        ota={getDemoOta8()}
+        onClose={() => navigate("/login")}
+      />
+    );
+  }
 
   /* ---------- Красивый зимний флоу сразу после входа/регистрации ---------- */
   if (authFlow && pendingSession) {

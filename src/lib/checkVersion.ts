@@ -42,6 +42,33 @@ export function getDemoAvailableVersion(): string {
   return UPDATE7_DEMO_AVAILABLE;
 }
 
+/* ============================================================
+   Демо-роут /update_8_active/
+   Показывает переход WinChat 7 → Cordy 8 в центре обновлений.
+   Как и демо 7, не меняет серверную версию и реальные OTA-проверки.
+   OOBE намеренно остаётся на ступени 7.0.0.
+   ============================================================ */
+export const UPDATE8_ROUTE = "/update_8_active/";
+export const UPDATE8_DEMO_AVAILABLE = "8.0.0-closed-beta";
+
+let update8DemoActive =
+  typeof window !== "undefined" &&
+  (window.location.pathname === UPDATE8_ROUTE ||
+    window.location.pathname === "/update_8_active");
+
+export function isUpdate8DemoActive(): boolean {
+  return update8DemoActive;
+}
+
+export function setUpdate8DemoActive(active: boolean): void {
+  update8DemoActive = active;
+}
+
+/** Версия, которую показывает демо-экран Cordy 8. */
+export function getDemoAvailableVersion8(): string {
+  return UPDATE8_DEMO_AVAILABLE;
+}
+
 export function isOta7Dismissed(key: string): boolean {
   try {
     return localStorage.getItem(OTA7_DISMISSED_KEY) === key;
@@ -117,10 +144,20 @@ export function isVersionNewer(remote: string, local: string): boolean {
   return compareFullVersions(r.core, l.core, r.pre, l.pre) > 0;
 }
 
+/** Старший номер версии (7, 8, …) или 0, если версии нет. */
+export function getMajorVersion(version: string | null | undefined): number {
+  if (!version) return 0;
+  return splitVersion(version).core[0] ?? 0;
+}
+
 /** Версия начинается с 7 (7.0.1, 7.0.1-beta, 7.0.1-release, …). */
 export function isVersion7(version: string | null | undefined): boolean {
-  if (!version) return false;
-  return (splitVersion(version).core[0] ?? 0) === 7;
+  return getMajorVersion(version) === 7;
+}
+
+/** Версия начинается с 8 (8.0.0-closed-beta, 8.1, …). */
+export function isVersion8(version: string | null | undefined): boolean {
+  return getMajorVersion(version) === 8;
 }
 
 /** Сравнение версий: -1 | 0 | 1. */

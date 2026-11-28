@@ -9,6 +9,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
+import { APP_VERSION } from "../lib/checkVersion";
 import {
   installOta,
   markOtaSeen,
@@ -151,11 +152,14 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
       });
   }
 
+  const fullVersion = version ?? APP_VERSION;
   const noteText =
     ota?.description?.trim() ||
-    "Новогоднее обновление WinChat 7.0: свежий дизайн, новые возможности и исправления.";
+    `Новогоднее обновление WinChat ${fullVersion}: свежий дизайн, новые возможности и исправления.`;
   const lines = descriptionLines(noteText);
-  const fullVersion = version ?? "7.0.1";
+  // Анимированная цифра берётся из старшего номера версии OTA.
+  const bigDigit = fullVersion.match(/^(\d+)/)?.[1] ?? "7";
+  const isEight = bigDigit === "8";
   const dashOffset = RING_CIRCUMFERENCE * (1 - progress / 100);
 
   if (typeof document === "undefined") return null;
@@ -165,7 +169,7 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
       className="ota7-root font-app"
       role="dialog"
       aria-modal="true"
-      aria-label="Доступно обновление WinChat 7.0"
+      aria-label={`Доступно обновление WinChat ${fullVersion}`}
       style={{ position: "fixed", inset: 0, zIndex: 400 }}
     >
       <style>{`
@@ -288,18 +292,45 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
           background: linear-gradient(130deg, rgba(255,255,255,.5), transparent 45%);
           pointer-events: none;
         }
-        .ota7-title-red {
-          position: relative; z-index: 1; margin: 22px 0 8px;
-          font-size: clamp(32px, 9vw, 44px); line-height: 1; font-weight: 1000;
-          letter-spacing: -.02em; color: #ff4747;
-          text-shadow: 0 0 12px rgba(255, 60, 60, .75), 0 0 40px rgba(255, 60, 60, .45), 0 3px 0 #6a0d0d;
-          animation: ota7-title-in 3.2s cubic-bezier(.2, 1.25, .3, 1) both;
+        .ota7-big-digit {
+          position: relative; z-index: 1; display: block; margin: 10px auto 0;
+          padding: .14em .07em .2em;
+          font-family: "Inter", "WinChat Zusker", system-ui, sans-serif;
+          font-size: clamp(110px, 30vw, 148px); line-height: 1; font-weight: 900;
+          text-align: center; color: #ff4148;
+          background-image: linear-gradient(110deg,
+            #ff243f 0%, #ff5b4a 20%, #ff9a63 36%, #ff3d6e 52%,
+            #ff2f45 68%, #ffb56a 84%, #ff243f 100%);
+          background-size: 260% 100%;
+          -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+          filter: drop-shadow(0 2px 0 #a41322) drop-shadow(0 8px 0 #750817) drop-shadow(0 16px 26px rgba(0,0,0,.45));
+          animation: ota7-digit-shimmer 5.8s ease-in-out infinite, ota7-digit-in .8s cubic-bezier(.2,1.4,.3,1) both;
         }
-        @keyframes ota7-title-in {
-          0%, 18% { transform: scale(.35); letter-spacing: .34em; opacity: 0; filter: blur(8px); }
-          42% { transform: scale(1.3); letter-spacing: .01em; opacity: 1; filter: blur(0); }
-          62% { transform: scale(1.05); letter-spacing: -.02em; opacity: 1; }
-          100% { transform: scale(1); letter-spacing: -.02em; opacity: 1; }
+        .ota7-big-digit--eight {
+          color: #ffd45e;
+          background-image: linear-gradient(110deg,
+            #fff3b0 0%, #ffd45e 18%, #fff8d6 36%, #ffb43d 54%,
+            #ffe98a 72%, #ffd45e 88%, #fff3b0 100%);
+          filter: drop-shadow(0 2px 0 #8c5a00) drop-shadow(0 8px 0 #5a3600) drop-shadow(0 0 20px rgba(255,212,94,.7));
+          animation: ota7-digit-gold 2.8s ease-in-out infinite, ota7-digit-in .8s cubic-bezier(.2,1.4,.3,1) both;
+        }
+        @keyframes ota7-digit-shimmer {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        @keyframes ota7-digit-gold {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        @keyframes ota7-digit-in {
+          from { opacity: 0; transform: translateY(18px) scale(.82); }
+          to { opacity: 1; transform: none; }
+        }
+        .ota7-big-version {
+          position: relative; z-index: 1; margin: 10px 0 0;
+          font-family: "WinChat Zusker", "Inter", system-ui, sans-serif;
+          font-size: 14px; font-weight: 900; letter-spacing: .04em;
+          color: #ffe9b0; text-shadow: 0 0 14px rgba(255,216,122,.55);
         }
         .ota7-intro-note {
           position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 7px;
@@ -452,6 +483,7 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
 
         @media (max-height: 700px) {
           .ota7-card { padding-top: 22px; padding-bottom: 20px; }
+          .ota7-big-digit { font-size: 108px; }
           .ota7-logo-orbit { width: 108px; height: 108px; margin-bottom: 8px; }
           .ota7-progress-stage .ota7-logo-circle { width: 60px; height: 60px; }
           .ota7-ring { width: 140px; height: 140px; margin: 10px auto; }
@@ -530,7 +562,12 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
                 <img src="/logo.jpg" alt="WinChat" draggable={false} />
               </div>
             </div>
-            <h1 className="ota7-title-red">WinChat 7.0</h1>
+            <span
+              className={isEight ? "ota7-big-digit ota7-big-digit--eight" : "ota7-big-digit"}
+            >
+              {bigDigit}
+            </span>
+            <p className="ota7-big-version">{fullVersion}</p>
             <div className="ota7-intro-note">
               <Sparkles /> Новогоднее обновление <Sparkles />
             </div>
@@ -614,20 +651,13 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
           </div>
         ) : (
           <div className="ota7-ready">
-            <div className="ota7-logo-orbit">
-              <div className="ota7-logo-orbit-ring" aria-hidden />
-              <div className="ota7-logo-circle">
-                <img src="/logo.jpg" alt="WinChat" draggable={false} />
-              </div>
-              <span className="ota7-orbit-dot ota7-orbit-dot-a" aria-hidden />
-              <span className="ota7-orbit-dot ota7-orbit-dot-b" aria-hidden />
-            </div>
-
-            <p className="ota7-red-mini">WinChat 7.0</p>
+            <span
+              className={isEight ? "ota7-big-digit ota7-big-digit--eight" : "ota7-big-digit"}
+            >
+              {bigDigit}
+            </span>
+            <p className="ota7-big-version">{fullVersion}</p>
             <h2 className="ota7-heading">Доступно обновление</h2>
-            <div className="ota7-version-pill">
-              <Snowflake /> {fullVersion}
-            </div>
 
             <div className="ota7-desc-card">
               <div className="ota7-desc-title">

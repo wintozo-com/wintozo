@@ -19,6 +19,7 @@ import {
   DOWNLOAD_URL,
   fetchLatestVersion,
   getDemoAvailableVersion,
+  getDemoAvailableVersion8,
   isUpdate7DemoActive,
   isVersion7,
   isVersionNewer,
@@ -246,6 +247,18 @@ export function getDemoOta7(): OtaInfo {
     updatedAt: null,
     description:
       "В версии 7.0 добавлено: новогодний дизайн, OTA-обновления, новые темы и многое другое.",
+  };
+}
+
+/** Демо-запись OTA для /update_8_active/: переход WinChat → Cordy. */
+export function getDemoOta8(): OtaInfo {
+  return {
+    url: DOWNLOAD_URL,
+    version: getDemoAvailableVersion8(),
+    target: "*",
+    channel: "full",
+    updatedAt: null,
+    description: "Cordy 8.0: новый дизайн и обновления.",
   };
 }
 
