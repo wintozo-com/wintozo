@@ -31,6 +31,7 @@ import { cn } from "../../../../utils/cn";
 import {
   ALL_THEMES,
   applyTheme,
+  CLASSIC_THEME_ID,
   getCurrentTheme,
   getThemeById,
   GLASS_THEME_ID,
@@ -723,7 +724,7 @@ export default function AndroidSettings({
           {/* ---------------- КАСТОМИЗАЦИЯ ---------------- */}
           {view === "customization" && (
             <div className="animate-fade-in">
-              <NyThemePicker className="mb-4" />
+              {currentId === CLASSIC_THEME_ID && <NyThemePicker className="mb-4" />}
               <BgMusicToggle className="mb-5" />
               <span className="mb-3 flex items-center gap-2 text-[12px] font-bold text-black/45">
                 <Palette className="h-3.5 w-3.5" />

@@ -157,9 +157,9 @@ export default function OobeIceIntro({ onDone }: Props) {
             </g>
           </svg>
 
-          {/* W находится внутри глыбы: чёрная основа + ледяная корка сверху. */}
-          <span className="oobe-ice-w-under" key={`u${hits}`}>W</span>
-          <span className="oobe-ice-w-frost">W</span>
+          {/* C находится внутри глыбы: чёрная основа + ледяная корка сверху. */}
+          <span className="oobe-ice-w-under" key={`u${hits}`}>C</span>
+          <span className="oobe-ice-w-frost">C</span>
 
           <svg className="oobe-ice-cracks" viewBox="0 0 200 200" preserveAspectRatio="none">
             {CRACK_PATHS.slice(0, hitsToBreak).map((d, i) => (
@@ -185,7 +185,7 @@ export default function OobeIceIntro({ onDone }: Props) {
                 } as CSSProperties
               }
             >
-              W
+              C
             </span>
           ))}
         </span>

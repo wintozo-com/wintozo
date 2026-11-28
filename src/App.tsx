@@ -20,7 +20,6 @@ import {
   YOU_THEME_ID,
 } from "./lib/themes";
 import { getAnimationId } from "./lib/animations";
-import { applyNyDark, getNyDark } from "./lib/nyTheme";
 import { initSecureAccountStore, rememberAccount } from "./lib/secureAccountStore";
 import {
   APP_VERSION,
@@ -68,6 +67,7 @@ import Messenger from "./components/Messenger";
 import LegacyScreen from "./components/LegacyScreen";
 import YouLocked from "./components/YouLocked";
 import GlassLocked from "./components/GlassLocked";
+import DesktopNewYearWidget from "./components/DesktopNewYearWidget";
 import OobeUpdate7 from "./components/oobe/OobeUpdate7";
 import OobeUpdate8 from "./components/oobe/OobeUpdate8";
 import OobeInstall7 from "./components/oobe/OobeInstall7";
@@ -370,7 +370,6 @@ export default function App() {
 
       // Тема применяется после восстановления настроек из зашифрованного файла.
       applyTheme(getCurrentTheme());
-      applyNyDark(getNyDark());
 
       // OTA: отправить статус устройства (is_wintozo_web_true / _no).
       // Сам поиск OTA делает CheckVersion после входа (см. lib/ota.ts).
@@ -977,6 +976,8 @@ export default function App() {
         }}
         inviteChatId={inviteOpenChatId}
       />
+
+      {!isPhoneDevice() && <DesktopNewYearWidget />}
 
       <YouBootPrompt
         open={youBootAsk}

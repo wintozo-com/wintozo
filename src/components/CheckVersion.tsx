@@ -188,7 +188,7 @@ export default function CheckVersion() {
         </div>
       )}
 
-      {/* Новогодний экран OTA WinChat 7.x */}
+      {/* Новогодний экран OTA Cordy 7.x */}
       {ota7 && (
         <OtaUpdate7Overlay
           ota={ota7.ota}

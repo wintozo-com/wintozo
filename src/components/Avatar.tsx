@@ -60,7 +60,7 @@ export default function Avatar({
   showWinPro,
   badges,
 }: Props) {
-  const label = name ?? profile?.nickname ?? "W";
+  const label = name ?? profile?.nickname ?? "C";
   const url = avatarUrl !== undefined ? avatarUrl : (profile?.avatar_url ?? null);
   const gradSeed = seed ?? profile?.username ?? label ?? "winchat";
   const showCrown = showWinPro ?? hasWinPro(profile);

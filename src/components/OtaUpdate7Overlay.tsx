@@ -48,7 +48,7 @@ function statusLabel(state: OtaState | null, progress: number, error: string | n
   return "Готовим обновление…";
 }
 
-/** Полноэкранный новогодний экран OTA-обновления WinChat 7.x. */
+/** Полноэкранный новогодний экран OTA-обновления Cordy 7.x. */
 export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props) {
   const [phase, setPhase] = useState<Phase>("intro");
   const [busy, setBusy] = useState(false);

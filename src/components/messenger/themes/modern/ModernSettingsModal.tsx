@@ -8,7 +8,7 @@ import Avatar from "../../../Avatar";
 import Crown from "../../../Crown";
 import Verified from "../../../Verified";
 import { cn } from "../../../../utils/cn";
-import { ALL_THEMES, applyTheme, getCurrentTheme, getThemeById, GLASS_THEME_ID, saveThemeId, THEMES, WINPRO_THEMES, YOU_THEME_ID } from "../../../../lib/themes";
+import { ALL_THEMES, applyTheme, CLASSIC_THEME_ID, getCurrentTheme, getThemeById, GLASS_THEME_ID, saveThemeId, THEMES, WINPRO_THEMES, YOU_THEME_ID } from "../../../../lib/themes";
 import {
   YOU_SEEDS,
   applyYouPalette,
@@ -475,7 +475,7 @@ export default function SettingsModal({
           {/* ===== Кастомизация ===== */}
           <div className={showTab("customization")}>
             <div className="nys-card nys-card--soft p-4">
-              <NyThemePicker className="mb-4" />
+              {currentId === CLASSIC_THEME_ID && <NyThemePicker className="mb-4" />}
               <BgMusicToggle />
             </div>
             <div>

@@ -90,7 +90,7 @@ export default function OobeInstall7({
   const [issuedWinpass, setIssuedWinpass] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [checkPhase, setCheckPhase] = useState(0);
-  /* Ледяная заставка 7.0: 6 кликов по W → логотип перелетает в OOBE. */
+  /* Ледяная заставка 7.0: 6 кликов по C → логотип перелетает в OOBE. */
   const [iceIntro, setIceIntro] = useState(true);
 
   /* Пока OOBE открыт — гасим фоновые анимации WinPro на <html>. */

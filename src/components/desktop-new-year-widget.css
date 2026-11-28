@@ -1,0 +1,105 @@
+/* Небольшой виджет отсчёта до Нового года — только на компьютере. */
+
+.ny-desk {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 120;
+  display: flex;
+  min-width: 210px;
+  flex-direction: column;
+  gap: 9px;
+  padding: 13px 14px 12px;
+  border: 1px solid rgba(255, 212, 94, 0.28);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(74, 107, 255, 0.24), transparent 58%),
+    linear-gradient(160deg, rgba(9, 31, 62, 0.94), rgba(5, 16, 38, 0.96));
+  box-shadow:
+    0 18px 44px -20px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #eaf2ff;
+  font-family: var(--font-sans, "WinChat Zusker", system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+.ny-desk-close {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(234, 242, 255, 0.45);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+.ny-desk-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.ny-desk-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-right: 20px;
+}
+.ny-desk-icon {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  color: #ffd45e;
+  background: rgba(255, 212, 94, 0.12);
+}
+.ny-desk-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: rgba(234, 242, 255, 0.82);
+}
+
+/* Переопределяем встроенный компактный счётчик под тёмную карточку. */
+.ny-desk .ny-desk-timer,
+.ny-desk .hy-countdown--inline {
+  width: 100%;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border-color: rgba(255, 212, 94, 0.22);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  color: #eaf2ff;
+}
+.ny-desk .hy-countdown-inline-label {
+  color: rgba(234, 242, 255, 0.5);
+  font-size: 9px;
+}
+.ny-desk .hy-countdown-inline-value {
+  color: rgba(234, 242, 255, 0.68);
+}
+.ny-desk .hy-countdown-inline-value strong,
+.ny-desk .hy-countdown-inline-clock {
+  color: #ffd45e;
+}
+.ny-desk .hy-countdown-inline-finished {
+  color: #ffd45e;
+  font-size: 11px;
+}
+
+/* На телефонах и узких окнах виджет не нужен. */
+@media (max-width: 1024px) {
+  .ny-desk {
+    display: none;
+  }
+}

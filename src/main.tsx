@@ -4,14 +4,14 @@ import "./index.css";
 import App from "./App";
 import { initDevLogs, devLog } from "./lib/devLogs";
 import { applyMono } from "./lib/devMode";
-import { applyNyDark, getNyDark } from "./lib/nyTheme";
+import { applyTheme, getCurrentTheme } from "./lib/themes";
 
 /* Режим разработчика: логи стартуют сразу при запуске приложения, */
 /* монохромный интерфейс включается до первого рендера.              */
 initDevLogs();
 applyMono();
-/* Тёмная зимняя тема применяется до первого рендера — без белой вспышки. */
-applyNyDark(getNyDark());
+/* Тема (включая тёмную зимнюю) применяется до первого рендера — без белой вспышки. */
+applyTheme(getCurrentTheme());
 devLog("rendering app");
 
 const rootEl = document.getElementById("root")!;

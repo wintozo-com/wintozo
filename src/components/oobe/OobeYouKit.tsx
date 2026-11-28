@@ -229,7 +229,7 @@ export function OobeYouBackdrop() {
 
 /* ------------------------------------------------------------
    Логотип: тот же перетекающий силуэт, что и в заставке.
-   Внутри — знак «W», вырезанный по форме.
+   Внутри — знак «C», вырезанный по форме.
    ------------------------------------------------------------ */
 
 export function OobeMorphMark({
@@ -355,7 +355,7 @@ export function OobeMorphMark({
                 '"WinChat Zusker", "Google Sans", "Outfit", "Roboto", ui-sans-serif, system-ui, sans-serif',
             }}
           >
-            W
+            C
           </text>
         </g>
         <use

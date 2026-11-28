@@ -231,7 +231,7 @@ export default function Auth({
             <span className="auth-hero-spark auth-hero-spark-a" />
             <span className="auth-hero-spark auth-hero-spark-b" />
             <span className="auth-hero-spark auth-hero-spark-c" />
-            <b>W</b>
+            <b>C</b>
           </div>
           <h1 className="auth-hero-title">
             Зима начинается <span>здесь</span>

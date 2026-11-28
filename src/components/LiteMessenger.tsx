@@ -562,7 +562,7 @@ export default function LiteMessenger({ me, onLogout }: Props) {
   /* ---------- неубираемая OTA-плашка ---------- */
   const otaBar = (
     <div className="lite-ota">
-      <div className="lite-ota-icon">W</div>
+      <div className="lite-ota-icon">C</div>
       <div className="lite-ota-body">
         <div className="lite-ota-title">Установите приложение</div>
         <div className="lite-ota-sub">Полная версия Cordy — для Android</div>

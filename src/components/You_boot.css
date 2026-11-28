@@ -1,12 +1,12 @@
 /* ============================================================
-   WinChat You — boot animation (Material You, Material 3 Expressive)
+   Cordy You — boot animation (Material You, Material 3 Expressive)
 
-   Чёрная буква «W» внутри силуэта, который непрерывно
+   Чёрная буква «C» внутри силуэта, который непрерывно
    перетекает между формами Material You: squircle → arch →
    diamond → circle → cookie 4 → clover 4 → cookie 7 →
    soft burst → cookie 9. Фон — голубая M3-палитра с мягким
    зерном. Когда сервер готов, силуэт фиксируется в плитку и
-   снизу выезжает «WinChat You».
+   снизу выезжает «Cordy You».
    ============================================================ */
 
 .youboot {
@@ -171,7 +171,7 @@
     );
 }
 
-/* Знак WinChat — простая чёрная буква «W» внутри силуэта.
+/* Знак Cordy — простая чёрная буква «C» внутри силуэта.
    Клип формы задаётся в SVG (см. компонент). */
 .youboot__logo {
   fill: #0b1a2b;
@@ -199,7 +199,7 @@
   filter: blur(7px);
 }
 
-/* ---------------- Надпись WinChat You ---------------- */
+/* ---------------- Надпись Cordy You ---------------- */
 
 .youboot__word {
   position: absolute;

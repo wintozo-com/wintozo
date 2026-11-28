@@ -19,7 +19,7 @@ type Phase = "loading" | "settle" | "reveal" | "exit";
    squircle → arch → diamond → circle → cookie 4 → clover 4 →
    cookie 7 → soft burst (12 лучей) → cookie 9.
 
-   Внутри силуэта — простая чёрная буква «W» (знак WinChat),
+   Внутри силуэта — простая чёрная буква «C» (знак Cordy),
    обрезанная формой. Вся заставка держится в голубой
    Material You-палитре активной темы пользователя.
    ============================================================ */
@@ -58,7 +58,7 @@ interface Props {
 
 /**
  * Заставка Cordy You (Material 3 Expressive): голубой тональный фон,
- * чёрная буква «W» внутри силуэта, который непрерывно перетекает между
+ * чёрная буква «C» внутри силуэта, который непрерывно перетекает между
  * формами Material You. Когда приложение готово, силуэт мягко садится
  * в squircle-плитку и снизу проявляется «Cordy You».
  */
@@ -239,7 +239,7 @@ export default function BootAnimationYou({ ready, long = false, onDone }: Props)
                 fontWeight={800}
                 letterSpacing="-0.02em"
               >
-                W
+                C
               </text>
             </g>
           </svg>

@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowLeft,
   Check,
@@ -50,7 +50,7 @@ function Snow() {
   return <div className="uc-snow" aria-hidden />;
 }
 
-/** Ёлочки и звёзды — SVG-иконки, видны только в состоянии WinChat 7. */
+/** Ёлочки и звёзды — SVG-иконки зимней сцены обновления. */
 function Forest() {
   return (
     <div className="uc-forest" aria-hidden>
@@ -63,48 +63,33 @@ function Forest() {
   );
 }
 
-/** Искры-частицы взрыва при переходе: угол полёта — через `--i`. */
-const BURST_BITS = Array.from({ length: 14 }, (_, i) => i);
-
 /**
  * Герой экрана: одна и та же разметка для 7 и для Cordy 8.
  * Меняются только цифра и подпись — сам интерфейс не перескакивает.
  */
-function HeroBlock({ label, revealed }: { label: string; revealed: boolean }) {
+function HeroBlock({ label, digit }: { label: string; digit: string }) {
+  const isEight = digit === "8";
   return (
-    <div className={revealed ? "uc-hero uc-hero--cordy" : "uc-hero"}>
+    <div className="uc-hero uc-hero--cordy">
       <div className="uc-hero-stage" aria-hidden>
         <div className="uc-hero-digit-wrap">
           <span className="uc-hero-glow" />
-          <span className="uc-hero-morph" />
           <span className="uc-hero-halo" />
-          <span className="uc-hero-ring" />
-          <span className="uc-hero-ring uc-hero-ring--late" />
-          <span className="uc-hero-digit uc-hero-digit--seven">7</span>
-          <span className="uc-hero-digit uc-hero-digit--eight">8</span>
-          <span className="uc-hero-sweep" />
-          <span className="uc-hero-burst">
-            {BURST_BITS.map((i) => (
-              <span
-                key={i}
-                className="uc-hero-bit"
-                style={{ "--i": i } as CSSProperties}
-              />
-            ))}
+          <span className="uc-hero-logo">
+            <img src="/cordy-logo.svg" alt="" draggable={false} />
+          </span>
+          <span
+            className={`uc-hero-digit uc-hero-digit--solo ${
+              isEight ? "uc-hero-digit--eight" : "uc-hero-digit--seven"
+            }`}
+          >
+            {digit}
           </span>
         </div>
       </div>
 
       <div className="uc-hero-names" aria-live="polite">
-        {/* WinChat разваливается на буквы-осколки при переходе к Cordy. */}
-        <span className="uc-hero-name uc-hero-name--winchat" aria-hidden>
-          {"WinChat".split("").map((ch, i) => (
-            <span key={i} className="uc-hero-ch">
-              {ch}
-            </span>
-          ))}
-        </span>
-        {/* Cordy собирается снизу по буквам. */}
+        {/* На экране обновления остаётся только новое имя — Cordy. */}
         <span className="uc-hero-name uc-hero-name--cordy">
           {"Cordy".split("").map((ch, i) => (
             <span key={i} className="uc-hero-ch uc-hero-ch--in">
@@ -134,20 +119,10 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
   const [betaNotFound, setBetaNotFound] = useState(false);
   const [betaNotice, setBetaNotice] = useState<string | null>(null);
 
-  /* Обновление до 8.x запускает плавный переход WinChat 7 → Cordy 8. */
+  /* Обновление до 8.x показывает новое имя Cordy 8. */
   const targetVersion = found?.version ?? ota?.version ?? null;
   const cordyMode = isVersion8(targetVersion);
-  const [cordyRevealed, setCordyRevealed] = useState(false);
-
-  useEffect(() => {
-    if (!cordyMode) {
-      setCordyRevealed(false);
-      return;
-    }
-    setCordyRevealed(false);
-    const timer = window.setTimeout(() => setCordyRevealed(true), 2000);
-    return () => window.clearTimeout(timer);
-  }, [cordyMode, targetVersion]);
+  const heroDigit = (targetVersion ?? APP_VERSION).match(/^(\d+)/)?.[1] ?? "8";
 
   useEffect(() => {
     const off = subscribeBeta(setBeta);
@@ -169,7 +144,7 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
       const result = await searchOta(device.deviceId, "full");
       if (result) {
         setFound(result);
-        // Обновление до 8.x сначала показывает переход 7 → Cordy 8 здесь,
+        // Обновление до 8.x сначала показывает Cordy 8 здесь,
         // а экран установки открывается по нажатию кнопки.
         if (!isVersion8(result.version)) {
           // Сначала поднимаем экран установки, затем закрываем центр обновлений,
@@ -247,8 +222,8 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
       <button className="uc-backdrop" onClick={onClose} aria-label="Закрыть" />
 
       <div className="uc-stage">
-        {/* Снег остаётся только у WinChat 7 и плавно уходит у Cordy 8. */}
-        <div className={cordyRevealed ? "uc-snow-wrap uc-snow-wrap--hidden" : "uc-snow-wrap"}>
+        {/* Снег остаётся и в новом стиле Cordy 8. */}
+        <div className="uc-snow-wrap">
           <Snow />
         </div>
 
@@ -286,20 +261,14 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
 
         {screen === "update" ? (
           <div className="uc-content" key="update">
-            {/* Ёлочки сверху, только у WinChat 7; у Cordy 8 плавно исчезают. */}
-            <div
-              className={
-                cordyRevealed
-                  ? "uc-forest-wrap uc-forest-wrap--hidden"
-                  : "uc-forest-wrap"
-              }
-            >
+            {/* Ёлочки остаются и в обновлённом экране Cordy 8. */}
+            <div className="uc-forest-wrap">
               <Forest />
             </div>
 
-            {/* Короткий экран: цифра, название и версия под ним. */}
+            {/* Короткий экран: новый логотип, цифра, название и версия под ним. */}
             <HeroBlock
-              revealed={cordyRevealed}
+              digit={heroDigit}
               label={
                 found?.version
                   ? `Доступна версия ${found.version}`
@@ -323,11 +292,7 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
                 ) : (
                   <Check size={19} />
                 )}
-                <span>
-                  {cordyMode && found
-                    ? "Доступно обновление"
-                    : "Проверить обновления"}
-                </span>
+                <span>Проверить обновления</span>
               </button>
             </div>
           </div>

@@ -102,7 +102,7 @@ function FestiveBoot() {
         <div className="boot-fir__circle">
           <div className="boot-fir__logo">
             <img src="/cordy-logo.svg" alt="" draggable={false} />
-            <span>W</span>
+            <span>C</span>
           </div>
         </div>
         <div className="boot-fir__word">Cordy Messenger</div>
@@ -112,7 +112,7 @@ function FestiveBoot() {
 }
 
 /**
- * Стартовый экран WinChat. Стандартная заставка наследует светлую или
+ * Стартовый экран Cordy. Стандартная заставка наследует светлую или
  * тёмную тему мессенджера; вариант dots сохраняет свою анимацию орбит.
  */
 export default function BootAnimation({

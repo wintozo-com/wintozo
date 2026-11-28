@@ -1,5 +1,5 @@
 /* ============================================================
-   WinChat — экран обновления внутри настроек
+   Cordy 8 — экран обновления внутри настроек.
    Тёмная сцена с плавным переливающимся градиентом, большая
    цифра, название под ней, три точки сверху, зелёная кнопка.
    ============================================================ */
@@ -15,10 +15,10 @@
   overflow: hidden;
   color: #f2fff9;
   background:
-    radial-gradient(circle at 18% 22%, rgba(255, 72, 92, 0.32), transparent 42%),
-    radial-gradient(circle at 82% 76%, rgba(255, 200, 92, 0.28), transparent 46%),
-    radial-gradient(circle at 50% 50%, rgba(42, 202, 150, 0.22), transparent 55%),
-    linear-gradient(135deg, #061a27 0%, #0a2a35 48%, #120f2c 100%);
+    radial-gradient(circle at 18% 22%, rgba(74, 107, 255, 0.26), transparent 42%),
+    radial-gradient(circle at 82% 76%, rgba(255, 212, 94, 0.16), transparent 46%),
+    radial-gradient(circle at 50% 50%, rgba(40, 92, 190, 0.24), transparent 55%),
+    linear-gradient(135deg, #061227 0%, #0b2144 48%, #06102a 100%);
   background-size: 180% 180%, 200% 200%, 190% 190%, 180% 180%;
   animation: uc-gradient-flow 16s ease-in-out infinite;
   backdrop-filter: blur(16px);
@@ -67,9 +67,9 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 28px;
   background:
-    radial-gradient(ellipse 80% 55% at 50% 0%, rgba(255, 90, 90, 0.18), transparent 70%),
-    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(255, 200, 90, 0.16), transparent 75%),
-    linear-gradient(160deg, rgba(10, 38, 52, 0.94) 0%, rgba(11, 24, 46, 0.96) 55%, rgba(24, 12, 38, 0.97) 100%);
+    radial-gradient(ellipse 80% 55% at 50% 0%, rgba(74, 107, 255, 0.26), transparent 70%),
+    radial-gradient(ellipse 90% 60% at 50% 100%, rgba(255, 212, 94, 0.14), transparent 75%),
+    linear-gradient(160deg, rgba(9, 31, 62, 0.96) 0%, rgba(6, 19, 44, 0.97) 55%, rgba(4, 12, 32, 0.98) 100%);
   box-shadow:
     0 32px 90px rgba(0, 0, 0, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
@@ -104,11 +104,10 @@
   pointer-events: none;
   background: conic-gradient(
     from 180deg,
-    rgba(255, 70, 90, 0.22),
-    rgba(255, 205, 95, 0.26),
-    rgba(65, 220, 160, 0.24),
-    rgba(110, 150, 255, 0.2),
-    rgba(255, 70, 90, 0.22)
+    rgba(74, 107, 255, 0.2),
+    rgba(255, 212, 94, 0.2),
+    rgba(110, 170, 255, 0.18),
+    rgba(74, 107, 255, 0.2)
   );
   filter: blur(70px);
   animation: uc-aurora-spin 22s linear infinite;
@@ -119,7 +118,7 @@
   z-index: 1;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(4, 14, 24, 0.12), rgba(4, 10, 20, 0.5));
+  background: linear-gradient(180deg, rgba(4, 12, 32, 0.1), rgba(4, 10, 26, 0.5));
 }
 @keyframes uc-aurora-spin {
   to {
@@ -127,7 +126,7 @@
   }
 }
 
-/* ---------- декор только для WinChat 7 ---------- */
+/* ---------- ёлки и снег — остаются и в стиле Cordy 8 ---------- */
 .uc-snow-wrap {
   position: absolute;
   inset: 0;
@@ -146,7 +145,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  opacity: 0.65;
+  opacity: 0.78;
 }
 .uc-snow::before,
 .uc-snow::after {
@@ -206,13 +205,13 @@
 .uc-tree-big {
   width: 40px;
   height: 40px;
-  color: #3edb8d;
-  filter: drop-shadow(0 0 12px rgba(62, 219, 141, 0.5));
+  color: #8fd8ff;
+  filter: drop-shadow(0 0 12px rgba(120, 200, 255, 0.55));
 }
 .uc-tree-small {
   width: 28px;
   height: 28px;
-  color: #2db878;
+  color: #5aa8e6;
   opacity: 0.9;
   transform: translateY(5px);
   animation-duration: 4.1s;
@@ -380,18 +379,62 @@
   justify-content: center;
   gap: 14px;
   width: 100%;
-  min-height: clamp(126px, 34vw, 168px);
+  min-height: clamp(230px, 52vw, 270px);
   margin-top: 6px;
   isolation: isolate;
 }
 .uc-hero-digit-wrap {
   position: relative;
-  display: grid;
+  display: flex;
   width: 150px;
-  height: 150px;
+  height: 252px;
   flex: none;
-  place-items: center;
+  align-items: flex-end;
+  justify-content: center;
+  padding-top: 66px;
   perspective: 700px;
+}
+/* Новый логотип Cordy — прямо над цифрой 8. */
+.uc-hero-logo {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  z-index: 4;
+  width: 62px;
+  height: 62px;
+  padding: 4px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  background: conic-gradient(
+    from 20deg,
+    #ffe9a8,
+    #ffd45e,
+    #fff6d0,
+    #d99a2b,
+    #ffe9a8
+  );
+  box-shadow:
+    0 0 0 4px rgba(255, 255, 255, 0.08),
+    0 0 30px -4px rgba(255, 212, 94, 0.85);
+  animation: uc-hero-logo-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.uc-hero-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #0a1e3a;
+  object-fit: cover;
+}
+@keyframes uc-hero-logo-in {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-12px) scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
 }
 .uc-hero-glow {
   position: absolute;
@@ -457,7 +500,8 @@
   }
 }
 .uc-hero-digit {
-  grid-area: 1 / 1;
+  position: relative;
+  z-index: 3;
   margin: 0;
   padding: 0.1em 0.02em 0.14em;
   font-family: "Inter", "WinChat Zusker", system-ui, sans-serif;
@@ -535,6 +579,26 @@
     drop-shadow(0 8px 0 #5a3600)
     drop-shadow(0 18px 28px rgba(0, 0, 0, 0.45))
     drop-shadow(0 0 28px rgba(255, 212, 94, 0.85));
+}
+/* В стиле 8 цифра видна сразу — переход 7 → 8 больше не нужен. */
+.uc-hero-digit--solo {
+  opacity: 1;
+  transform: none;
+}
+.uc-hero-digit--solo.uc-hero-digit--eight {
+  animation:
+    uc-hero-gold-shimmer 2.8s ease-in-out infinite,
+    uc-hero-eight-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  filter:
+    drop-shadow(0 2px 0 #8c5a00)
+    drop-shadow(0 8px 0 #5a3600)
+    drop-shadow(0 18px 28px rgba(0, 0, 0, 0.45))
+    drop-shadow(0 0 28px rgba(255, 212, 94, 0.85));
+}
+.uc-hero-digit--solo.uc-hero-digit--seven {
+  animation:
+    uc-hero-red-shimmer 5.8s ease-in-out infinite,
+    uc-hero-eight-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .uc-hero-halo {
   position: absolute;
@@ -701,53 +765,9 @@
     transform 1.1s cubic-bezier(0.16, 1, 0.3, 1),
     filter 0.9s ease;
 }
-.uc-hero-name--winchat {
-  opacity: 1;
-  color: #ffffff;
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5);
-}
 .uc-hero-ch {
   display: inline-block;
   will-change: transform, opacity, filter;
-}
-/* Распад WinChat на осколки: каждая буква улетает в свою сторону. */
-.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch {
-  transition:
-    transform 1s cubic-bezier(0.3, 0.9, 0.25, 1),
-    opacity 0.75s ease,
-    filter 0.75s ease;
-}
-.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(1) {
-  transform: translate(-58px, -44px) rotate(-42deg) scale(0.65);
-  transition-delay: 0s;
-}
-.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(2) {
-  transform: translate(-14px, -76px) rotate(26deg) scale(0.7);
-  transition-delay: 0.06s;
-}
-.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(3) {
-  transform: translate(18px, 58px) rotate(-30deg) scale(0.6);
-  transition-delay: 0.12s;
-}
-.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(4) {
-  transform: translate(-30px, 70px) rotate(38deg) scale(0.72);
-  transition-delay: 0.03s;
-}
-.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(5) {
-  transform: translate(56px, -54px) rotate(46deg) scale(0.66);
-  transition-delay: 0.1s;
-}
-.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(6) {
-  transform: translate(48px, 66px) rotate(-36deg) scale(0.62);
-  transition-delay: 0.16s;
-}
-.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch:nth-child(7) {
-  transform: translate(74px, 22px) rotate(52deg) scale(0.7);
-  transition-delay: 0.2s;
-}
-.uc-hero--cordy .uc-hero-name--winchat .uc-hero-ch {
-  opacity: 0;
-  filter: blur(6px);
 }
 .uc-hero-name--cordy {
   opacity: 0;
@@ -883,12 +903,12 @@
   font-family: inherit;
   font-size: 15px;
   font-weight: 800;
-  color: #fff;
-  background: linear-gradient(135deg, #55dd90 0%, #27ad63 52%, #158a4d 100%);
+  color: #1b1405;
+  background: linear-gradient(135deg, #fff3b0 0%, #ffd45e 48%, #efaa2c 100%);
   box-shadow:
-    0 14px 30px rgba(25, 156, 86, 0.42),
-    0 3px 0 rgba(5, 88, 45, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+    0 14px 30px rgba(255, 200, 80, 0.32),
+    0 3px 0 rgba(140, 90, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
   cursor: pointer;
   transition:
     transform 0.18s cubic-bezier(0.22, 1, 0.36, 1),
@@ -930,14 +950,14 @@
   filter: brightness(1.06);
   transform: translateY(-2px);
   box-shadow:
-    0 20px 38px rgba(25, 156, 86, 0.5),
-    0 3px 0 rgba(5, 88, 45, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    0 20px 38px rgba(255, 200, 80, 0.4),
+    0 3px 0 rgba(140, 90, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
 }
 .uc-primary:active:not(:disabled),
 .uc-beta-btn:active:not(:disabled) {
   transform: translateY(1px) scale(0.99);
-  box-shadow: 0 6px 16px rgba(25, 156, 86, 0.35);
+  box-shadow: 0 6px 16px rgba(255, 200, 80, 0.28);
 }
 .uc-primary:disabled,
 .uc-beta-btn:disabled {
@@ -1167,8 +1187,79 @@
   .uc-hero-digit {
     font-size: 108px;
   }
+  .uc-hero-stage {
+    min-height: 214px;
+  }
+  .uc-hero-digit-wrap {
+    height: 214px;
+    padding-top: 56px;
+  }
+  .uc-hero-logo {
+    top: -6px;
+    width: 50px;
+    height: 50px;
+  }
   .uc-content {
     padding-bottom: 18px;
+  }
+}
+
+/* ---------- телефоны: убираем тяжёлые и дёрганые анимации ---------- */
+@media (max-width: 640px) {
+  .uc-root {
+    animation: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .uc-stage {
+    animation: none;
+  }
+  .uc-stage::before {
+    inset: 0;
+    filter: none;
+    animation: none;
+    background: radial-gradient(
+      circle at 50% 12%,
+      rgba(74, 107, 255, 0.22),
+      transparent 62%
+    );
+  }
+  .uc-content > *,
+  .uc-notice,
+  .uc-beta-updates {
+    animation: none !important;
+  }
+  .uc-snow::before,
+  .uc-snow::after {
+    animation: none;
+    filter: none;
+  }
+  .uc-snow::after {
+    display: none;
+  }
+  .uc-tree,
+  .uc-star,
+  .uc-hero-glow,
+  .uc-hero-halo,
+  .uc-hero-ring,
+  .uc-hero-sweep,
+  .uc-hero-burst,
+  .uc-hero-logo {
+    animation: none !important;
+  }
+  .uc-hero-digit--solo.uc-hero-digit--eight,
+  .uc-hero--cordy .uc-hero-digit--eight,
+  .uc-hero--cordy .uc-hero-name--cordy .uc-hero-ch--in {
+    animation: none;
+  }
+  .uc-primary::after,
+  .uc-beta-btn::after,
+  .uc-primary-glow {
+    display: none;
+  }
+  .uc-primary:hover:not(:disabled),
+  .uc-beta-btn:hover:not(:disabled) {
+    transform: none;
   }
 }
 

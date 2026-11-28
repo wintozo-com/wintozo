@@ -1,7 +1,7 @@
 /* ============================================================
    OOBE 7.0 — ледяная заставка (светлая и тёмная темы).
    Реалистичная глыба: неровные края, внутренние пузыри, помутнения,
-   зерно, трещины с неровной геометрией, W заморожена внутри льда.
+   зерно, трещины с неровной геометрией, C заморожена внутри льда.
    ============================================================ */
 
 html.oobe-intro-active [data-oobe-intro-target] {
@@ -252,7 +252,7 @@ html.oobe-intro-active .ny7-melody {
 .oobe-ice-etched g { transform-origin: 100px 100px; animation: ice-etched-spin 90s linear infinite; }
 @keyframes ice-etched-spin { to { transform: rotate(360deg); } }
 
-/* Чёрная W внутри глыбы + ледяная корка поверх неё. */
+/* Чёрная C внутри глыбы + ледяная корка поверх неё. */
 .oobe-ice-w-under,
 .oobe-ice-w-frost {
   position: absolute;

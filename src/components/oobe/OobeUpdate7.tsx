@@ -66,7 +66,7 @@ const WHATS_NEW = [
  */
 export default function OobeUpdate7({ winPro, onFinish, variant = "you" }: Props) {
   const [step, setStep] = useState<1 | 2>(1);
-  /* Ледяная заставка 7.0: 6 кликов по W → логотип перелетает в OOBE. */
+  /* Ледяная заставка 7.0: 6 кликов по C → логотип перелетает в OOBE. */
   const [iceIntro, setIceIntro] = useState(true);
 
   useEffect(() => {

@@ -4,6 +4,7 @@
  */
 
 import { applyYouPalette, getYouSeedId } from "./materialYou";
+import { applyNyDark, getNyDark } from "./nyTheme";
 
 /** id темы Material You — она включает отдельный режим WinChat You. */
 export const YOU_THEME_ID = "material-you";
@@ -368,7 +369,11 @@ export function applyTheme(theme: Theme | WinProTheme): void {
   document.documentElement.classList.toggle("theme-glass", isGlassTheme(theme.id));
 
   // Зимнее ледяное стекло — часть классической палитры.
-  document.documentElement.classList.toggle("theme-newyear", isNewYearTheme(theme.id));
+  const newYear = isNewYearTheme(theme.id);
+  document.documentElement.classList.toggle("theme-newyear", newYear);
+  /* Тёмная новогодняя тема не должна протекать в You, Glass и другие палитры:
+     иначе html.ny-dark перекрывает их фон и интерфейс становится чёрным. */
+  applyNyDark(newYear && getNyDark());
 
   // WinChat You: отдельная тональная схема Material You + «обои» пользователя.
   if (isYouTheme(theme.id)) {
