@@ -23,7 +23,6 @@ import {
   isVersion7,
   isVersionNewer,
   markUpdatedTo,
-  shouldOfferOta,
 } from "./checkVersion";
 
 /* ============================================================
@@ -266,8 +265,8 @@ export function showOta7IfAvailable(ota: OtaInfo | null): void {
 
 /* ============================================================
    Разбор аргументов /set ota
-   /set ota https://…apk 7.0.0 --note В версии 7.0 добавлено...
-   /set ota @admin https://…apk 7.0.0 --note "В версии 7.0..."
+   /set ota https://…apk 7.0.1 --note В версии 7.0 добавлено...
+   /set ota @admin https://…apk 7.0.1 --note "В версии 7.0..."
    плюс старый формат с описанием в кавычках.
    ============================================================ */
 
@@ -410,33 +409,26 @@ export async function searchOta(
       updatedAt: res.updated_at ?? null,
       description: res.description ?? null,
     };
-    // На нативном Android фильтруем по версии (versionName из APK),
-    // только если админ указал версию у OTA. Без версии OTA работает
-    // как push-канал: плашка видна, пока админ не снял запись.
-    // Если версия указана и не новее установленной — запись всё равно
-    // считается новой, когда админ перезаливал её (updated_at изменился
-    // с момента прошлой установки): так пересборка APK с той же строкой
-    // версии снова предлагает установку.
-    // В вебе не фильтруем: там APK просто скачивается по ссылке.
-    // Бета-сборки часто имеют пререлизную строку вида 7.0.0-closed-beta,
-    // которая по semver «старее» открытой беты. Для beta-канала не сравниваем
-    // версии: наличие записи и отметка updated_at важнее строки версии.
-    if (canInstallOta()) {
-      if (ota.channel === "beta") {
-        // Не сравниваем версии: 7.0.0-closed-beta по semver «старее»,
-        // чем 7.0.0, но это другая бета-сборка. Повторно не
-        // предлагаем только ту же запись, которую уже начали ставить.
-        if (ota.updatedAt && ota.updatedAt === getOtaSeenStamp("beta")) return null;
-      } else if (ota.version) {
-        const info = await getDeviceInfo();
-        const installed = info.appVersion || APP_VERSION;
-        if (!isVersionNewer(ota.version, installed)) {
-          // Телефон уже обновлялся до этой версии (короткий id) — не предлагаем снова.
-          if (!shouldOfferOta(ota.version)) return null;
-          if (!ota.updatedAt || ota.updatedAt === getOtaSeenStamp(ota.channel)) return null;
-        }
-      }
+    // Бета — отдельный канал со своими сборками: версии не сравниваем,
+    // повторно блокируем только ту же запись, которую уже начали ставить.
+    if (ota.channel === "beta") {
+      if (ota.updatedAt && ota.updatedAt === getOtaSeenStamp("beta")) return null;
+      return ota;
     }
+
+    // Обычный канал: обновление должно быть строго новее установленной
+    // версии. Раньше в браузере фильтр был выключен — из-за этого на
+    // версии 7.0.0 показывали «Доступно обновление 7.0.0».
+    if (!ota.version) {
+      // запись без версии — это push для нативного приложения;
+      // в браузере APK не ставится, поэтому такую запись не показываем.
+      if (!canInstallOta()) return null;
+      return ota;
+    }
+
+    const info = await getDeviceInfo();
+    const installed = info.appVersion || APP_VERSION;
+    if (!isVersionNewer(ota.version, installed)) return null;
     return ota;
   } catch {
     return null;
@@ -510,11 +502,41 @@ export async function installOta(
     return { started: false, fallback: true };
   }
 
+  let installListener: PluginListenerHandle | null = null;
+  let listenerReady = false;
   try {
+    // Версия считается обновлённой только когда APK найден и установщик
+    // действительно открыт. При ошибке загрузки оставляем версию доступной.
+    const markWhenInstalled = (event: OtaStatusEvent) => {
+      if (event.state === "installing" || event.state === "permission") {
+        markUpdatedTo(version || APP_VERSION);
+      }
+      if (
+        event.state === "installing" ||
+        event.state === "permission" ||
+        event.state === "error"
+      ) {
+        const handle = installListener;
+        installListener = null;
+        if (handle) void handle.remove();
+      }
+    };
+    try {
+      installListener = await WinChatOta.addListener("otaStatus", markWhenInstalled);
+      listenerReady = true;
+    } catch {
+      listenerReady = false;
+    }
+
     await WinChatOta.install({ url });
-    markUpdatedTo(version || APP_VERSION);
+    if (!listenerReady) markUpdatedTo(version || APP_VERSION);
     return { started: true, fallback: false };
   } catch {
+    const pendingHandle = installListener as PluginListenerHandle | null;
+    if (pendingHandle) {
+      void pendingHandle.remove();
+      installListener = null;
+    }
     // Если нативный установщик недоступен, отдаём ссылку системе.
     window.open(url, "_blank", "noopener,noreferrer");
     return { started: false, fallback: true };

@@ -5,8 +5,8 @@
  */
 import { supabase } from "./supabase";
 
-/** Текущая версия клиента. Синхронизирована с GitHub Release v7.0.0. */
-export const APP_VERSION = "7.0.0";
+/** Текущая версия клиента. Синхронизирована с GitHub Release v7.0.1. */
+export const APP_VERSION = "7.0.1";
 
 /** Ссылка на APK в релизах GitHub. */
 export const DOWNLOAD_URL = "https://github.com/NikitaDev2015/wintozo/releases/latest";
@@ -18,7 +18,7 @@ export const DOWNLOAD_URL = "https://github.com/NikitaDev2015/wintozo/releases/l
    ============================================================ */
 export const UPDATE7_ROUTE = "/update_7_active";
 
-const UPDATE7_DEMO_AVAILABLE = "7.0.0";
+const UPDATE7_DEMO_AVAILABLE = "7.1.0";
 const OTA7_DISMISSED_KEY = "winchat_ota7_dismissed";
 
 /**
@@ -117,7 +117,7 @@ export function isVersionNewer(remote: string, local: string): boolean {
   return compareFullVersions(r.core, l.core, r.pre, l.pre) > 0;
 }
 
-/** Версия начинается с 7 (7.0.0, 7.0.0-beta, 7.0.0-release, …). */
+/** Версия начинается с 7 (7.0.1, 7.0.1-beta, 7.0.1-release, …). */
 export function isVersion7(version: string | null | undefined): boolean {
   if (!version) return false;
   return (splitVersion(version).core[0] ?? 0) === 7;
@@ -253,7 +253,7 @@ const CHangelog_KEY = "winchat_changelog_seen";
    новые релизы получают следующий id автоматически:
      3.1.2 → 0, 4.0.0 → 1, 4.0.1 → 2, 5.0.0 → 3,
      6.0.0-closed-beta → 4, 6.0.0-stable → 5,
-     7.0.0 → 6 (и т.д.).
+     7.0.0 → 6, 7.0.1 → 7 (и т.д.).
    Обновился до версии с id N — телефон запоминает это и
    больше не предлагает обновиться на неё же.
    ============================================================ */
@@ -267,6 +267,7 @@ const VERSION_MILESTONES = [
   "6.0.0-closed-beta",
   "6.0.0-stable",
   "7.0.0",
+  "7.0.1",
 ];
 
 /**

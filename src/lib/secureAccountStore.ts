@@ -10,7 +10,7 @@
  *  2) читает и расшифровывает account_settings.enc;
  *  3) восстанавливает настройки в localStorage ДО инициализации Supabase Auth.
  */
-import { supabase, type Profile } from "./supabase";
+import { onAnyAuthStateChange, type Profile } from "./supabase";
 import {
   ensureWinChatFolders,
   isNativeStorageAvailable,
@@ -215,7 +215,7 @@ export function initSecureAccountStore(): Promise<void> {
 
     // При выходе сессия должна исчезнуть и из зашифрованного файла,
     // иначе при следующем запуске восстановится недействительный токен.
-    supabase.auth.onAuthStateChange((_event, session) => {
+    onAnyAuthStateChange((_event, session) => {
       if (!session) {
         void forgetSecureSession();
       } else {

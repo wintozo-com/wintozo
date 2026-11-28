@@ -9,7 +9,7 @@ import {
   Loader2,
   UserRound,
 } from "lucide-react";
-import { emailFor, loginByWinpass, supabase } from "../../lib/supabase";
+import { isUsernameTaken, loginAccount, loginByWinpass, registerAccount } from "../../lib/supabase";
 import { mapAuthError } from "../Auth";
 import { rememberLegacyPassword } from "../LegacyScreen";
 import { normalizeWinpass, validateNickname, validatePassword, validateUsername } from "../../lib/utils";
@@ -89,60 +89,30 @@ export default function OobeInstall({ hasSession, profile, onFinish, variant = "
         const nErr = validateNickname(nickname);
         if (nErr) return setError(nErr);
 
-        const { data: taken } = await supabase
-          .from("profiles")
-          .select("id")
-          .ilike("username", username.trim())
-          .maybeSingle();
-        if (taken) return setError("Такой username уже занят");
+        if (await isUsernameTaken(username.trim())) {
+          return setError("Такой username уже занят");
+        }
 
-        const { data, error: upErr } = await supabase.auth.signUp({
-          email: emailFor(username),
+        const result = await registerAccount({
+          username: username.trim().toLowerCase(),
           password,
-          options: {
-            data: { username: username.trim().toLowerCase(), nickname: nickname.trim() },
-          },
+          nickname: nickname.trim(),
         });
-        if (upErr) return setError(mapAuthError(upErr));
+        if (!result.ok) return setError(result.notice ?? mapAuthError(result.error));
 
         /* Пароль нужен для моста «Память о Wintozo» */
         void rememberLegacyPassword(password);
 
-        if (data.user && !data.session) {
-          const { error: siErr } = await supabase.auth.signInWithPassword({
-            email: emailFor(username),
-            password,
-          });
-          if (siErr) return setError(mapAuthError(siErr));
-        }
-
-        /* Забрать WinPass, выданный триггером на сервере */
-        const uid = data.user?.id;
-        if (uid) {
-          let code: string | null = null;
-          for (let attempt = 0; attempt < 5 && !code; attempt++) {
-            const { data: prof } = await supabase
-              .from("profiles")
-              .select("winpass")
-              .eq("id", uid)
-              .maybeSingle();
-            code = (prof as { winpass?: string } | null)?.winpass || null;
-            if (!code) await new Promise((r) => setTimeout(r, 400));
-          }
-          if (code) {
-            setIssuedWinpass(code);
-            setStep("winpass");
-            return;
-          }
+        if (result.winpass) {
+          setIssuedWinpass(result.winpass);
+          setStep("winpass");
+          return;
         }
         /* Сессия появилась — App прогрузит профиль и включится экран «Проверка..» */
         setStep("checking");
       } else {
-        const { error: inErr } = await supabase.auth.signInWithPassword({
-          email: emailFor(username),
-          password,
-        });
-        if (inErr) return setError(mapAuthError(inErr));
+        const result = await loginAccount(username.trim(), password);
+        if (!result.ok) return setError(mapAuthError(result.error));
         setStep("checking");
       }
     } catch {

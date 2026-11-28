@@ -83,7 +83,7 @@ export default function CheckVersion() {
         if (isUpdate7DemoActive()) {
           const demo = getDemoOta7();
           setOta7({
-            version: demo.version ?? "7.0.0",
+            version: demo.version ?? "7.0.1",
             ota: demo,
             url: demo.url,
           });

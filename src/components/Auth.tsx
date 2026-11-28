@@ -12,7 +12,13 @@ import {
   TriangleAlert,
   User,
 } from "lucide-react";
-import { emailFor, loginByWinpass, supabase } from "../lib/supabase";
+import {
+  isUsernameTaken,
+  loginAccount,
+  loginByWinpass,
+  registerAccount,
+  supabase,
+} from "../lib/supabase";
 import { rememberLegacyPassword } from "./LegacyScreen";
 import { normalizeWinpass, validateNickname, validatePassword, validateUsername } from "../lib/utils";
 void normalizeWinpass; // канонизация в supabase.loginByWinpass
@@ -156,69 +162,30 @@ export default function Auth({
         if (nErr) return setError(nErr);
         devLog(`auth: registering @${username.trim().toLowerCase()}`);
 
-        const { data: taken } = await supabase
-          .from("profiles")
-          .select("id")
-          .ilike("username", username.trim())
-          .maybeSingle();
-        if (taken) return setError("Такой username уже занят");
+        if (await isUsernameTaken(username.trim())) {
+          return setError("Такой username уже занят");
+        }
 
-        const { data, error: upErr } = await supabase.auth.signUp({
-          email: emailFor(username),
+        const result = await registerAccount({
+          username: username.trim().toLowerCase(),
           password,
-          options: {
-            data: { username: username.trim().toLowerCase(), nickname: nickname.trim() },
-          },
+          nickname: nickname.trim(),
         });
-        if (upErr) return setError(mapAuthError(upErr));
+        if (!result.ok) {
+          if (result.notice) return setNotice(result.notice);
+          return setError(mapAuthError(result.error));
+        }
 
         /* Пароль нужен для моста «Память о Wintozo» — запоминаем его */
         void rememberLegacyPassword(password);
 
-        /* При включённом «Confirm email» gotrue не выдаёт сессию */
-        if (data.user && !data.session) {
-          if (Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-            return setError("Такой аккаунт уже существует — войдите");
-          }
-          const { error: siErr } = await supabase.auth.signInWithPassword({
-            email: emailFor(username),
-            password,
-          });
-          if (siErr) {
-            return /email not confirmed/i.test(rawMessage(siErr))
-              ? setNotice(
-                  "Аккаунт создан. Осталось отключить «Confirm email»: Supabase → Authentication → Sign In / Providers → Email → Save. После этого входите."
-                )
-              : setError(mapAuthError(siErr));
-          }
-        }
-
-        /* Забрать WinPass, который выдал триггер на сервере */
-        let winpass = "";
-        const uid = data.user?.id;
-        if (uid) {
-          let code: string | null = null;
-          for (let attempt = 0; attempt < 5 && !code; attempt++) {
-            const { data: prof } = await supabase
-              .from("profiles")
-              .select("winpass")
-              .eq("id", uid)
-              .maybeSingle();
-            code = (prof as { winpass?: string } | null)?.winpass || null;
-            if (!code) await new Promise((r) => setTimeout(r, 400));
-          }
-          winpass = code ?? "";
-        }
-        devLog("auth: account created");
-        onAuthenticated?.({ kind: "register", winpass });
+        devLog(`auth: account created on ${result.server}`);
+        onAuthenticated?.({ kind: "register", winpass: result.winpass });
       } else {
         devLog(`auth: signing in @${username.trim().toLowerCase()}`);
-        const { error: inErr } = await supabase.auth.signInWithPassword({
-          email: emailFor(username),
-          password,
-        });
-        if (inErr) return setError(mapAuthError(inErr));
-        devLog("auth: signed in");
+        const result = await loginAccount(username.trim(), password);
+        if (!result.ok) return setError(mapAuthError(result.error));
+        devLog(`auth: signed in on ${result.server}`);
         onAuthenticated?.({ kind: "login" });
       }
     } catch (errCaught) {

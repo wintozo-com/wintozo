@@ -23,6 +23,9 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * WinChat OTA: скачивает APK во внутреннее хранилище приложения и
@@ -45,6 +48,10 @@ public class WinChatOtaPlugin extends Plugin {
     private File pendingApk;
     private BroadcastReceiver downloadReceiver;
     private boolean receiverRegistered = false;
+    /** Защита от повторной установки: событие может прийти и от опроса, и от receiver. */
+    private boolean downloadHandled = false;
+    /** Уникальное имя файла: DownloadManager добавляет "-1" к занятым именам. */
+    private String currentApkName = APK_NAME;
 
     private final Handler progressHandler = new Handler(Looper.getMainLooper());
     private Runnable progressRunnable;
@@ -96,9 +103,17 @@ public class WinChatOtaPlugin extends Plugin {
                 return;
             }
 
+            // Уникальное имя на каждую загрузку. Иначе DownloadManager видит
+            // старый файл и сохраняет новый как winchat-update-1.apk, а мы
+            // ищем winchat-update.apk и получаем «файл не найден».
+            currentApkName = "winchat-update-" + System.currentTimeMillis() + ".apk";
+            downloadHandled = false;
+            pendingApk = null;
+
+            cleanupOldApks();
             File destination = apkFile();
             if (destination.exists() && !destination.delete()) {
-                // Не критично: DownloadManager перезапишет файл.
+                // Не критично: имя уникальное, коллизий не будет.
             }
 
             stopProgressPolling();
@@ -113,7 +128,7 @@ public class WinChatOtaPlugin extends Plugin {
             request.setDestinationInExternalFilesDir(
                 getContext(),
                 Environment.DIRECTORY_DOWNLOADS,
-                APK_NAME
+                currentApkName
             );
             request.setAllowedOverMetered(true);
             request.setAllowedOverRoaming(false);
@@ -189,8 +204,9 @@ public class WinChatOtaPlugin extends Plugin {
                         notifyState("downloading", null, progress, downloaded, total);
                     }
                 } else if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                    stopProgressPolling();
-                    notifyState("downloading", null, 100, total > 0 ? total : downloaded, total);
+                    // Не ждём broadcast: на некоторых устройствах он не приходит
+                    // или приходит до регистрации receiver.
+                    finishSuccessfulDownload(cursor, downloaded, total);
                 } else if (status == DownloadManager.STATUS_FAILED) {
                     stopProgressPolling();
                 }
@@ -261,13 +277,9 @@ public class WinChatOtaPlugin extends Plugin {
                 );
 
                 if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                    File apk = apkFile();
-                    if (!apk.exists()) {
-                        notifyState("error", "Файл обновления не найден", -1, 0L, 0L);
-                        return;
-                    }
-                    notifyState("downloading", null, 100, 0L, 0L);
-                    launchInstaller(apk);
+                    long downloaded = safeColumnLong(cursor, DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR);
+                    long total = safeColumnLong(cursor, DownloadManager.COLUMN_TOTAL_SIZE_BYTES);
+                    finishSuccessfulDownload(cursor, downloaded, total);
                 } else if (status == DownloadManager.STATUS_FAILED) {
                     int reason = cursor.getInt(
                         cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON)
@@ -279,6 +291,92 @@ public class WinChatOtaPlugin extends Plugin {
             }
         } catch (Exception e) {
             notifyState("error", "Ошибка проверки загрузки: " + e.getMessage(), -1, 0L, 0L);
+        }
+    }
+
+    /**
+     * Завершение успешной загрузки. Реальный файл ищем по COLUMN_LOCAL_URI:
+     * DownloadManager может добавить суффикс к имени или сохранить файл в
+     * другом каталоге — искать только по фиксированному имени нельзя.
+     */
+    private void finishSuccessfulDownload(Cursor cursor, long downloaded, long total) {
+        if (downloadHandled) return;
+        downloadHandled = true;
+        stopProgressPolling();
+
+        File apk = resolveDownloadedApk(cursor);
+        if (apk == null || !apk.exists() || apk.length() <= 0) {
+            notifyState("error", "Скачанный APK не найден. Попробуйте ещё раз", -1, 0L, 0L);
+            return;
+        }
+
+        notifyState("downloading", null, 100, total > 0 ? total : downloaded, total);
+        launchInstaller(apk);
+    }
+
+    private File resolveDownloadedApk(Cursor cursor) {
+        String localUri = null;
+        try {
+            int idx = cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI);
+            if (idx >= 0) localUri = cursor.getString(idx);
+        } catch (Exception ignored) {
+        }
+
+        if (localUri != null && !localUri.isEmpty()) {
+            try {
+                Uri uri = Uri.parse(localUri);
+                if ("file".equalsIgnoreCase(uri.getScheme())) {
+                    String path = uri.getPath();
+                    if (path != null) {
+                        File file = new File(path);
+                        if (file.exists() && file.length() > 0) return file;
+                    }
+                } else if ("content".equalsIgnoreCase(uri.getScheme())) {
+                    File target = apkFile();
+                    if (copyContent(uri, target)) return target;
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
+        File expected = apkFile();
+        return expected.exists() && expected.length() > 0 ? expected : null;
+    }
+
+    private boolean copyContent(Uri uri, File target) {
+        try {
+            File dir = target.getParentFile();
+            if (dir != null && !dir.exists()) dir.mkdirs();
+            try (InputStream in = getContext().getContentResolver().openInputStream(uri);
+                 OutputStream out = new FileOutputStream(target, false)) {
+                if (in == null) return false;
+                byte[] buffer = new byte[16384];
+                int read;
+                while ((read = in.read(buffer)) > 0) {
+                    out.write(buffer, 0, read);
+                }
+                out.flush();
+            }
+            return target.exists() && target.length() > 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private void cleanupOldApks() {
+        try {
+            File dir = apkFile().getParentFile();
+            if (dir == null || !dir.exists()) return;
+            File[] files = dir.listFiles();
+            if (files == null) return;
+            for (File file : files) {
+                String name = file.getName();
+                if (name.startsWith("winchat-update") && name.endsWith(".apk")
+                        && !name.equals(currentApkName)) {
+                    file.delete();
+                }
+            }
+        } catch (Exception ignored) {
         }
     }
 
@@ -353,7 +451,7 @@ public class WinChatOtaPlugin extends Plugin {
         if (dir == null) {
             dir = getContext().getCacheDir();
         }
-        return new File(dir, APK_NAME);
+        return new File(dir, currentApkName);
     }
 
     private String appVersion() {

@@ -94,7 +94,7 @@ end;
 $$;
 
 -- 7. RPC для админ-терминала: /get winpass <username>
-drop function if exists public(admin_get_winpass(uuid, text));
+drop function if exists public.admin_get_winpass(uuid, text);
 create or replace function public.admin_get_winpass(_admin_id uuid, _target_username text)
 returns jsonb
 language plpgsql

@@ -86,6 +86,7 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
       if (disposed) return;
       setStatus(event.state);
       if (event.state === "error") {
+        setBusy(false);
         setError(event.message ?? "Не удалось скачать обновление");
       } else {
         setError(null);
@@ -154,7 +155,7 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
     ota?.description?.trim() ||
     "Новогоднее обновление WinChat 7.0: свежий дизайн, новые возможности и исправления.";
   const lines = descriptionLines(noteText);
-  const fullVersion = version ?? "7.0.0";
+  const fullVersion = version ?? "7.0.1";
   const dashOffset = RING_CIRCUMFERENCE * (1 - progress / 100);
 
   if (typeof document === "undefined") return null;

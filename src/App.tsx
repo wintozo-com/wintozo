@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { isGlassGranted, isWinProActive, getChatByInvite, supabase, type Profile } from "./lib/supabase";
+import {
+  isGlassGranted,
+  isWinProActive,
+  getChatByInvite,
+  onAnyAuthStateChange,
+  supabase,
+  type Profile,
+} from "./lib/supabase";
 import { checkBanned } from "./lib/adminApi";
 import {
   applyTheme,
@@ -376,7 +383,7 @@ export default function App() {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, s) => {
+    } = onAnyAuthStateChange((event, s) => {
       if (!s) {
         setSession(null);
         setPendingSession(null);
