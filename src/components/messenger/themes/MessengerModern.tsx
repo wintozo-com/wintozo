@@ -85,13 +85,13 @@ interface Props {
   initialSettingsTab?: "profile" | "customization" | "security" | "winpro";
   /** Форсировать полноэкранные Android-настройки (отладка на ПК: /setting_phone=1). */
   forcePhoneSettings?: boolean;
-  /** Режим WinChat You (Material You). */
+  /** Режим Cordy You (Material You). */
   youMode?: boolean;
   /** Чат из адреса /themes/you/chat/:id. */
   initialChatId?: string | null;
   /** Обновить адрес при выборе чата в режиме You. */
   onYouChatRoute?: (chatId: string | null) => void;
-  /** Выйти из WinChat You в обычный интерфейс. */
+  /** Выйти из Cordy You в обычный интерфейс. */
   onExitYou?: () => void;
   /** Открыть настройки по адресу /themes/you/settings. */
   onOpenYouSettings?: () => void;
@@ -125,8 +125,8 @@ function Placeholder({
         <span className="yc-placeholder-orb yc-placeholder-orb-a" aria-hidden />
         <span className="yc-placeholder-orb yc-placeholder-orb-b" aria-hidden />
         <div className="yc-placeholder-card">
-          <button type="button" onClick={onLogoTap} className="yc-placeholder-mark" aria-label="WinChat">
-            <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+          <button type="button" onClick={onLogoTap} className="yc-placeholder-mark" aria-label="Cordy">
+            <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
           </button>
           <p className="yc-placeholder-title">Ваши беседы</p>
           <p className="yc-placeholder-sub">
@@ -161,19 +161,19 @@ function Placeholder({
         className="pointer-events-none absolute left-1/2 top-[18%] h-72 w-72 -translate-x-1/2 rounded-full bg-white/70 blur-3xl"
       />
 
-      {/* Логотип WinChat и админ-терминал в правом верхнем углу */}
+      {/* Логотип Cordy и админ-терминал в правом верхнем углу */}
       <div className="absolute top-4 right-4 z-20 hidden items-center gap-2 md:flex">
         {onLogoTap && (
           <button
             onClick={onLogoTap}
             className="flex items-center gap-2 rounded-2xl border border-black/8 bg-white/85 py-1.5 pr-3 pl-1.5 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:bg-white hover:shadow-md active:scale-95"
-            aria-label="WinChat"
-            title="WinChat"
+            aria-label="Cordy"
+            title="Cordy"
           >
             <span className="h-8 w-8 overflow-hidden rounded-xl ring-1 ring-black/5">
-              <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+              <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
             </span>
-            <span className="text-[13px] font-extrabold tracking-tight text-ink">WinChat</span>
+            <span className="text-[13px] font-extrabold tracking-tight text-ink">Cordy Messenger</span>
           </button>
         )}
         {isAdmin && onOpenTerminal && (
@@ -194,12 +194,12 @@ function Placeholder({
             <div className="relative shrink-0">
               <div className="absolute inset-0 scale-110 rounded-[34px] bg-accent/15 blur-xl" aria-hidden />
               <div className="relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-[32px] bg-white shadow-xl ring-1 ring-black/5 sm:h-28 sm:w-28">
-                <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+                <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
               </div>
             </div>
 
             <div className="min-w-0 flex-1">
-              <span className="hy-empty-season">WinChat · зимняя история</span>
+              <span className="hy-empty-season">Cordy · зимняя история</span>
               <h1 className="text-3xl font-extrabold tracking-tight text-ink sm:text-[2.2rem]">
                 {greeting}
               </h1>
@@ -341,7 +341,7 @@ export default function Messenger({
   const isAdmin = me.username.toLowerCase() === "admin";
   const active = chats.find((c) => c.id === activeId) ?? null;
 
-  /* ---------- WinChat You: адрес синхронизирует выбранный чат и настройки ---------- */
+  /* ---------- Cordy You: адрес синхронизирует выбранный чат и настройки ---------- */
   useEffect(() => {
     if (youMode) setActiveId(initialChatId ?? null);
   }, [youMode, initialChatId]);

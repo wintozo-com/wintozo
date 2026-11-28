@@ -29,16 +29,16 @@ type CatalogApp = {
 const CATALOG: CatalogApp[] = [
   {
     id: "winchat",
-    name: "WinChat",
+    name: "Cordy Messenger",
     packageId: "org.wintozo.messenger",
-    description: "Основной мессенджер WinChat: чаты, каналы, группы и обновления.",
+    description: "Основной мессенджер Cordy: чаты, каналы, группы и обновления.",
     badge: "Messenger",
   },
   {
     id: "winchat-you",
-    name: "WinChat You",
+    name: "Cordy You",
     packageId: "com.winchat.you",
-    description: "Отдельное приложение WinChat только в теме Material You.",
+    description: "Отдельное приложение Cordy только в теме Material You.",
     badge: "You",
   },
   {
@@ -201,7 +201,7 @@ export default function StoreApp({
         <header className="mb-5 flex flex-col gap-4 rounded-[28px] border border-white/70 bg-white/75 p-4 shadow-[0_20px_60px_-30px_rgba(16,18,20,0.35)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between sm:p-5">
           <div className="flex items-center gap-3 sm:gap-4">
             <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-[20px] bg-white shadow-lg ring-1 ring-black/5 sm:h-16 sm:w-16">
-              <img src="/logo.jpg" alt="Wintozo Store" className="h-full w-full object-cover" />
+              <img src="/cordy-logo.svg" alt="Wintozo Store" className="h-full w-full object-cover" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -285,7 +285,7 @@ export default function StoreApp({
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-2xl bg-white shadow ring-1 ring-black/5">
-                        <img src="/logo.jpg" alt={app.name} className="h-full w-full object-cover" />
+                        <img src="/cordy-logo.svg" alt={app.name} className="h-full w-full object-cover" />
                       </div>
                       <div>
                         <p className="text-[16px] font-extrabold leading-tight text-ink">{app.name}</p>
@@ -397,7 +397,7 @@ export default function StoreApp({
                   <input
                     value={otaVersion}
                     onChange={(e) => setOtaVersion(e.target.value)}
-                    placeholder="7.0.1"
+                    placeholder="8.0.0-closed-beta"
                     className="w-full rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm font-medium outline-none transition focus:border-accent/40 focus:ring-4 focus:ring-accent/10"
                   />
                 </label>

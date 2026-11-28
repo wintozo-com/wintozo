@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, CheckCheck, Palette, Sparkles } from "lucide-react";
 import { cn } from "../../utils/cn";
 import YouBackdrop from "../YouBackdrop";
@@ -25,7 +25,7 @@ const CHECKS = [
 ];
 
 /**
- * OOBE обновления на WinChat 5.0: приветствие → предпросмотр Liquid Glass
+ * OOBE обновления на Cordy 5.0: приветствие → предпросмотр Liquid Glass
  * с проверкой WinPro → финальный экран «Обновление завершено».
  * Показывается один раз после обновления; на ПК доступен по /oobe_update.
  */
@@ -149,23 +149,23 @@ export default function OobeUpdate({ winPro, onFinish, variant = "liquid", onThe
                 )}
               >
                 <img
-                  src="/logo.jpg"
-                  alt="WinChat"
+                  src="/cordy-logo.svg"
+                  alt="Cordy"
                   className="h-full w-full animate-[oobe-breathe_3s_ease-in-out_infinite] object-cover"
                 />
               </div>
             </div>
 
             <h1 className="animate-[oobe-rise_0.65s_cubic-bezier(0.22,1.2,0.4,1)_0.15s_both] mt-8 text-[34px] leading-tight font-extrabold tracking-tight oobe-title">
-              WinChat <span className="text-[#3f6df6] oobe-accent-text">5.0</span>
+              Cordy <span className="text-[#3f6df6] oobe-accent-text">5.0</span>
             </h1>
             <p className="animate-[oobe-rise_0.65s_cubic-bezier(0.22,1.2,0.4,1)_0.28s_both] mt-2 text-[16px] font-bold oobe-subtitle">
               Обновление завершено
             </p>
             <p className="mt-3 max-w-[320px] text-[13px] leading-relaxed font-medium oobe-subtitle">
               {you
-                ? "Впереди красочный Material You: живые палитры, тональные поверхности и крупные формы. Добро пожаловать в эру WinChat You."
-                : "Впереди самый прозрачный интерфейс в истории WinChat — добро пожаловать в эру Liquid Glass."}
+                ? "Впереди красочный Material You: живые палитры, тональные поверхности и крупные формы. Добро пожаловать в эру Cordy You."
+                : "Впереди самый прозрачный интерфейс в истории Cordy — добро пожаловать в эру Liquid Glass."}
             </p>
 
             <OobeButton
@@ -198,7 +198,7 @@ export default function OobeUpdate({ winPro, onFinish, variant = "liquid", onThe
               >
                 <span className="flex items-center gap-2">
                   <img
-                    src="/logo.jpg"
+                    src="/cordy-logo.svg"
                     alt=""
                     className={cn(
                       "h-6 w-6 object-cover",
@@ -351,11 +351,11 @@ export default function OobeUpdate({ winPro, onFinish, variant = "liquid", onThe
                     
                   </span>
                   <p className={cn("text-[15px] leading-snug font-extrabold", you ? "oobe-you-title" : "text-[#12295c]")}>
-                    У вас есть WinPro. Вы можете использовать WinChat Glass как основную
+                    У вас есть WinPro. Вы можете использовать Cordy Glass как основную
                     тему!
                   </p>
                   <p className={cn("text-[12px] font-semibold", you ? "oobe-you-subtitle" : "text-[#1a2434]/55")}>
-                    Настройки → Оформление → WinChat Glass
+                    Настройки → Оформление → Cordy Glass
                   </p>
                 </div>
               ) : (
@@ -370,7 +370,7 @@ export default function OobeUpdate({ winPro, onFinish, variant = "liquid", onThe
                   </span>
                   <p className={cn("text-[15px] leading-snug font-extrabold", you ? "oobe-you-title" : "text-[#12295c]")}>
                     У вас нет WinPro. Получайте его в раздаче или у админа и пользуйтесь
-                    WinChat Glass или WinChat You!
+                    Cordy Glass или Cordy You!
                   </p>
                 </div>
               )}
@@ -389,13 +389,13 @@ export default function OobeUpdate({ winPro, onFinish, variant = "liquid", onThe
                 className="absolute -inset-6 animate-[oobe-breathe_3s_ease-in-out_infinite] rounded-full bg-white/70 blur-2xl"
               />
               <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-[32px] border border-white/90 bg-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,1),0_30px_60px_-32px_rgba(28,60,140,0.7)] backdrop-blur-2xl">
-                <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+                <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
               </div>
             </div>
 
             <h1 className="animate-[oobe-rise_0.7s_cubic-bezier(0.22,1.2,0.4,1)_0.2s_both] mt-7 text-[38px] font-extrabold tracking-tight text-[#101214] oobe-title">
               <span className="bg-gradient-to-r from-[#3f6df6] via-[#7aa2ff] to-[#8aa0c8] bg-clip-text text-transparent oobe-accent-grad">
-                WinChat
+                Cordy
               </span>
             </h1>
 
@@ -429,7 +429,7 @@ export function OobeButton({
   onClick: () => void;
   className?: string;
   disabled?: boolean;
-  /** Стиль WinChat You (Material 3 filled). */
+  /** Стиль Cordy You (Material 3 filled). */
   you?: boolean;
 }) {
   return (

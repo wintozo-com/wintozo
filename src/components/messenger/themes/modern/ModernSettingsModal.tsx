@@ -821,7 +821,7 @@ export default function SettingsModal({
                   </div>
                   <h4 className="mt-4 text-xl font-extrabold tracking-tight">WinPro</h4>
                   <p className="mt-1.5 text-[13px] font-medium leading-relaxed text-black/50">
-                    Премиум-подписка WinChat: корона в профиле, серая галочка, эксклюзивные
+                    Премиум-подписка Cordy: корона в профиле, серая галочка, эксклюзивные
                     палитры и секретные анимации.
                   </p>
                   <div className="mt-5 space-y-2 text-left">
@@ -970,11 +970,11 @@ export default function SettingsModal({
                 {[
                   { label: "Устройство", value: deviceLabel() },
                   { label: "Версия Android", value: androidLabel() },
-                  { label: "Версия приложения WinChat", value: device?.appVersion || APP_VERSION },
-                  { label: "Версия сервера WinChat", value: serverVersion ?? "…" },
+                  { label: "Версия приложения Cordy", value: device?.appVersion || APP_VERSION },
+                  { label: "Версия сервера Cordy", value: serverVersion ?? "…" },
                   { label: "Самая новая версия", value: latestVersion ?? "—" },
                 ].map((row, i) => {
-                  const isVersion = row.label === "Версия приложения WinChat";
+                  const isVersion = row.label === "Версия приложения Cordy";
                   const content = (
                     <>
                       <span className="shrink-0 text-[12px] font-bold text-black/45">{row.label}</span>

@@ -29,7 +29,7 @@ $files = @(
 
 $sb = New-Object System.Text.StringBuilder
 [void]$sb.AppendLine('-- ============================================================')
-[void]$sb.AppendLine('-- WinChat 7.0.1 - FULL SCHEMA FOR SERVER 2')
+[void]$sb.AppendLine('-- Cordy 8.0.0-closed-beta - FULL SCHEMA FOR SERVER 2')
 [void]$sb.AppendLine('-- Project: https://bjsjvozhkjktowqizidj.supabase.co')
 [void]$sb.AppendLine('-- Run entirely in Dashboard -> SQL Editor -> New query -> Run')
 [void]$sb.AppendLine('-- Server 2 accepts ~half of registrations, but every account is')

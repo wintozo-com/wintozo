@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Check,
   CheckCheck,
@@ -37,7 +37,7 @@ interface Props {
   variant?: OobeVariant;
 }
 
-/** Что нового в WinChat 6.0 (шаг 3). */
+/** Что нового в Cordy 6.0 (шаг 3). */
 const WHATS_NEW = [
   "Material You — живые палитры и тональные поверхности",
   "Новый шрифт Google Sans в Material You",
@@ -46,7 +46,7 @@ const WHATS_NEW = [
 ];
 
 /**
- * OOBE обновления до WinChat 6.0 в стиле Material You:
+ * OOBE обновления до Cordy 6.0 в стиле Material You:
  * приветствие → живое превью → активация темы → «Что нового».
  * Фон и логотип используют expressive-формы из бут-анимации You.
  */
@@ -70,7 +70,7 @@ export default function OobeUpdate({
     window.scrollTo({ top: 0 });
   }, [step]);
 
-  /* Активировать тему WinChat You (Material You) — кнопка на шаге 2. */
+  /* Активировать тему Cordy You (Material You) — кнопка на шаге 2. */
   function activateYou() {
     saveThemeId(YOU_THEME_ID);
     applyTheme(getThemeById(YOU_THEME_ID) ?? THEMES[0]);
@@ -99,7 +99,7 @@ export default function OobeUpdate({
 
             <span className="oobe-you-eyebrow">
               <Sparkles />
-              WinChat 6.0 · Material You
+              Cordy 6.0 · Material You
             </span>
 
             <h1 className="oobe-you-h1">
@@ -109,7 +109,7 @@ export default function OobeUpdate({
 
             <p className="oobe-you-lead">
               Живые формы из заставки, тональные поверхности и новая палитра —
-              WinChat стал мягче и выразительнее.
+              Cordy стал мягче и выразительнее.
             </p>
 
             <div className="oobe-you-actions">
@@ -143,23 +143,23 @@ export default function OobeUpdate({
             </span>
 
             <div className="oobe-you-video-grid">
-              <OobeYouVideo src="/Preview_you.mp4" caption="WinChat You 2.0–5.0" />
-              <OobeYouVideo src="/winchat_new_prewiew.mp4" caption="WinChat 6.0" />
+              <OobeYouVideo src="/Preview_you.mp4" caption="Cordy You 2.0–5.0" />
+              <OobeYouVideo src="/winchat_new_prewiew.mp4" caption="Cordy 6.0" />
             </div>
 
             <span className="oobe-you-eyebrow">
               <WandSparkles />
-              Так теперь выглядит WinChat
+              Так теперь выглядит Cordy
             </span>
 
             <h1 className="oobe-you-h2">
-              WinChat 6.0
-              <span className="oobe-you-grad">Встречайте новый улучшенный WinChat You</span>
+              Cordy 6.0
+              <span className="oobe-you-grad">Встречайте новый улучшенный Cordy You</span>
             </h1>
 
             <p className="oobe-you-lead">
               Одна палитра для кнопок, сообщений и фона. Форму интерфейса можно
-              менять в настройках WinChat You.
+              менять в настройках Cordy You.
             </p>
 
             {winPro ? (
@@ -168,8 +168,8 @@ export default function OobeUpdate({
                   variant={activated ? "tonal" : "filled"}
                   label={
                     activated
-                      ? "Тема WinChat You активирована"
-                      : "Активировать WinChat You"
+                      ? "Тема Cordy You активирована"
+                      : "Активировать Cordy You"
                   }
                   leading={activated ? <CheckCheck /> : <Palette />}
                   onClick={activateYou}
@@ -273,7 +273,7 @@ export function OobeButton({
   onClick: () => void;
   className?: string;
   disabled?: boolean;
-  /** Стиль WinChat You (в 6.0 всегда Material You). */
+  /** Стиль Cordy You (в 6.0 всегда Material You). */
   you?: boolean;
 }) {
   return (

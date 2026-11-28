@@ -1,7 +1,7 @@
 /**
- * WinChat Lite — урезанный интерфейс для Android в браузере.
+ * Cordy Lite — урезанный интерфейс для Android в браузере.
  *
- * Стиль — как у старого Wintozo (папка old/), но название WinChat.
+ * Стиль — как у старого Wintozo (папка old/), но название Cordy.
  * Урезан максимально: только личные чаты и группы, текстовые сообщения.
  * Каналы не показываются. Никаких картинок и аватарок, новых чатов,
  * медиа-сообщения показываются текстовой плашкой («только в приложении»).
@@ -565,7 +565,7 @@ export default function LiteMessenger({ me, onLogout }: Props) {
       <div className="lite-ota-icon">W</div>
       <div className="lite-ota-body">
         <div className="lite-ota-title">Установите приложение</div>
-        <div className="lite-ota-sub">Полная версия WinChat — для Android</div>
+        <div className="lite-ota-sub">Полная версия Cordy — для Android</div>
       </div>
       <button
         className="lite-ota-btn"
@@ -584,7 +584,7 @@ export default function LiteMessenger({ me, onLogout }: Props) {
       <div className="wclite" data-theme={theme}>
         {otaBar}
         <div className="lite-header">
-          <span className="lite-logo">WinChat</span>
+          <span className="lite-logo">Cordy</span>
           <span className="lite-logo-badge">Lite</span>
           <div style={{ flex: 1 }} />
           <button className="lite-icon-btn" onClick={cycleTheme} title="Сменить тему">
@@ -617,7 +617,7 @@ export default function LiteMessenger({ me, onLogout }: Props) {
             </div>
             <div className="lite-row">
               <span className="lite-row-label">Версия</span>
-              <span className="lite-row-value">WinChat {APP_VERSION} Lite</span>
+              <span className="lite-row-value">Cordy {APP_VERSION} Lite</span>
             </div>
           </div>
 
@@ -643,7 +643,7 @@ export default function LiteMessenger({ me, onLogout }: Props) {
       <div className="wclite" data-theme={theme}>
         {otaBar}
         <div className="lite-header">
-          <span className="lite-logo">WinChat</span>
+          <span className="lite-logo">Cordy</span>
           <span className="lite-logo-badge">Lite</span>
           <div style={{ flex: 1 }} />
           <button className="lite-icon-btn" onClick={cycleTheme} title="Сменить тему">

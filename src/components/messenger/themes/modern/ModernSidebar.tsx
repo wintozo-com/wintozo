@@ -241,12 +241,12 @@ export default function Sidebar({
                 type="button"
                 onClick={onLogoTap}
                 className="yc-brand-logo relative flex h-11 w-11 items-center justify-center overflow-hidden font-extrabold"
-                aria-label="WinChat"
+                aria-label="Cordy"
               >
-                <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+                <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
               </button>
               <div className="min-w-0">
-                <p className="yc-brand-name text-[18px] leading-none font-extrabold tracking-tight">WinChat You</p>
+                <p className="yc-brand-name text-[18px] leading-none font-extrabold tracking-tight">Cordy You</p>
               </div>
             </div>
             <div className="yc-side-actions flex items-center gap-1.5">
@@ -362,10 +362,10 @@ export default function Sidebar({
         <button
           onClick={onLogoTap}
           className="mb-3 flex h-11 w-11 items-center justify-center overflow-hidden rounded-[16px] bg-white shadow-md ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-lg active:scale-95"
-          aria-label="WinChat"
-          title="WinChat"
+          aria-label="Cordy"
+          title="Cordy"
         >
-          <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+          <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
         </button>
 
         <div className="flex flex-1 flex-col items-center gap-1.5">
@@ -421,13 +421,13 @@ export default function Sidebar({
             type="button"
             onClick={onLogoTap}
             className="hy-phone-logo flex h-12 w-12 items-center justify-center overflow-hidden rounded-[18px] bg-white shadow-md ring-1 ring-black/5 transition active:scale-95"
-            aria-label="WinChat"
+            aria-label="Cordy"
           >
-            <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+            <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
           </button>
           <div className="min-w-0 flex-1">
             <p className="hy-phone-kicker">С наступающим · 2027</p>
-            <p className="hy-phone-title text-[20px] font-extrabold tracking-tight text-ink leading-none">WinChat</p>
+            <p className="hy-phone-title text-[20px] font-extrabold tracking-tight text-ink leading-none">Cordy</p>
             <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1">
               <HappyYearCountdown inline />
               <span className="hy-phone-dialogs text-[11px] font-semibold text-black/40">{chats.length} диалогов</span>

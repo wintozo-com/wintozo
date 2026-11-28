@@ -26,7 +26,7 @@ export default function YouLocked({ me, onBack, onGetWinPro }: Props) {
 
         <div className="relative">
           <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-[28px] bg-[var(--you-primary-container)] shadow-inner">
-            <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+            <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
           </div>
 
           <div className="mt-5 flex items-center justify-center gap-2">
@@ -36,7 +36,7 @@ export default function YouLocked({ me, onBack, onGetWinPro }: Props) {
           </div>
 
           <h1 className="mt-3 text-[32px] leading-tight font-extrabold tracking-tight text-[var(--you-on-surface)]">
-            WinChat <span className="text-[var(--you-primary)]">You</span>
+            Cordy <span className="text-[var(--you-primary)]">You</span>
           </h1>
           <p className="mx-auto mt-3 max-w-[320px] text-[14px] leading-relaxed font-medium text-[var(--you-on-surface-variant)]">
             Интерфейс, который подстраивается под вас: динамическая палитра Material You,
@@ -76,7 +76,7 @@ export default function YouLocked({ me, onBack, onGetWinPro }: Props) {
             onClick={onGetWinPro}
             className="mt-7 flex w-full items-center justify-center gap-2 rounded-full bg-[var(--you-primary)] px-5 py-3.5 text-[15px] font-extrabold text-[var(--you-on-primary)] shadow-lg transition hover:brightness-105 active:scale-[0.98]"
           >
-            {active ? "Открыть WinChat You" : "Оформить WinPro"}
+            {active ? "Открыть Cordy You" : "Оформить WinPro"}
           </button>
 
           <button
@@ -84,7 +84,7 @@ export default function YouLocked({ me, onBack, onGetWinPro }: Props) {
             className="mt-2 flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-[13px] font-bold text-[var(--you-on-surface-variant)] transition hover:bg-[var(--you-surface-container)] active:scale-[0.98]"
           >
             <ArrowLeft className="h-4 w-4" />
-            Вернуться в обычный WinChat
+            Вернуться в обычный Cordy
           </button>
         </div>
       </div>

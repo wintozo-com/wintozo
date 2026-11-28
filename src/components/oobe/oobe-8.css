@@ -1,0 +1,858 @@
+/* ============================================================
+   Cordy 8.0 — OOBE обновления.
+   Двухколоночный макет в духе прошлых OOBE: слева заголовок и
+   действия, справа карточка-сцена с преображением WinChat → Cordy.
+   Только светлая и тёмная тема, один акцентный цвет.
+   ============================================================ */
+
+.c8 {
+  --c8-bg: #f5f5f2;
+  --c8-surface: #ffffff;
+  --c8-text: #101214;
+  --c8-muted: #5b6069;
+  --c8-line: rgba(16, 18, 20, 0.1);
+  --c8-line-strong: rgba(16, 18, 20, 0.16);
+  --c8-accent: #2b4fff;
+  --c8-accent-soft: #e8edff;
+  --c8-glow-strong: rgba(43, 79, 255, 0.12);
+  --c8-glow-soft: rgba(43, 79, 255, 0.07);
+  --c8-panel-shadow: 0 40px 90px -60px rgba(16, 18, 20, 0.45);
+  --c8-on-accent: #ffffff;
+
+  position: relative;
+  display: flex;
+  min-height: 100dvh;
+  flex-direction: column;
+  overflow-x: clip;
+  color: var(--c8-text);
+  background: var(--c8-bg);
+  font-family: var(--font-sans, "WinChat Zusker", system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+.theme-dark .c8 {
+  --c8-bg: #0f0f13;
+  --c8-surface: #1a1a24;
+  --c8-text: #e0e7ff;
+  --c8-muted: rgba(224, 231, 255, 0.56);
+  --c8-line: rgba(224, 231, 255, 0.1);
+  --c8-line-strong: rgba(224, 231, 255, 0.18);
+  --c8-accent: #4a6bff;
+  --c8-accent-soft: rgba(74, 107, 255, 0.14);
+  --c8-glow-strong: rgba(74, 107, 255, 0.18);
+  --c8-glow-soft: rgba(74, 107, 255, 0.1);
+  --c8-panel-shadow: 0 40px 90px -50px rgba(0, 0, 0, 0.9);
+}
+
+.c8 *,
+.c8 *::before,
+.c8 *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- фон: мягкие пятна света и едва заметная сетка ---------- */
+.c8-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(900px 520px at 50% -10%, var(--c8-glow-strong), transparent 62%),
+    radial-gradient(620px 420px at 6% 14%, var(--c8-glow-soft), transparent 70%),
+    radial-gradient(620px 420px at 94% 20%, var(--c8-glow-soft), transparent 70%);
+}
+.c8-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--c8-line-strong) 1px, transparent 1px);
+  background-size: 26px 26px;
+  opacity: 0.5;
+  mask-image: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    transparent 34%,
+    transparent 66%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+/* ---------- шапка ---------- */
+.c8-topbar {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: min(100% - 48px, 1120px);
+  margin: 0 auto;
+  padding: 24px 0;
+}
+.c8-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.c8-brand img {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+.c8-chip {
+  padding: 6px 12px;
+  border: 1px solid var(--c8-line);
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--c8-muted);
+  white-space: nowrap;
+}
+
+/* ---------- каркас ---------- */
+.c8-main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  width: min(100% - 48px, 1120px);
+  margin: 0 auto;
+  padding: 8px 0 56px;
+}
+.c8-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 430px);
+  gap: clamp(32px, 5vw, 72px);
+  align-items: center;
+}
+
+/* ---------- левая колонка ---------- */
+.c8-copy {
+  max-width: 560px;
+  animation: c8-rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes c8-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.c8-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c8-muted);
+}
+.c8-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c8-accent);
+  box-shadow: 0 0 0 4px var(--c8-accent-soft);
+}
+
+.c8-title {
+  margin: 16px 0 0;
+  font-size: clamp(38px, 4.4vw, 56px);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+}
+.c8-title em {
+  display: block;
+  font-style: normal;
+  color: var(--c8-accent);
+}
+
+.c8-lead {
+  max-width: 470px;
+  margin: 18px 0 0;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--c8-muted);
+}
+
+.c8-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.c8-points li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--c8-muted);
+}
+.c8-points svg {
+  width: 15px;
+  height: 15px;
+  color: var(--c8-accent);
+}
+
+/* ---------- кнопки ---------- */
+.c8-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+}
+.c8-btn {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 22px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    border-color 0.18s ease,
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+.c8-btn svg {
+  width: 17px;
+  height: 17px;
+}
+.c8-btn--primary {
+  background: var(--c8-accent);
+  color: var(--c8-on-accent);
+  box-shadow: 0 12px 28px -14px var(--c8-accent);
+}
+.c8-btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px -14px var(--c8-accent);
+}
+.c8-btn--ghost {
+  background: transparent;
+  border-color: var(--c8-line-strong);
+  color: var(--c8-text);
+}
+.c8-btn--ghost:hover {
+  background: var(--c8-surface);
+}
+.c8-btn:active {
+  transform: translateY(0) scale(0.99);
+}
+.c8-btn:focus-visible {
+  outline: 2px solid var(--c8-accent);
+  outline-offset: 2px;
+}
+
+/* ---------- прогресс ---------- */
+.c8-progress {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 36px;
+}
+.c8-progress span {
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--c8-line-strong);
+  transition: background 0.3s ease;
+}
+.c8-progress span.is-active {
+  background: var(--c8-accent);
+}
+.c8-progress small {
+  margin-left: 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--c8-muted);
+}
+
+/* ---------- список изменений ---------- */
+.c8-features {
+  margin: 26px 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--c8-line);
+}
+.c8-features li {
+  display: flex;
+  gap: 14px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--c8-line);
+}
+.c8-feature-icon {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--c8-accent);
+  background: var(--c8-accent-soft);
+}
+.c8-feature-icon svg {
+  width: 18px;
+  height: 18px;
+}
+.c8-feature-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.c8-feature-copy strong {
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.c8-feature-copy span {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--c8-muted);
+}
+.c8-footnote {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: var(--c8-muted);
+}
+.c8-footnote svg {
+  width: 15px;
+  height: 15px;
+  color: var(--c8-accent);
+  flex: none;
+}
+
+/* ---------- правая карточка ---------- */
+.c8-panel {
+  position: relative;
+  display: flex;
+  min-height: 440px;
+  flex-direction: column;
+  padding: 22px;
+  border: 1px solid var(--c8-line);
+  border-radius: 40px;
+  background: var(--c8-surface);
+  box-shadow: var(--c8-panel-shadow);
+  overflow: hidden;
+}
+.c8-panel::before {
+  content: "";
+  position: absolute;
+  inset: -40% 0 auto;
+  height: 80%;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    var(--c8-glow-strong),
+    transparent 70%
+  );
+}
+.c8-panel-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.c8-panel-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c8-muted);
+}
+.c8-panel-chip {
+  padding: 4px 9px;
+  border: 1px solid var(--c8-line);
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--c8-muted);
+  white-space: nowrap;
+}
+.c8-panel-body {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  flex: 1;
+  place-items: center;
+  padding: 18px 0 22px;
+}
+.c8-panel-foot {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid var(--c8-line);
+  font-size: 12px;
+  font-weight: 600;
+}
+.c8-panel-foot svg {
+  width: 14px;
+  height: 14px;
+  color: var(--c8-muted);
+}
+.c8-foot-old {
+  color: var(--c8-muted);
+}
+.c8-foot-new {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--c8-text);
+}
+
+/* ---------- сцена преображения ---------- */
+.c8-stage {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 300px;
+  align-items: center;
+  justify-content: center;
+}
+
+.c8-icon {
+  position: absolute;
+  left: 50%;
+  bottom: calc(50% + 38px);
+  width: 104px;
+  height: 104px;
+  transform: translateX(-50%);
+}
+.c8-shard {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transition:
+    transform 0.75s cubic-bezier(0.3, 0.7, 0.3, 1),
+    opacity 0.6s ease,
+    filter 0.6s ease;
+}
+.c8-shard--1 {
+  clip-path: polygon(0 0, 54% 0, 46% 54%, 0 46%);
+}
+.c8-shard--2 {
+  clip-path: polygon(54% 0, 100% 0, 100% 46%, 46% 54%);
+}
+.c8-shard--3 {
+  clip-path: polygon(0 46%, 46% 54%, 54% 100%, 0 100%);
+}
+.c8-shard--4 {
+  clip-path: polygon(46% 54%, 100% 46%, 100% 100%, 54% 100%);
+}
+.c8-tile {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 9px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow:
+    0 18px 40px -22px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(16, 18, 20, 0.06);
+}
+.c8-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+/* Новый логотип встаёт на место старого после распада. */
+.c8-new-icon {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: scale(0.72) rotate(-10deg);
+  transition:
+    opacity 0.55s ease 0.38s,
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.38s;
+}
+.c8-new-icon::before {
+  content: "";
+  position: absolute;
+  inset: -22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--c8-glow-strong), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.6s ease 0.42s;
+}
+.c8-new-icon img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow:
+    0 20px 44px -22px rgba(43, 79, 255, 0.55),
+    0 0 0 1px var(--c8-line);
+}
+.c8[data-revealed="1"] .c8-new-icon {
+  opacity: 1;
+  transform: none;
+}
+.c8[data-revealed="1"] .c8-new-icon::before {
+  opacity: 1;
+}
+.c8[data-revealed="1"] .c8-shard--1 {
+  transform: translate(-13px, -15px) rotate(-7deg) scale(0.96);
+  opacity: 0;
+  filter: blur(3px);
+}
+.c8[data-revealed="1"] .c8-shard--2 {
+  transform: translate(15px, -13px) rotate(6deg) scale(0.96);
+  opacity: 0;
+  filter: blur(3px);
+  transition-delay: 0.04s;
+}
+.c8[data-revealed="1"] .c8-shard--3 {
+  transform: translate(-15px, 13px) rotate(5deg) scale(0.96);
+  opacity: 0;
+  filter: blur(3px);
+  transition-delay: 0.02s;
+}
+.c8[data-revealed="1"] .c8-shard--4 {
+  transform: translate(13px, 15px) rotate(-6deg) scale(0.96);
+  opacity: 0;
+  filter: blur(3px);
+  transition-delay: 0.06s;
+}
+
+/* строка «WinChat 8.0» → «Cordy 8.0» */
+.c8-line {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 15px;
+  transform: translateY(32px);
+  font-size: clamp(34px, 3.6vw, 44px);
+  line-height: 1;
+}
+.c8-slot {
+  position: relative;
+  display: block;
+  width: 3.9em;
+  height: 1.3em;
+}
+.c8-old,
+.c8-new {
+  position: absolute;
+  right: 0;
+  top: calc(50% + 10px);
+  transform: translateY(-50%);
+  display: flex;
+  white-space: nowrap;
+  font-size: 0.9em;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+.c8-old {
+  color: var(--c8-muted);
+}
+.c8-new {
+  color: var(--c8-text);
+}
+.c8-old-ch {
+  display: inline-block;
+  transition:
+    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.42s ease,
+    filter 0.42s ease;
+}
+.c8[data-revealed="1"] .c8-old-ch {
+  opacity: 0;
+  filter: blur(4px);
+}
+.c8[data-revealed="1"] .c8-old-ch:nth-child(1) {
+  transform: translate(-6px, -9px) rotate(-10deg);
+}
+.c8[data-revealed="1"] .c8-old-ch:nth-child(2) {
+  transform: translate(-2px, -13px) rotate(7deg);
+  transition-delay: 0.03s;
+}
+.c8[data-revealed="1"] .c8-old-ch:nth-child(3) {
+  transform: translate(3px, 8px) rotate(-8deg);
+  transition-delay: 0.06s;
+}
+.c8[data-revealed="1"] .c8-old-ch:nth-child(4) {
+  transform: translate(-4px, 10px) rotate(9deg);
+  transition-delay: 0.02s;
+}
+.c8[data-revealed="1"] .c8-old-ch:nth-child(5) {
+  transform: translate(6px, -10px) rotate(11deg);
+  transition-delay: 0.05s;
+}
+.c8[data-revealed="1"] .c8-old-ch:nth-child(6) {
+  transform: translate(5px, 9px) rotate(-9deg);
+  transition-delay: 0.08s;
+}
+.c8[data-revealed="1"] .c8-old-ch:nth-child(7) {
+  transform: translate(7px, 3px) rotate(12deg);
+  transition-delay: 0.1s;
+}
+
+.c8-new-ch {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(22px);
+  filter: blur(5px);
+  transition:
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.45s ease,
+    filter 0.45s ease;
+}
+.c8[data-revealed="1"] .c8-new-ch {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+.c8[data-revealed="1"] .c8-new-ch:nth-child(1) {
+  transition-delay: 0.48s;
+}
+.c8[data-revealed="1"] .c8-new-ch:nth-child(2) {
+  transition-delay: 0.53s;
+}
+.c8[data-revealed="1"] .c8-new-ch:nth-child(3) {
+  transition-delay: 0.58s;
+}
+.c8[data-revealed="1"] .c8-new-ch:nth-child(4) {
+  transition-delay: 0.63s;
+}
+.c8[data-revealed="1"] .c8-new-ch:nth-child(5) {
+  transition-delay: 0.68s;
+}
+
+.c8-ver {
+  font-size: 1.3em;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.045em;
+  color: var(--c8-text);
+  transform: translateY(12px);
+}
+.c8[data-revealed="1"] .c8-ver {
+  animation: c8-ver-pop 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+}
+@keyframes c8-ver-pop {
+  0% {
+    transform: translateY(12px) scale(1);
+  }
+  42% {
+    transform: translateY(12px) scale(1.05);
+  }
+  100% {
+    transform: translateY(12px) scale(1);
+  }
+}
+
+.c8-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150px;
+  height: 150px;
+  margin: -75px 0 0 -75px;
+  border: 1px solid var(--c8-accent);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+.c8[data-revealed="1"] .c8-ring {
+  animation: c8-ring 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+.c8[data-revealed="1"] .c8-ring--late {
+  animation-delay: 0.34s;
+  animation-duration: 1.25s;
+}
+@keyframes c8-ring {
+  0% {
+    opacity: 0;
+    transform: scale(0.42);
+  }
+  28% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.55);
+  }
+}
+
+/* ---------- финальная карточка ---------- */
+.c8-final {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+  animation: c8-rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.c8-final-mark {
+  position: relative;
+  display: grid;
+  width: 124px;
+  height: 124px;
+  place-items: center;
+}
+.c8-final-mark::before {
+  content: "";
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--c8-glow-strong),
+    transparent 70%
+  );
+}
+.c8-final-mark img {
+  position: relative;
+  z-index: 1;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  box-shadow: 0 22px 44px -24px rgba(0, 0, 0, 0.5);
+}
+.c8-final-ring {
+  position: absolute;
+  inset: -12px;
+  border: 1px solid var(--c8-line);
+  border-radius: 50%;
+}
+.c8-final-ring--late {
+  inset: -26px;
+  opacity: 0.6;
+}
+.c8-final-name {
+  margin: 8px 0 0;
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.c8-final-name span {
+  color: var(--c8-accent);
+}
+.c8-final-note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--c8-muted);
+}
+
+/* ---------- адаптив ---------- */
+@media (max-width: 980px) {
+  .c8-main {
+    padding-top: 8px;
+  }
+  .c8-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 30px;
+    width: min(100%, 560px);
+    margin: 0 auto;
+  }
+  .c8-panel {
+    order: -1;
+    min-height: 360px;
+  }
+  .c8-copy {
+    max-width: none;
+    text-align: center;
+  }
+  .c8-lead {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .c8-points,
+  .c8-actions,
+  .c8-progress {
+    justify-content: center;
+  }
+  .c8-features {
+    text-align: left;
+  }
+  .c8-footnote {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .c8-topbar {
+    padding: 16px 0;
+  }
+  .c8-chip {
+    display: none;
+  }
+  .c8-panel {
+    min-height: 390px;
+    padding: 18px;
+    border-radius: 32px;
+  }
+  .c8-stage {
+    min-height: 252px;
+  }
+  .c8-icon {
+    bottom: calc(50% + 30px);
+    width: 84px;
+    height: 84px;
+  }
+  .c8-tile {
+    padding: 7px;
+  }
+  .c8-line {
+    font-size: 32px;
+    gap: 12px;
+  }
+  .c8-title {
+    font-size: 36px;
+  }
+  .c8-actions {
+    width: 100%;
+  }
+  .c8-btn {
+    flex: 1;
+    padding: 0 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .c8 *,
+  .c8 *::before,
+  .c8 *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

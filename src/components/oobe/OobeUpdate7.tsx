@@ -60,7 +60,7 @@ const WHATS_NEW = [
 ];
 
 /**
- * Новогоднее OOBE обновления до WinChat 7.0 — отдельный дизайн.
+ * Новогоднее OOBE обновления до Cordy 7.0 — отдельный дизайн.
  * Шаг 1: поздравление + отсчёт до 01.01.2027.
  * Шаг 2: что нового в 7.0.
  */
@@ -93,8 +93,8 @@ export default function OobeUpdate7({ winPro, onFinish, variant = "you" }: Props
           <span className="ny7-logo">
             <img
               data-oobe-intro-target
-              src="/logo.jpg"
-              alt="WinChat"
+              src="/cordy-logo.svg"
+              alt="Cordy"
               width={52}
               height={52}
               decoding="async"
@@ -104,7 +104,7 @@ export default function OobeUpdate7({ winPro, onFinish, variant = "you" }: Props
             />
           </span>
           <span className="ny7-brand-copy">
-            <strong>WinChat</strong>
+            <strong>Cordy</strong>
             <small>7.0 · Closed Beta</small>
           </span>
         </div>
@@ -127,13 +127,13 @@ export default function OobeUpdate7({ winPro, onFinish, variant = "you" }: Props
             ) : (
               <>
                 Подарки
-                <em>WinChat 7.0</em>
+                <em>Cordy 7.0</em>
               </>
             )}
           </h1>
           <p className="ny7-hero-text">
             {step === 1
-              ? "WinChat 7.0 установлен. Пусть каждый чат светится теплом, сообщения приходят вовремя, а рядом всегда будут близкие люди."
+              ? "Cordy 7.0 установлен. Пусть каждый чат светится теплом, сообщения приходят вовремя, а рядом всегда будут близкие люди."
               : "Мы украсили мессенджер к празднику: новогодний стиль, кнопки-шарики, отсчёт до 2027 и мелодия."}
           </p>
 
@@ -187,7 +187,7 @@ export default function OobeUpdate7({ winPro, onFinish, variant = "you" }: Props
                 <span className="ny7-mark-ring" aria-hidden="true" />
                 <img
                   data-oobe-intro-target
-                  src="/logo.jpg"
+                  src="/cordy-logo.svg"
                   alt=""
                   decoding="async"
                   onError={(e) => {
@@ -198,7 +198,7 @@ export default function OobeUpdate7({ winPro, onFinish, variant = "you" }: Props
               <h2>
                 Обновление завершено!
                 <br />
-                <em>WinChat 7.0</em>
+                <em>Cordy 7.0</em>
               </h2>
               <p>
                 Праздничная версия готова. Загляните, что нового, или сразу
@@ -211,7 +211,7 @@ export default function OobeUpdate7({ winPro, onFinish, variant = "you" }: Props
                   <ArrowRight />
                 </button>
                 <button type="button" className="ny7-secondary" onClick={onFinish}>
-                  Открыть WinChat
+                  Открыть Cordy
                 </button>
               </div>
             </div>
@@ -250,7 +250,7 @@ export default function OobeUpdate7({ winPro, onFinish, variant = "you" }: Props
 
               <div className="ny7-actions">
                 <button type="button" className="ny7-primary" onClick={onFinish}>
-                  <span>Открыть WinChat</span>
+                  <span>Открыть Cordy</span>
                   <CheckCheck />
                 </button>
               </div>

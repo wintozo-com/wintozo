@@ -329,7 +329,7 @@ export default function AndroidSettings({
     {
       id: "updates",
       label: "Обновления",
-      sub: "WinChat 7.0 · бета-программа",
+      sub: "Cordy 8.0 · бета-программа",
       icon: Download,
     },
     { id: "about", label: "О приложении", sub: device?.appVersion || APP_VERSION, icon: Info },
@@ -381,7 +381,7 @@ export default function AndroidSettings({
                 <Sparkles className="h-4 w-4" />
               </span>
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-black/35">WinChat</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-black/35">Cordy</p>
                 <span className="text-[17px] font-extrabold tracking-tight text-ink leading-none">Настройки</span>
               </div>
             </div>
@@ -652,7 +652,7 @@ export default function AndroidSettings({
                   </div>
                   <h4 className="mt-4 text-xl font-extrabold tracking-tight">WinPro</h4>
                   <p className="mt-1.5 text-[13px] font-medium leading-relaxed text-black/50">
-                    Премиум-подписка WinChat: корона в профиле, серая галочка, эксклюзивные
+                    Премиум-подписка Cordy: корона в профиле, серая галочка, эксклюзивные
                     палитры и секретные анимации.
                   </p>
                   <p className="mt-5 rounded-xl bg-white/70 px-3 py-2.5 font-mono text-[11px] font-semibold text-black/45">
@@ -677,11 +677,11 @@ export default function AndroidSettings({
                 {[
                   { label: "Устройство", value: deviceLabel() },
                   { label: "Версия Android", value: androidLabel() },
-                  { label: "Версия приложения WinChat", value: device?.appVersion || APP_VERSION },
-                  { label: "Версия сервера WinChat", value: serverVersion ?? "…" },
+                  { label: "Версия приложения Cordy", value: device?.appVersion || APP_VERSION },
+                  { label: "Версия сервера Cordy", value: serverVersion ?? "…" },
                   { label: "Самая новая версия", value: latestVersion ?? "—" },
                 ].map((row, i) => {
-                  const isVersion = row.label === "Версия приложения WinChat";
+                  const isVersion = row.label === "Версия приложения Cordy";
                   const content = (
                     <>
                       <span className="shrink-0 text-[12px] font-bold text-black/45">{row.label}</span>

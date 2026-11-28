@@ -266,7 +266,7 @@ export default function Sidebar({
                 youMode ? "yc-brand-logo h-11 w-11" : "h-9 w-9 rounded-xl"
               )}
             >
-              <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+              <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
             </div>
             <div className="min-w-0">
               <p
@@ -275,7 +275,7 @@ export default function Sidebar({
                   youMode && "yc-brand-name"
                 )}
               >
-                {youMode ? "WinChat You" : "WinChat"}
+                {youMode ? "Cordy You" : "Cordy Messenger"}
               </p>
             </div>
           </div>

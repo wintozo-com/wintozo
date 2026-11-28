@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import {
   ArrowRight,
   AtSign,
@@ -36,8 +36,8 @@ interface Props {
 type Step = "welcome" | "auth" | "winpass" | "checking" | "success";
 
 /**
- * OOBE первого скачивания WinChat: приветствие → Liquid Glass регистрация
- * / вход → экран «Проверка..» → финал «WinChat · Продолжить».
+ * OOBE первого скачивания Cordy: приветствие → Liquid Glass регистрация
+ * / вход → экран «Проверка..» → финал «Cordy · Продолжить».
  * Показывается на телефонах при первом запуске; на ПК — по /install_oobe.
  */
 export default function OobeInstall({ hasSession, profile, onFinish, variant = "liquid", onThemeSwitch }: Props) {
@@ -174,7 +174,7 @@ export default function OobeInstall({ hasSession, profile, onFinish, variant = "
                 you && "oobe-you-logo"
               )}
             >
-              <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+              <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
             </div>
           </div>
 
@@ -186,7 +186,7 @@ export default function OobeInstall({ hasSession, profile, onFinish, variant = "
                 you && "oobe-accent-grad"
               )}
             >
-              Добро пожаловать в WinChat!
+              Добро пожаловать в Cordy!
             </span>
           </h1>
 
@@ -205,11 +205,11 @@ export default function OobeInstall({ hasSession, profile, onFinish, variant = "
                 you && "oobe-you-logo"
               )}
             >
-              <img src="/logo.jpg" alt="" className="h-full w-full object-cover" />
+              <img src="/cordy-logo.svg" alt="" className="h-full w-full object-cover" />
             </div>
             <div>
               <p className={cn("text-[20px] leading-none font-extrabold tracking-tight text-[#101214]", you && "oobe-you-title")}>
-                WinChat
+                Cordy
               </p>
               <p className="mt-1 text-[11px] font-extrabold tracking-[0.16em] uppercase oobe-accent-grad-text">
                 {mode === "register" ? "Регистрация" : "Вход"}
@@ -397,13 +397,13 @@ export default function OobeInstall({ hasSession, profile, onFinish, variant = "
               className="absolute -inset-6 animate-[oobe-breathe_3s_ease-in-out_infinite] rounded-full bg-white/70 blur-2xl"
             />
             <div className="relative flex h-28 w-28 items-center justify-center overflow-hidden rounded-[32px] border border-black/8 bg-white shadow-[0_30px_60px_-32px_rgba(28,60,140,0.55)]">
-              <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+              <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
             </div>
           </div>
 
           <h1 className="animate-[oobe-rise_0.7s_cubic-bezier(0.22,1.2,0.4,1)_0.2s_both] mt-7 text-[40px] font-extrabold tracking-tight text-[#101214]">
             <span className="bg-gradient-to-r from-[#3f6df6] via-[#7aa2ff] to-[#8aa0c8] bg-clip-text text-transparent oobe-accent-grad">
-              WinChat
+              Cordy
             </span>
           </h1>
 
@@ -439,7 +439,7 @@ function OobeField({
   type?: string;
   maxLength?: number;
   autoFocus?: boolean;
-  /** Стиль WinChat You (тональная капсула). */
+  /** Стиль Cordy You (тональная капсула). */
   you?: boolean;
 }) {
   return (
@@ -480,7 +480,7 @@ function WinpassGlass({
   value: string;
   onChange: (v: string) => void;
   loading: boolean;
-  /** Стиль WinChat You (тональные поверхности). */
+  /** Стиль Cordy You (тональные поверхности). */
   you?: boolean;
 }) {
   const [open, setOpen] = useState(false);

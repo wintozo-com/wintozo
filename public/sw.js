@@ -14,7 +14,7 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('push', (event) => {
   const data = event.data ? event.data.json() : {};
-  const title = data.title || 'WinChat';
+  const title = data.title || 'Cordy';
   const body = data.body || 'Новое сообщение';
   const icon = data.icon || '/icon-192.png';
   const badge = data.badge || '/icon-192.png';

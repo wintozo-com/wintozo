@@ -1,7 +1,7 @@
 /**
- * Окно выбора стиля OOBE: WinChat You (Material You).
+ * Окно выбора стиля OOBE: Cordy You (Material You).
  *
- * Само окно выполнено в стиле WinChat You: живой фон (YouBackdrop),
+ * Само окно выполнено в стиле Cordy You: живой фон (YouBackdrop),
  * тональные поверхности, filled-кнопка. Выбор сохраняется в localStorage
  * (winchat_oobe_theme) и передаётся в OobeUpdate / OobeInstall через variant.
  */
@@ -33,18 +33,18 @@ export default function OobeThemeChooser({ onChoose }: Props) {
             style={{ background: "var(--you-primary-container)" }}
           />
           <div className="oobe-you-logo relative flex h-24 w-24 items-center justify-center overflow-hidden rounded-[28px] border">
-            <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+            <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
           </div>
         </div>
 
         <h1 className="animate-[oobe-rise_0.65s_cubic-bezier(0.22,1.2,0.4,1)_0.15s_both] mt-7 text-[32px] leading-tight font-extrabold tracking-tight oobe-you-title">
-          WinChat 6.0
+          Cordy 6.0
         </h1>
         <p className="animate-[oobe-rise_0.65s_cubic-bezier(0.22,1.2,0.4,1)_0.28s_both] mt-2 text-[16px] font-bold oobe-you-subtitle">
           Выберите стиль приветствия
         </p>
         <p className="animate-[oobe-rise_0.65s_cubic-bezier(0.22,1.2,0.4,1)_0.4s_both] mt-3 max-w-[340px] text-[13px] leading-relaxed font-medium oobe-you-subtitle">
-          Весь OOBE подстроится под выбранную тему: WinChat You.
+          Весь OOBE подстроится под выбранную тему: Cordy You.
         </p>
 
         <div className="animate-[oobe-rise_0.7s_cubic-bezier(0.22,1.2,0.4,1)_0.5s_both] mt-9 w-full max-w-[360px] space-y-3">

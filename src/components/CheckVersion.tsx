@@ -223,7 +223,7 @@ export default function CheckVersion() {
             <div className="relative">
               <div className="inline-flex items-center gap-2 rounded-full border border-[#2e7d32]/20 bg-white/80 px-3 py-1.5 text-[11px] font-extrabold tracking-[.14em] text-[#2e7d32] uppercase">
                 <Snowflake className="h-3.5 w-3.5" />
-                WinChat 7.0
+                Cordy 7.0
               </div>
               <div className="mt-4 flex items-start gap-3">
                 <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[radial-gradient(circle_at_32%_24%,rgba(255,255,255,.85)_0_10%,transparent_34%),linear-gradient(145deg,#c62828,#8e1b1b)] text-white shadow-[inset_-4px_-6px_10px_rgba(0,0,0,.18),0_10px_20px_-10px_rgba(198,40,40,.55)]">
@@ -234,7 +234,7 @@ export default function CheckVersion() {
                     Что нового в 2026
                   </h3>
                   <p className="mt-1 text-sm font-medium text-[#5f6b63]">
-                    История WinChat: от Wintozo до 7.0
+                    История Cordy: от Wintozo до 7.0
                   </p>
                 </div>
               </div>

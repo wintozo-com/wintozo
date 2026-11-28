@@ -242,7 +242,7 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
       className={embedded ? "uc-root uc-root--embedded" : "uc-root"}
       role="dialog"
       aria-modal="true"
-      aria-label="Обновление WinChat"
+      aria-label="Обновление Cordy"
     >
       <button className="uc-backdrop" onClick={onClose} aria-label="Закрыть" />
 
@@ -303,7 +303,7 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
               label={
                 found?.version
                   ? `Доступна версия ${found.version}`
-                  : `WinChat ${APP_VERSION}`
+                  : `Cordy ${APP_VERSION}`
               }
             />
 
@@ -339,12 +339,12 @@ export default function UpdateCenterOverlay({ onClose, ota, embedded = false }: 
 
             <div className="uc-beta-panel">
               <div className="uc-beta-logo">
-                <img src="/logo.jpg" alt="" draggable={false} />
-                <span>WinChat</span>
+                <img src="/cordy-logo.svg" alt="" draggable={false} />
+                <span>Cordy</span>
               </div>
               <p className="uc-beta-title">Бета-программа</p>
               <p className="uc-beta-desc">
-                Получайте обновления раньше всех и помогайте делать WinChat лучше.
+                Получайте обновления раньше всех и помогайте делать Cordy лучше.
                 Заявку рассматривает администратор.
               </p>
 

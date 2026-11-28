@@ -33,7 +33,7 @@ export const BOOT_STYLES: { id: BootStyle; name: string; description: string }[]
   },
   {
     id: "you",
-    name: "WinChat You",
+    name: "Cordy You",
     description: "Голубой фон и формы Material You",
   },
 ];

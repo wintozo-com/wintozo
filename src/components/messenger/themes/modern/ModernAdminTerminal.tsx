@@ -160,7 +160,7 @@ const GUI_ACTIONS: GuiAction[] = [
   {
     id: "give_glass",
     label: "Выдать Glass",
-    desc: "Доступ к WinChat Glass",
+    desc: "Доступ к Cordy Glass",
     icon: Gem,
     fields: [{ key: "user", label: "Юзернейм", placeholder: "@username" }],
     build: (v) => `/give glass @${v.user.replace(/^@/, "").trim()}`,
@@ -242,7 +242,7 @@ const GUI_ACTIONS: GuiAction[] = [
     icon: Terminal,
     fields: [
       { key: "url", label: "Ссылка на APK", placeholder: "https://update.com/winchat.apk" },
-      { key: "version", label: "Версия", placeholder: "7.0.1" },
+      { key: "version", label: "Версия", placeholder: "8.0.0-closed-beta" },
     ],
     build: (v) => `/set ota ${v.url.trim()} beta ${v.version.trim()}`,
   },
@@ -253,7 +253,7 @@ const GUI_ACTIONS: GuiAction[] = [
     icon: Terminal,
     fields: [
       { key: "url", label: "Ссылка на APK", placeholder: "https://update.com/winchat.apk" },
-      { key: "version", label: "Версия", placeholder: "7.0.1" },
+      { key: "version", label: "Версия", placeholder: "8.0.0-closed-beta" },
     ],
     build: (v) => `/set ota ${v.url.trim()} full ${v.version.trim()}`,
   },
@@ -262,7 +262,7 @@ const GUI_ACTIONS: GuiAction[] = [
 
 export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdated }: Props) {
   const [history, setHistory] = useState<LogEntry[]>([
-    { type: "info", text: "WinChat Admin Terminal · Modern" },
+    { type: "info", text: "Cordy Admin Terminal · Modern" },
     { type: "info", text: "Введите /help или откройте GUI-панель" },
   ]);
   const [input, setInput] = useState("");
@@ -501,7 +501,7 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
         const res = data as any;
         const list = (res.devices ?? []) as OtaDeviceRow[];
         if (!list.length) append({ type: "info", text: "Устройств нет" });
-        else append([{ type: "info", text: `═══ Устройства (${list.length}) ═══` }, ...list.map((d, i) => ({ type: "info" as const, text: `${i + 1}. ${d.nickname || (d.username ? "@" + d.username : "—")} · ${[d.manufacturer, d.model].filter(Boolean).join(" ") || d.platform || "устройство"} · ${d.status ?? ""} · v${d.app_version ?? "?"} · в WinChat ${d.days_in_winchat ?? "?"} дн.${d.beta_accepted ? " · бета" : ""}` }))]);
+        else append([{ type: "info", text: `═══ Устройства (${list.length}) ═══` }, ...list.map((d, i) => ({ type: "info" as const, text: `${i + 1}. ${d.nickname || (d.username ? "@" + d.username : "—")} · ${[d.manufacturer, d.model].filter(Boolean).join(" ") || d.platform || "устройство"} · ${d.status ?? ""} · v${d.app_version ?? "?"} · в Cordy ${d.days_in_winchat ?? "?"} дн.${d.beta_accepted ? " · бета" : ""}` }))]);
         return;
       }
       if (cmd === "/get" && parts[1] === "beta" && parts[2] === "requests") {
@@ -511,7 +511,7 @@ export default function ModernAdminTerminal({ me, open, onClose, onProfileUpdate
         if (!res.requests.length) return append({ type: "info", text: "Новых заявок на бета-тест нет" });
         append([
           { type: "info", text: `═══ Заявки на бета-тест (${res.requests.length}) ═══` },
-          ...res.requests.map((r) => ({ type: "info" as const, text: `${r.nickname || `@${r.username || "?"}`} · ${[r.manufacturer, r.model].filter(Boolean).join(" ") || r.platform || "устройство"} · ${r.app_version ? `v${r.app_version}` : "версия ?"} · в WinChat ${r.days_in_winchat ?? "?"} дн. · ${new Date(r.created_at).toLocaleString("ru-RU")} · id ${r.id}` })),
+          ...res.requests.map((r) => ({ type: "info" as const, text: `${r.nickname || `@${r.username || "?"}`} · ${[r.manufacturer, r.model].filter(Boolean).join(" ") || r.platform || "устройство"} · ${r.app_version ? `v${r.app_version}` : "версия ?"} · в Cordy ${r.days_in_winchat ?? "?"} дн. · ${new Date(r.created_at).toLocaleString("ru-RU")} · id ${r.id}` })),
           { type: "info", text: "Принять: /beta accept <id> · Отклонить: /beta reject <id> [причина]" },
         ]);
         return;

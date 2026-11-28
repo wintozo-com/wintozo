@@ -47,7 +47,7 @@ function baseName(kind: "photo" | "video", ext: string): string {
   const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(
     now.getHours()
   )}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
-  return `${kind === "video" ? "WinChat_Video" : "WinChat_Photo"}_${stamp}.${ext}`;
+  return `${kind === "video" ? "Cordy_Video" : "Cordy_Photo"}_${stamp}.${ext}`;
 }
 
 /** Скачивает файл в браузере (в том числе на Android без нативного плагина). */
@@ -110,8 +110,8 @@ export async function downloadMedia(
       path: native.path,
       message:
         kind === "video"
-          ? "Видео сохранено в DCIM/WinChat/Video"
-          : "Фото сохранено в DCIM/WinChat/Photos",
+          ? "Видео сохранено в DCIM/Cordy/Video"
+          : "Фото сохранено в DCIM/Cordy/Photos",
     };
   }
 

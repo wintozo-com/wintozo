@@ -101,11 +101,11 @@ function FestiveBoot() {
         <span className="boot-fir__ripple boot-fir__ripple--two" />
         <div className="boot-fir__circle">
           <div className="boot-fir__logo">
-            <img src="/logo.jpg" alt="" draggable={false} />
+            <img src="/cordy-logo.svg" alt="" draggable={false} />
             <span>W</span>
           </div>
         </div>
-        <div className="boot-fir__word">WinChat</div>
+        <div className="boot-fir__word">Cordy Messenger</div>
       </div>
     </div>
   );
@@ -166,7 +166,7 @@ export default function BootAnimation({
       data-variant={variant}
       role="status"
       aria-live="polite"
-      aria-label="Загрузка WinChat"
+      aria-label="Загрузка Cordy"
     >
       {variant === "classic" ? (
         <FestiveBoot />
@@ -182,10 +182,10 @@ export default function BootAnimation({
           <span className="boot__pulse" />
           <span className="boot__line" />
           <div className="boot__mark">
-            <img src="/logo.jpg" alt="" draggable={false} />
+            <img src="/cordy-logo.svg" alt="" draggable={false} />
             <span className="boot__shine" />
           </div>
-          <div className="boot__word"><span>WinChat</span></div>
+          <div className="boot__word"><span>Cordy Messenger</span></div>
         </div>
       )}
     </div>

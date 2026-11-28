@@ -9,7 +9,7 @@ import type { Profile } from "../lib/supabase";
 
 interface Props {
   me: Profile;
-  /** Пользователь решил остаться в новом интерфейсе WinChat. */
+  /** Пользователь решил остаться в новом интерфейсе Cordy. */
   onStayNew: () => void;
   /** Пропустить плашку выбора (роут /events/themes/wintozo/*). */
   skipAsk?: boolean;
@@ -227,7 +227,7 @@ export default function LegacyScreen({ me, onStayNew, skipAsk = false }: Props) 
           </h2>
           <p className="mt-3 text-sm font-medium leading-relaxed text-black/55">
             Сервер всё ещё работает на старой версии. Вы можете вернуться в
-            привычный интерфейс Wintozo или остаться с новым WinChat.
+            привычный интерфейс Wintozo или остаться с новым Cordy.
           </p>
           <button
             type="button"
@@ -271,7 +271,7 @@ export default function LegacyScreen({ me, onStayNew, skipAsk = false }: Props) 
         className="font-app absolute right-3 top-3 z-10 flex items-center gap-1.5 rounded-full bg-black/45 px-3.5 py-2 text-[12px] font-bold text-white backdrop-blur transition hover:bg-black/65 active:scale-95"
       >
         <ArrowLeft className="h-3.5 w-3.5" />
-        WinChat
+        Cordy
       </button>
     </div>
   );

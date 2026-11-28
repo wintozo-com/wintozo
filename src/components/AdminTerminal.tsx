@@ -36,7 +36,7 @@ interface OtaDeviceRow {
 
 export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: Props) {
   const [history, setHistory] = useState<LogEntry[]>([
-    { type: "info", text: "WinChat Admin Terminal v2.0" },
+    { type: "info", text: "Cordy Admin Terminal v2.0" },
     { type: "info", text: "Введите /help для списка команд" },
   ]);
   const [input, setInput] = useState("");
@@ -214,8 +214,8 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
             { type: "info", text: "/get winpass @username      — WinPass аккаунта (восстановление)" },
             { type: "info", text: "/give wintozopro @username X — Выдать WinPro на X дней" },
             { type: "info", text: "/delete wintozopro @username — Удалить WinPro" },
-            { type: "info", text: "/give glass @username — Выдать WinChat Glass (флаг is_winchat_glass_true)" },
-            { type: "info", text: "/delete glass @username — Снять WinChat Glass (флаг is_winchat_glass_no)" },
+            { type: "info", text: "/give glass @username — Выдать Cordy Glass (флаг is_winchat_glass_true)" },
+            { type: "info", text: "/delete glass @username — Снять Cordy Glass (флаг is_winchat_glass_no)" },
             { type: "info", text: "/give badge @username <1|2|3> — Выдать бейдж (1 — Дизайнер, 2 — Тестер, 3 — Олд)" },
             { type: "info", text: "/get badges @username — Получить бейджи пользователя" },
             { type: "info", text: "/channel list — Список каналов (id, название, подписчики)" },
@@ -232,8 +232,8 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
             { type: "info", text: "/get beta requests          — Заявки на бета-тест (in-app бот)" },
             { type: "info", text: "/beta accept <id>           — Принять заявку в бета-программу" },
             { type: "info", text: "/beta reject <id> [причина] — Отклонить заявку" },
-            { type: "info", text: "/set legacy @username       — Включить базовый (legacy) интерфейс WinChat" },
-            { type: "info", text: "/del legacy @username       — Вернуть новый интерфейс WinChat" },
+            { type: "info", text: "/set legacy @username       — Включить базовый (legacy) интерфейс Cordy" },
+            { type: "info", text: "/del legacy @username       — Вернуть новый интерфейс Cordy" },
             { type: "info", text: '/set oobe @username "<X.Y>" — Показать пользователю OOBE версии (5.0 / 6.0) при следующем входе' },
             { type: "info", text: "/set oobe @username off     — Вернуть обычную логику OOBE" },
             { type: "info", text: "/get devices                — Устройства, которые запускали приложение" },
@@ -762,7 +762,7 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
                 type: "info" as const,
                 text: `${d.nickname || (d.username ? `@${d.username}` : "—")} · ${[d.manufacturer, d.model].filter(Boolean).join(" ") || d.platform || "устройство"} · ${
                   d.status ?? (d.is_wintozo_web ? "is_wintozo_web_true" : "is_wintozo_web_no")
-                } · v${d.app_version ?? "?"} · в WinChat ${d.days_in_winchat ?? "?"} дн.${d.beta_accepted ? " · бета" : ""} · ${d.device_id}`,
+                } · v${d.app_version ?? "?"} · в Cordy ${d.days_in_winchat ?? "?"} дн.${d.beta_accepted ? " · бета" : ""} · ${d.device_id}`,
               })),
             ]);
             break;
@@ -787,7 +787,7 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
               { type: "info", text: `═══ Заявки на бета-тест (${res.requests.length}) ═══` },
               ...res.requests.map((r) => ({
                 type: "info" as const,
-                text: `${r.nickname || `@${r.username || "?"}`} · ${[r.manufacturer, r.model].filter(Boolean).join(" ") || r.platform || "устройство"} · ${r.app_version ? `v${r.app_version}` : "версия ?"} · в WinChat ${r.days_in_winchat ?? "?"} дн. · ${new Date(r.created_at).toLocaleString("ru-RU")} · id ${r.id}`,
+                text: `${r.nickname || `@${r.username || "?"}`} · ${[r.manufacturer, r.model].filter(Boolean).join(" ") || r.platform || "устройство"} · ${r.app_version ? `v${r.app_version}` : "версия ?"} · в Cordy ${r.days_in_winchat ?? "?"} дн. · ${new Date(r.created_at).toLocaleString("ru-RU")} · id ${r.id}`,
               })),
               { type: "info", text: "Принять: /beta accept <id> · Отклонить: /beta reject <id> [причина]" },
             ]);
@@ -868,7 +868,7 @@ export default function AdminTerminal({ me, open, onClose, onProfileUpdated }: P
         }
 
         case "/clear": {
-          setHistory([{ type: "info", text: "WinChat Admin Terminal v2.0" }]);
+          setHistory([{ type: "info", text: "Cordy Admin Terminal v2.0" }]);
           break;
         }
 

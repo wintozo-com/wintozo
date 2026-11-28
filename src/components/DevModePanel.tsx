@@ -17,7 +17,7 @@ import {
 
 interface Props {
   className?: string;
-  /** Режим WinChat You — подстроить рамки под тона темы. */
+  /** Режим Cordy You — подстроить рамки под тона темы. */
   you?: boolean;
 }
 
@@ -98,7 +98,7 @@ export default function DevModePanel({ className, you = false }: Props) {
         <div className="min-w-0">
           <p className="text-[15px] font-extrabold tracking-tight">Режим разработчика</p>
           <p className="text-[11px] font-medium leading-snug text-black/45">
-            Скрытые инструменты WinChat: монохромный интерфейс и логи
+            Скрытые инструменты Cordy: монохромный интерфейс и логи
           </p>
         </div>
       </div>

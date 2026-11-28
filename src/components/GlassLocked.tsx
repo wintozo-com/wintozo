@@ -32,11 +32,11 @@ export default function GlassLocked({ me, onBack }: Props) {
 
         <div className="relative">
           <div className="mx-auto flex h-20 w-20 items-center justify-center overflow-hidden rounded-[30px] border border-white/90 bg-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,1),0_20px_40px_-24px_rgba(31,55,96,0.7)]">
-            <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+            <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
           </div>
 
           <h1 className="mt-3 text-[32px] leading-tight font-extrabold tracking-tight text-[#1a2434]">
-            WinChat <span className="bg-gradient-to-r from-[#3f6df6] to-[#7aa2ff] bg-clip-text text-transparent">Glass</span>
+            Cordy <span className="bg-gradient-to-r from-[#3f6df6] to-[#7aa2ff] bg-clip-text text-transparent">Glass</span>
           </h1>
           <p className="mx-auto mt-3 max-w-[320px] text-[14px] leading-relaxed font-medium text-[#1a2434]/60">
             Интерфейс из «жидкого стекла»: прозрачные панели, глубокое размытие,
@@ -75,7 +75,7 @@ export default function GlassLocked({ me, onBack }: Props) {
             className="mt-5 flex w-full items-center justify-center gap-2 rounded-full border border-white bg-white/60 px-5 py-3.5 text-[15px] font-extrabold text-[#2c56e8] shadow-[inset_0_1px_0_rgba(255,255,255,1),0_16px_34px_-20px_rgba(28,60,120,0.5)] backdrop-blur-2xl backdrop-saturate-150 transition hover:bg-white/80 active:scale-[0.98]"
           >
             <ArrowLeft className="h-4 w-4" />
-            Вернуться в обычный WinChat
+            Вернуться в обычный Cordy
           </button>
         </div>
       </div>

@@ -66,14 +66,14 @@ function rawMessage(err: unknown): string {
 
 /** Переводит ошибки Supabase Auth на русский и подсказывает действие. */
 export function mapAuthError(err: unknown): string {
-  console.error("[WinChat] ошибка авторизации:", err);
+  console.error("[Cordy] ошибка авторизации:", err);
   const raw = rawMessage(err);
   const e = err as Record<string, unknown> | null;
   const code = String(e?.error_code ?? e?.code ?? "");
   const t = `${code} ${raw}`.toLowerCase();
 
   const NO_SERVER = "Нет подключения к серверу";
-  const NO_SERVERS = "Не удалось подключится к серверам WinChat. У вас включен интернет?";
+  const NO_SERVERS = "Не удалось подключится к серверам Cordy. У вас включен интернет?";
 
   // Сырые сетевые ошибки вроде "unable to host ...supabase.co" больше
   // не показываем пользователю — только понятное сообщение.

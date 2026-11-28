@@ -386,7 +386,7 @@ export function OobeYouTopBar({
       <div className="oobe-you-brand">
         <span className="oobe-you-brand-logo">
           <img
-            src="/logo.jpg"
+            src="/cordy-logo.svg"
             alt=""
             width={42}
             height={42}
@@ -398,7 +398,7 @@ export function OobeYouTopBar({
           />
         </span>
         <span className="oobe-you-brand-text">
-          <strong>WinChat</strong>
+          <strong>Cordy</strong>
           <small>{subtitle}</small>
         </span>
       </div>

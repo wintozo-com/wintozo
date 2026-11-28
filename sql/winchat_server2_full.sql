@@ -1,5 +1,5 @@
 -- ============================================================
--- WinChat 7.0.1 - FULL SCHEMA FOR SERVER 2
+-- WinChat 8.0.0-closed-beta - FULL SCHEMA FOR SERVER 2
 -- Project: https://bjsjvozhkjktowqizidj.supabase.co
 -- Run entirely in Dashboard -> SQL Editor -> New query -> Run
 -- Server 2 accepts ~half of registrations, but every account is
@@ -4273,7 +4273,7 @@ grant execute on function public.winchat_search_ota(text, text) to anon, authent
 -- FILE: sql\winchat_update_23_server_balancing.sql
 -- ------------------------------------------------------------
 -- ============================================================
---  WinChat 7.0.1 — глобальный балансировщик регистраций
+--  Cordy 8.0.0-closed-beta — глобальный балансировщик регистраций
 --  Проект: СЕРВЕР 1 (https://iksgubxxxspkjwsazrwq.supabase.co)
 --
 --  Выполнить в Dashboard → SQL Editor → New query → Run

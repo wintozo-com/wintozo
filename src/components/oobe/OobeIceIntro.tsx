@@ -102,7 +102,7 @@ export default function OobeIceIntro({ onDone }: Props) {
   const hint = left <= 2 ? HINTS[2] : hits === 0 ? HINTS[0] : HINTS[1];
 
   return createPortal(
-    <div className="oobe-ice-intro" data-phase={phase} role="dialog" aria-label="WinChat 7.0 — разбейте лёд">
+    <div className="oobe-ice-intro" data-phase={phase} role="dialog" aria-label="Cordy 7.0 — разбейте лёд">
       {/* SVG-фильтры: неровные трещины и ледяная зернистость. */}
       <svg className="oobe-ice-defs" aria-hidden="true">
         <filter id="oobe-ice-jag" x="-30%" y="-30%" width="160%" height="160%">
@@ -215,10 +215,10 @@ export default function OobeIceIntro({ onDone }: Props) {
             }
           >
             <span className="oobe-ice-logo-pop">
-              <img src="/logo.jpg" alt="" draggable={false} />
+              <img src="/cordy-logo.svg" alt="" draggable={false} />
             </span>
           </div>
-          <span className="oobe-ice-version">WinChat 7.0</span>
+          <span className="oobe-ice-version">Cordy 7.0</span>
         </div>
       )}
     </div>,

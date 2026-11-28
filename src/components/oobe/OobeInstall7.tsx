@@ -63,7 +63,7 @@ type Step = "welcome" | "auth" | "winpass" | "checking" | "success";
 const CHECK_STEPS = ["Аккаунт", "WinPro и подписка", "Безопасность профиля"];
 
 /**
- * OOBE первого запуска WinChat 7.0 — отдельный новогодний экран.
+ * OOBE первого запуска Cordy 7.0 — отдельный новогодний экран.
  *
  * Это не перекрашенный Material You 6.0: своя двухпанельная вёрстка
  * (поздравительная открытка + форма), своя типографика, свои поля и кнопки.
@@ -244,8 +244,8 @@ export default function OobeInstall7({
           <span className="ny7-logo">
             <img
               data-oobe-intro-target
-              src="/logo.jpg"
-              alt="WinChat"
+              src="/cordy-logo.svg"
+              alt="Cordy"
               width={52}
               height={52}
               decoding="async"
@@ -255,8 +255,8 @@ export default function OobeInstall7({
             />
           </span>
           <span className="ny7-brand-copy">
-            <strong>WinChat</strong>
-            <small>7.0 · Новый год</small>
+            <strong>Cordy</strong>
+            <small>8.0 · Closed Beta</small>
           </span>
         </div>
         <span className="ny7-badge">
@@ -275,7 +275,7 @@ export default function OobeInstall7({
             <em>2027 годом!</em>
           </h1>
           <p className="ny7-hero-text">
-            Праздничная версия WinChat уже установлена. Создайте аккаунт,
+            Праздничная версия Cordy Messenger уже установлена. Создайте аккаунт,
             чтобы оставаться на связи с близкими в уютной зимней атмосфере.
           </p>
 
@@ -338,7 +338,7 @@ export default function OobeInstall7({
                 <span className="ny7-mark-ring" aria-hidden="true" />
                 <img
                   data-oobe-intro-target
-                  src="/logo.jpg"
+                  src="/cordy-logo.svg"
                   alt=""
                   decoding="async"
                   onError={(e) => {
@@ -348,7 +348,7 @@ export default function OobeInstall7({
               </div>
               <h2>
                 Добро пожаловать
-                <br />в WinChat 7.0
+                <br />в Cordy 8.0
               </h2>
               <p>
                 Установка завершена. Осталось создать аккаунт или войти —
@@ -581,13 +581,13 @@ export default function OobeInstall7({
                 <em>{profile?.nickname?.trim() || "друг"}!</em>
               </h2>
               <p>
-                Аккаунт проверен. Внутри — чаты, каналы и новогоднее
-                оформление WinChat 7.0.
+                Аккаунт проверен. Внутри — чаты, каналы и праздничное
+                оформление Cordy 8.0.
               </p>
 
               <div className="ny7-actions">
                 <button type="button" className="ny7-primary" onClick={onFinish}>
-                  <span>Открыть WinChat</span>
+                  <span>Открыть Cordy</span>
                   <ArrowRight />
                 </button>
               </div>

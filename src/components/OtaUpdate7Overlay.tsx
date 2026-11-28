@@ -41,7 +41,7 @@ function descriptionLines(text: string): string[] {
 function statusLabel(state: OtaState | null, progress: number, error: string | null): string {
   if (error) return error;
   if (state === "permission") {
-    return "Разрешите установку из этого источника и вернитесь в WinChat";
+    return "Разрешите установку из этого источника и вернитесь в Cordy";
   }
   if (state === "installing") return "Устанавливаем… почти готово";
   if (state === "downloading") return `Загружаем новогоднее обновление… ${progress}%`;
@@ -155,7 +155,7 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
   const fullVersion = version ?? APP_VERSION;
   const noteText =
     ota?.description?.trim() ||
-    `Новогоднее обновление WinChat ${fullVersion}: свежий дизайн, новые возможности и исправления.`;
+    `Новогоднее обновление Cordy ${fullVersion}: свежий дизайн, новые возможности и исправления.`;
   const lines = descriptionLines(noteText);
   // Анимированная цифра берётся из старшего номера версии OTA.
   const bigDigit = fullVersion.match(/^(\d+)/)?.[1] ?? "7";
@@ -169,7 +169,7 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
       className="ota7-root font-app"
       role="dialog"
       aria-modal="true"
-      aria-label={`Доступно обновление WinChat ${fullVersion}`}
+      aria-label={`Доступно обновление Cordy ${fullVersion}`}
       style={{ position: "fixed", inset: 0, zIndex: 400 }}
     >
       <style>{`
@@ -559,7 +559,7 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
             <div className="ota7-rays" aria-hidden />
             <div className="ota7-logo-wrap">
               <div className="ota7-logo-ring">
-                <img src="/logo.jpg" alt="WinChat" draggable={false} />
+                <img src="/cordy-logo.svg" alt="Cordy" draggable={false} />
               </div>
             </div>
             <span
@@ -575,9 +575,9 @@ export default function OtaUpdate7Overlay({ ota, version, url, onClose }: Props)
         ) : phase === "installing" ? (
           <div className="ota7-progress-stage">
             <div className="ota7-logo-circle">
-              <img src="/logo.jpg" alt="WinChat" draggable={false} />
+              <img src="/cordy-logo.svg" alt="Cordy" draggable={false} />
             </div>
-            <h2 className="ota7-heading">WinChat 7.0</h2>
+            <h2 className="ota7-heading">Cordy 8.0</h2>
             <div className="ota7-version-pill" style={{ marginTop: 9 }}>
               <Snowflake /> {fullVersion}
             </div>

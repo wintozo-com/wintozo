@@ -176,7 +176,7 @@ export const WINPRO_THEMES = [
   {
     id: YOU_THEME_ID,
     name: "Material You",
-    description: "Выразительная палитра WinChat You: насыщенные тона, блобы и крупные формы",
+    description: "Выразительная палитра Cordy You: насыщенные тона, блобы и крупные формы",
     accent: "#7c4dff",
     accentSoft: "#e4d7ff",
     chatBg: "#efe5ff",
@@ -192,7 +192,7 @@ export const WINPRO_THEMES = [
   },
   {
     id: GLASS_THEME_ID,
-    name: "WinChat Glass",
+    name: "Cordy Glass",
     description: "Прозрачное «жидкое стекло»: размытие, глянцевые блики и очень крупные скругления",
     accent: "#3f6df6",
     accentSoft: "rgba(255,255,255,0.65)",

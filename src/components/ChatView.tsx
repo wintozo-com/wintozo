@@ -58,7 +58,7 @@ interface Props {
   onBack: () => void;
   onActivity: (m: Message) => void;
   onOpenInfo: () => void;
-  /** Режим WinChat You (Material You). */
+  /** Режим Cordy You (Material You). */
   youMode?: boolean;
 }
 
@@ -488,7 +488,7 @@ export default function ChatView({
     /* В Electron-обёртке (EXE/APK) нет HTTPS-ограничения — проверяем только API */
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
       return flashError(
-        "Запись голоса недоступна в этом браузере. Откройте WinChat в актуальном Chrome, Safari или Firefox — а не во встроенном браузере мессенджера или соцсети.",
+        "Запись голоса недоступна в этом браузере. Откройте Cordy в актуальном Chrome, Safari или Firefox — а не во встроенном браузере мессенджера или соцсети.",
         9000
       );
     }
@@ -558,7 +558,7 @@ export default function ChatView({
 
     if (!navigator.mediaDevices?.getUserMedia) {
       return flashError(
-        "Запись видео недоступна. Откройте WinChat в актуальном Chrome, Safari или Firefox.",
+        "Запись видео недоступна. Откройте Cordy в актуальном Chrome, Safari или Firefox.",
         9000
       );
     }
@@ -1319,7 +1319,7 @@ export default function ChatView({
                   strokeWidth={1.6}
                 />
                 {youMode && (
-                  <img src="/logo.jpg" alt="" className="yc-empty-logo" aria-hidden />
+                  <img src="/cordy-logo.svg" alt="" className="yc-empty-logo" aria-hidden />
                 )}
               </div>
               <p

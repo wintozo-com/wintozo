@@ -82,13 +82,13 @@ interface Props {
   initialSettingsTab?: "profile" | "customization" | "security" | "winpro";
   /** Форсировать полноэкранные Android-настройки (отладка на ПК: /setting_phone=1). */
   forcePhoneSettings?: boolean;
-  /** Режим WinChat You (Material You). */
+  /** Режим Cordy You (Material You). */
   youMode?: boolean;
   /** Чат из адреса /themes/you/chat/:id. */
   initialChatId?: string | null;
   /** Обновить адрес при выборе чата в режиме You. */
   onYouChatRoute?: (chatId: string | null) => void;
-  /** Выйти из WinChat You в обычный интерфейс. */
+  /** Выйти из Cordy You в обычный интерфейс. */
   onExitYou?: () => void;
   /** Открыть настройки по адресу /themes/you/settings. */
   onOpenYouSettings?: () => void;
@@ -117,7 +117,7 @@ function Placeholder({
         <span className="yc-placeholder-orb yc-placeholder-orb-b" aria-hidden />
         <div className="yc-placeholder-card">
           <div className="yc-placeholder-mark">
-            <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+            <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
           </div>
           <p className="yc-placeholder-title">Ваши беседы</p>
           <p className="yc-placeholder-sub">
@@ -146,9 +146,9 @@ function Placeholder({
       />
       <div className="animate-scale-in relative w-full max-w-md rounded-[32px] bg-white/80 p-8 shadow-2xl backdrop-blur">
         <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center overflow-hidden rounded-[26px] bg-white shadow-lg">
-          <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+          <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
         </div>
-        <p className="text-xl font-extrabold tracking-tight">WinChat</p>
+        <p className="text-xl font-extrabold tracking-tight">Cordy Messenger</p>
         <p className="mt-2 max-w-[320px] text-sm leading-relaxed font-medium text-black/45">
           Выберите чат слева, найдите человека или соберите группу
         </p>
@@ -240,7 +240,7 @@ export default function Messenger({
   const isAdmin = me.username.toLowerCase() === "admin";
   const active = chats.find((c) => c.id === activeId) ?? null;
 
-  /* ---------- WinChat You: адрес синхронизирует выбранный чат и настройки ---------- */
+  /* ---------- Cordy You: адрес синхронизирует выбранный чат и настройки ---------- */
   useEffect(() => {
     if (youMode) setActiveId(initialChatId ?? null);
   }, [youMode, initialChatId]);

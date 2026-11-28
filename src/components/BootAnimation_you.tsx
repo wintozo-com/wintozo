@@ -49,7 +49,7 @@ const easeInOutCubic = (t: number) =>
 const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
 interface Props {
-  /** Сервер готов — форма фиксируется и выезжает «WinChat You». */
+  /** Сервер готов — форма фиксируется и выезжает «Cordy You». */
   ready: boolean;
   /** Первый запуск или обновление: анимация загрузки заметно длиннее. */
   long?: boolean;
@@ -57,10 +57,10 @@ interface Props {
 }
 
 /**
- * Заставка WinChat You (Material 3 Expressive): голубой тональный фон,
+ * Заставка Cordy You (Material 3 Expressive): голубой тональный фон,
  * чёрная буква «W» внутри силуэта, который непрерывно перетекает между
  * формами Material You. Когда приложение готово, силуэт мягко садится
- * в squircle-плитку и снизу проявляется «WinChat You».
+ * в squircle-плитку и снизу проявляется «Cordy You».
  */
 export default function BootAnimationYou({ ready, long = false, onDone }: Props) {
   const [phase, setPhase] = useState<Phase>("loading");
@@ -196,7 +196,7 @@ export default function BootAnimationYou({ ready, long = false, onDone }: Props)
       style={youPaletteVars(seed)}
       role="status"
       aria-live="polite"
-      aria-label="Загрузка WinChat You"
+      aria-label="Загрузка Cordy You"
     >
       <div className="youboot__ambient" aria-hidden="true" />
       <div className="youboot__grain" aria-hidden="true" />
@@ -247,7 +247,7 @@ export default function BootAnimationYou({ ready, long = false, onDone }: Props)
       </div>
 
       <div className="youboot__word" aria-hidden="true">
-        <span className="youboot__word-main">WinChat</span>
+        <span className="youboot__word-main">Cordy</span>
         <span className="youboot__word-you">You</span>
       </div>
     </div>

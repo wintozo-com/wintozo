@@ -278,8 +278,8 @@ export function showOta7IfAvailable(ota: OtaInfo | null): void {
 
 /* ============================================================
    Разбор аргументов /set ota
-   /set ota https://…apk 7.0.1 --note В версии 7.0 добавлено...
-   /set ota @admin https://…apk 7.0.1 --note "В версии 7.0..."
+   /set ota https://…apk 8.0.0-closed-beta --note В версии 8.0 добавлено...
+   /set ota @admin https://…apk 8.0.0-closed-beta --note "В версии 8.0..."
    плюс старый формат с описанием в кавычках.
    ============================================================ */
 

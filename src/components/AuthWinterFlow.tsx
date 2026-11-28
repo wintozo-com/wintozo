@@ -116,7 +116,7 @@ export function AuthWinpassGift({ winpass, onDone }: { winpass: string; onDone: 
           <Snowflake className="h-7 w-7" strokeWidth={1.4} />
         </div>
 
-        <p className="auth-flow-eyebrow">WinChat 7.0 · зимняя регистрация</p>
+        <p className="auth-flow-eyebrow">Cordy 8.0 · зимняя регистрация</p>
         <h2 className="auth-flow-title">Аккаунт создан!</h2>
         <p className="auth-flow-lead">
           Сохраните <b>WinPass</b> — это ваш код восстановления. Он навсегда привязан к аккаунту и
@@ -134,7 +134,7 @@ export function AuthWinpassGift({ winpass, onDone }: { winpass: string; onDone: 
             {copied ? "Скопировано ✓" : "Скопировать код"}
           </button>
           <button type="button" onClick={onDone} className="auth-btn-secondary">
-            Войти в WinChat
+            Войти в Cordy
             <ArrowRight className="h-4 w-4" />
           </button>
         </div>
@@ -156,7 +156,7 @@ const CHECKS = [
   { key: "winpro", title: "Проверка WinPro", hint: "Подписка и привилегии" },
   { key: "ban", title: "Проверка блокировки аккаунта", hint: "Безопасность профиля" },
   { key: "password", title: "Проверка пароля", hint: "Сессия подтверждена" },
-  { key: "ready", title: "Подготовка WinChat 7.0", hint: "Зимний интерфейс готов" },
+  { key: "ready", title: "Подготовка Cordy 8.0", hint: "Зимний интерфейс готов" },
 ] as const;
 
 function CheckIcon({ index }: { index: number }) {
@@ -282,11 +282,11 @@ export function AuthSecurityCheck({ userId, onDone }: { userId: string; onDone: 
           {blocked
             ? "Ой… аккаунт заблокирован. Сейчас покажу подробности."
             : active >= CHECKS.length
-              ? "Всё готово! Добро пожаловать в WinChat ❄"
+              ? "Всё готово! Добро пожаловать в Cordy Messenger ❄"
               : `Проверяю: ${CHECKS[active].title.toLowerCase()}…`}
         </div>
 
-        <p className="auth-flow-eyebrow">WinChat 7.0 · вход в аккаунт</p>
+        <p className="auth-flow-eyebrow">Cordy 8.0 · вход в аккаунт</p>
         <h2 className="auth-flow-title">Зимняя проверка</h2>
         <p className="auth-flow-lead">Снеговик проверяет ваш аккаунт — это займёт пару секунд.</p>
 
@@ -341,7 +341,7 @@ export function AuthSecurityCheck({ userId, onDone }: { userId: string; onDone: 
         )}
 
         <p className="auth-flow-footnote">
-          <Sparkles className="inline h-3 w-3" /> Проверка идёт на защищённом сервере WinChat
+          <Sparkles className="inline h-3 w-3" /> Проверка идёт на защищённом сервере Cordy
         </p>
       </div>
     </div>

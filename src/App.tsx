@@ -69,6 +69,7 @@ import LegacyScreen from "./components/LegacyScreen";
 import YouLocked from "./components/YouLocked";
 import GlassLocked from "./components/GlassLocked";
 import OobeUpdate7 from "./components/oobe/OobeUpdate7";
+import OobeUpdate8 from "./components/oobe/OobeUpdate8";
 import OobeInstall7 from "./components/oobe/OobeInstall7";
 import type { OobeVariant } from "./components/oobe/OobeThemeChooser";
 /* OOBE прошлых версий (например 5.0) — назначается через терминал (/set oobe). */
@@ -84,9 +85,10 @@ import OobeUpdate5 from "./components/oobe/OobeUpdate5";
                     /events/themes/wintozo/*
    ============================================================ */
 const LEGACY_PREFIX = "/events/themes/wintozo";
-/** Прямые ссылки-превью OOBE в браузере: /winchat_6_oobe и /winchat_7_oobe */
+/** Прямые ссылки-превью OOBE: /winchat_6_oobe, /winchat_7_oobe и /cordy_8_oobe */
 const OOBE_PREVIEW_PATH = "/winchat_6_oobe";
 const OOBE_PREVIEW_PATH_7 = "/winchat_7_oobe";
+const OOBE_PREVIEW_PATH_8 = "/cordy_8_oobe";
 const YOU_PREFIX = "/themes/you";
 const YOU_PREV_THEME_KEY = "winchat_you_prev_theme";
 const GLASS_PREFIX = "/themes/glass";
@@ -255,7 +257,10 @@ export default function App() {
     path.startsWith(`${OOBE_PREVIEW_PATH}/`) ||
     path === OOBE_PREVIEW_PATH_7 ||
     path.startsWith(`${OOBE_PREVIEW_PATH_7}/`);
-  const oobeForceUpdate = path.startsWith("/oobe_update");
+  const oobePreview8 =
+    path === OOBE_PREVIEW_PATH_8 || path.startsWith(`${OOBE_PREVIEW_PATH_8}/`);
+  const oobeForceUpdate =
+    path.startsWith("/oobe_update") || oobePreview8;
   const oobeForceInstall = path.startsWith("/install_oobe") || isOobePreview;
   /* OOBE какой версии назначена пользователю через терминал (/set oobe):
      «5.0», «6.0» или «7.0» — покажется при следующем входе даже без обновления. */
@@ -646,7 +651,7 @@ export default function App() {
       wasGlass.current = true;
       saveThemeId(GLASS_THEME_ID);
       applyTheme(getThemeById(GLASS_THEME_ID) ?? THEMES[0]);
-      document.title = "WinChat Glass";
+      document.title = "Cordy Glass";
       return;
     }
 
@@ -669,7 +674,7 @@ export default function App() {
 
     // Пользователь выбрал другую тему или ушёл в You — не перетираем.
     if (savedId !== GLASS_THEME_ID || youMode) {
-      if (!themedMode) document.title = "WinChat";
+      if (!themedMode) document.title = "Cordy Messenger";
       return;
     }
 
@@ -683,7 +688,7 @@ export default function App() {
     if (isWinProTheme(prev) && !isWinProActive(profile)) prev = THEMES[0].id;
     saveThemeId(prev);
     applyTheme(getThemeById(prev) ?? THEMES[0]);
-    if (!themedMode) document.title = "WinChat";
+    if (!themedMode) document.title = "Cordy Messenger";
   }, [profile, glassMode, path, youMode, themedMode]);
 
   /* Демо /update_8_active/: показываем переход WinChat 7 → Cordy 8
@@ -704,7 +709,7 @@ export default function App() {
       setAuthFlow(null);
       setPendingSession(null);
     };
-    document.title = "WinChat 7.0";
+    document.title = "Cordy 8.0";
     if (authFlow.kind === "register") {
       return <AuthWinpassGift winpass={authFlow.winpass} onDone={finishAuthGate} />;
     }
@@ -768,7 +773,7 @@ export default function App() {
 
   /* ---------- OOBE: приветствия WinChat 7.0 (обновление / установка) ---------- */
   if (showInstallOobe) {
-    document.title = "Добро пожаловать в WinChat";
+    document.title = "Добро пожаловать в Cordy";
     return (
       <OobeInstall7
         hasSession={!!session}
@@ -779,10 +784,9 @@ export default function App() {
     );
   }
   if (showUpdateOobe) {
-    /* OOBE версии 5.0 — оригинальное приветствие пятой версии.
-     * В 7.0 по умолчанию показывается новогоднее OobeUpdate7. */
+    /* OOBE прошлых версий назначается через терминал (/set oobe). */
     if (forcedOobeVersion === "5.0") {
-      document.title = "WinChat 5.0";
+      document.title = "Cordy 5.0";
       return (
         <OobeUpdate5
           winPro={profile ? isWinProActive(profile) : session ? null : false}
@@ -791,9 +795,20 @@ export default function App() {
         />
       );
     }
-    document.title = "WinChat 7.0";
+    if (forcedOobeVersion === "7.0") {
+      document.title = "Cordy 7.0";
+      return (
+        <OobeUpdate7
+          winPro={profile ? isWinProActive(profile) : session ? null : false}
+          onFinish={finishUpdateOobe}
+          variant={oobeTheme}
+        />
+      );
+    }
+    /* С 8.0 обновление встречает преображение WinChat → Cordy. */
+    document.title = "Cordy 8.0 — новое имя мессенджера";
     return (
-      <OobeUpdate7
+      <OobeUpdate8
         winPro={profile ? isWinProActive(profile) : session ? null : false}
         onFinish={finishUpdateOobe}
         variant={oobeTheme}

@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import {
   ArrowLeft,
   AtSign,
@@ -49,7 +49,7 @@ interface Props {
   onFinish: () => void;
   /** Стиль OOBE (в 6.0 всегда Material You). */
   variant?: OobeVariant;
-  /** Новогоднее оформление WinChat 7.0: другие тексты и палитра. */
+  /** Новогоднее оформление Cordy 7.0: другие тексты и палитра. */
   newYear?: boolean;
 }
 
@@ -58,7 +58,7 @@ type Step = "welcome" | "auth" | "winpass" | "checking" | "success";
 const CHECK_STEPS = ["Аккаунт", "WinPro и подписка", "Безопасность профиля"];
 
 /**
- * OOBE первого скачивания WinChat 7.0 в новогоднем стиле:
+ * OOBE первого скачивания Cordy 7.0 в новогоднем стиле:
  * приветствие → регистрация / вход → WinPass → проверка → финал.
  * Фон и логотип живут теми же expressive-формами, что и бут-анимация.
  */
@@ -246,7 +246,7 @@ export default function OobeInstall({
 
             <span className="oobe-you-eyebrow">
               {newYear ? <Snowflake /> : <Sparkles />}
-              {newYear ? "WinChat 7.0 · Новый год" : "WinChat 6.0 · Material You"}
+              {newYear ? "Cordy 7.0 · Новый год" : "Cordy 6.0 · Material You"}
             </span>
 
             <h1 className="oobe-you-h1">
@@ -258,8 +258,8 @@ export default function OobeInstall({
 
             <p className="oobe-you-lead">
               {newYear
-                ? "Праздничная установка завершена. Создайте аккаунт или войдите — и WinChat откроется в новогоднем стиле."
-                : "Всё готово к первому запуску. Создайте аккаунт или войдите — и WinChat откроется в новой теме."}
+                ? "Праздничная установка завершена. Создайте аккаунт или войдите — и Cordy откроется в новогоднем стиле."
+                : "Всё готово к первому запуску. Создайте аккаунт или войдите — и Cordy откроется в новой теме."}
             </p>
 
             {newYear && (
@@ -333,7 +333,7 @@ export default function OobeInstall({
                 <ArrowLeft />
               </button>
               <div className="oobe-you-head-copy">
-                <p className="oobe-you-kicker">Аккаунт WinChat</p>
+                <p className="oobe-you-kicker">Аккаунт Cordy</p>
                 <h1>
                   {mode === "register" ? "Создайте аккаунт" : "С возвращением"}
                 </h1>
@@ -528,18 +528,18 @@ export default function OobeInstall({
             <h1 className="oobe-you-h1">
               {newYear ? "С Новым годом" : "Добро пожаловать"}
               <span className="oobe-you-grad">
-                {profile?.nickname?.trim() || (newYear ? "2027!" : "в WinChat")}
+                {profile?.nickname?.trim() || (newYear ? "2027!" : "в Cordy")}
               </span>
             </h1>
 
             <p className="oobe-you-lead">
               {newYear
-                ? "Аккаунт проверен. Внутри — чаты, каналы и новогоднее оформление WinChat 7.0."
+                ? "Аккаунт проверен. Внутри — чаты, каналы и новогоднее оформление Cordy 7.0."
                 : "Аккаунт проверен. Внутри — чаты, каналы и новая тема Material You."}
             </p>
 
             <div className="oobe-you-actions">
-              <OobeYouButton label="Открыть WinChat" onClick={onFinish} />
+              <OobeYouButton label="Открыть Cordy" onClick={onFinish} />
             </div>
 
             <div className="oobe-you-chips">
@@ -558,14 +558,14 @@ export default function OobeInstall({
   );
 }
 
-/* ---------- Новогодний медальон WinChat ---------- */
+/* ---------- Новогодний медальон Cordy ---------- */
 function NewYearMark({ className = "" }: { className?: string }) {
   return (
     <div className={`oobe-newyear-mark ${className}`} aria-hidden="true">
       <span className="oobe-newyear-halo" />
       <span className="oobe-newyear-ring" />
       <img
-        src="/logo.jpg"
+        src="/cordy-logo.svg"
         alt=""
         decoding="async"
         onError={(e) => {

@@ -53,7 +53,7 @@ interface Props {
   onLogout: () => void;
   /** Ивент «Память о Wintozo»: показать плашку выбора интерфейса. */
   onShowLegacy?: () => void;
-  /** Режим WinChat You: показывать отдельное окно кастомизации «WinChat You». */
+  /** Режим Cordy You: показывать отдельное окно кастомизации «Cordy You». */
   youMode?: boolean;
 }
 
@@ -105,7 +105,7 @@ export default function SettingsModal({
   );
   /* --- Бут-анимация --- */
   const [bootStyle, setBootStyle] = useState<BootStyle>(() => getBootStyle());
-  /* --- WinChat You --- */
+  /* --- Cordy You --- */
   const [youSeed, setYouSeed] = useState<string>(() => getYouSeedId());
   const [youShape, setYouShape] = useState<YouShape>(() => getYouShape());
 
@@ -293,7 +293,7 @@ export default function SettingsModal({
 
   const showTab = (t: Tab) => (activeTab === t ? "animate-fade-in" : "hidden");
   const you = youMode || currentId === YOU_THEME_ID;
-  /** WinChat Glass виден в кастомизации только тем, у кого есть доступ (флаг профиля). */
+  /** Cordy Glass виден в кастомизации только тем, у кого есть доступ (флаг профиля). */
   const glassAllowed = isGlassGranted(me);
   const myBadges = badgeCodes(me);
 
@@ -323,7 +323,7 @@ export default function SettingsModal({
           <div className="flex items-center gap-2.5">
             {you && (
               <span className="you-logo flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-[14px]">
-                <img src="/logo.jpg" alt="WinChat" className="h-full w-full object-cover" />
+                <img src="/cordy-logo.svg" alt="Cordy" className="h-full w-full object-cover" />
               </span>
             )}
             <h3
@@ -656,7 +656,7 @@ export default function SettingsModal({
                 })}
               </div>
 
-              {/* ===== Material You — WinChat You ===== */}
+              {/* ===== Material You — Cordy You ===== */}
               {currentId === YOU_THEME_ID && (
                 <div className="mt-5">
                   <div
@@ -855,7 +855,7 @@ export default function SettingsModal({
                   </div>
                   <h4 className="mt-4 text-xl font-extrabold tracking-tight">WinPro</h4>
                   <p className="mt-1.5 text-[13px] font-medium leading-relaxed text-black/50">
-                    Премиум-подписка WinChat: корона в профиле, серая галочка, эксклюзивные
+                    Премиум-подписка Cordy: корона в профиле, серая галочка, эксклюзивные
                     палитры и секретные анимации.
                   </p>
                   <div className="mt-5 space-y-2 text-left">
@@ -1004,11 +1004,11 @@ export default function SettingsModal({
                 {[
                   { label: "Устройство", value: deviceLabel() },
                   { label: "Версия Android", value: androidLabel() },
-                  { label: "Версия приложения WinChat", value: device?.appVersion || APP_VERSION },
-                  { label: "Версия сервера WinChat", value: serverVersion ?? "…" },
+                  { label: "Версия приложения Cordy", value: device?.appVersion || APP_VERSION },
+                  { label: "Версия сервера Cordy", value: serverVersion ?? "…" },
                   { label: "Самая новая версия", value: latestVersion ?? "—" },
                 ].map((row, i) => {
-                  const isVersion = row.label === "Версия приложения WinChat";
+                  const isVersion = row.label === "Версия приложения Cordy";
                   const content = (
                     <>
                       <span className="shrink-0 text-[12px] font-bold text-black/45">{row.label}</span>

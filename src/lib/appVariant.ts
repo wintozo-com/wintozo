@@ -11,8 +11,8 @@ export const isYouOnlyApp = APP_VARIANT === "you";
 export const APP_BRAND = isStoreApp
   ? "Wintozo Store"
   : isYouOnlyApp
-    ? "WinChat You"
-    : "WinChat";
+    ? "Cordy You"
+    : "Cordy Messenger";
 
 /** Android applicationId / package для текущего билда. */
 export const APP_PACKAGE_ID = isStoreApp
